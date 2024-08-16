@@ -555,7 +555,7 @@ class PaymentController
     public function createOrdernew(Request $request)
     {
         $request->validate([
-            'orderAmount' => 'required|numeric|gt:0|between:1,20000',
+            'orderAmount' => 'required|numeric|gt:0|between:10,20000',
         ]);
         $amount = $request->orderAmount;
         $GatewayChoice_setting = Setting::find(7);
