@@ -203,6 +203,16 @@ Route::group(['middleware' => 'auth:web'], function () {
     Route::get('/bank-withdraw', [WithdrawRequestController::class, 'bankWithdraw'])->name('bank-withdraw');
     Route::post('/bank-withdraw', [WithdrawRequestController::class, 'bankWithdrawPost'])->name('bank-withdraw');
 
+    // these are the new routes for the withdrawl process
+    Route::get('/universal-withdraw', [WithdrawRequestController::class,'universalWithdraw']);
+    Route::post('/universal-withdraw', [WithdrawRequestController::class,'POSTuniversalWithdraw'])->name('universal-withdraw');
+    Route::get('/universal-withdraw', [WithdrawRequestController::class,'universalWithdraw']);
+    Route::post('/universal-withdraw', [WithdrawRequestController::class,'POSTuniversalWithdraw'])->name('universal-withdraw');
+    Route::get('/edit-bank', [WithdrawRequestController::class,'editBankDetail']);
+    Route::get('/editBankDeatil/{type}', [WithdrawRequestController::class,'editBankTypeDetail']);
+    Route::post('/editBankDeatil/{type}', [WithdrawRequestController::class,'POSTeditBankTypeDetail']);
+
+
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
     Route::get('/referral-history', [TransactionController::class, 'referral'])->name('referral-history');
     Route::get('/game-history', [TransactionController::class, 'gameHistory'])->name('game-history');

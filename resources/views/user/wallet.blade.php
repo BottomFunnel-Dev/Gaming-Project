@@ -4,7 +4,7 @@
 
 <div class="main-area" style="padding-top: 60px;">
          <div class="p-4 bg-light">
-            
+
          </div>
          <div class="divider-x"></div>
          <div class="p-4 bg-light">
@@ -26,7 +26,7 @@
                </div>
                <div class="text-white text-uppercase" style="font-size: 0.9em; font-weight: 500;">Winnings Cash</div>
                <div class="mt-5" style="font-size: 0.9em; color: rgb(216, 224, 255);">Can be withdrawn to Paytm or Bank.
-                  Can be used to play Tournaments &amp; Battles.</div><a href="{{url('withdraw-request')}}"
+                  Can be used to play Tournaments &amp; Battles.</div><a href="{{url('universal-withdraw')}}"
                   class="walletCard-btn d-flex justify-content-center align-items-center text-uppercase">Withdraw</a>
             </div>
          </div>

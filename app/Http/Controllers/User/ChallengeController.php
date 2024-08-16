@@ -19,6 +19,8 @@ use URL;
 use Hash;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Log;
+
 use GuzzleHttp\Client;
 
 class ChallengeController
@@ -893,131 +895,155 @@ class ChallengeController
 
     }
     public function add_rommcode(Request $r)
-    {
-        $r->validate([
-            'id' => 'required',
-            'code' => 'required'
-        ]);
-        $curl = curl_init();
+{
+    // Validate the request parameters
+    $r->validate([
+        'id' => 'required',
+        'code' => 'required'
+    ]);
 
-        curl_setopt_array($curl, [
-            CURLOPT_URL => "https://ludo-king-room-code-api.p.rapidapi.com/global/checkroom?code=" . $r->code,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER => [
-                "X-RapidAPI-Host: ludo-king-room-code-api.p.rapidapi.com",
-                "X-RapidAPI-Key: 2f052eb9f1msh32e7919b12c922fp1343acjsn99fe7d89ea92"
-                // 		"X-RapidAPI-Key: e7a93cc1msh5dde49113f03513p1cbf4fjsnb3170365d929"
-            ],
-        ]);
+    // Initialize cURL session
+    $curl = curl_init();
 
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
+    // Set cURL options
+    curl_setopt_array($curl, [
+        CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $r->code . "&apikey=733f4afa", // New API URL
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "GET",
+    ]);
 
-        curl_close($curl);
+    // Execute cURL request and capture response
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
 
-        if ($err) {
-            return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
-        } else {
-            // return $response;
-            $responses = json_decode($response);
-            // 	return $responses->roomType;
-            if (isset($responses->type) && $responses->type == "classic") {
-                $dataa = Challenge::where('id', $r->id)->first();
-                if ($dataa && $dataa->status >= 3) {
-                    $chData = Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
-                    return redirect('/challenge-detail/' . $r->id);
-                } else {
-                    return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled');
-                }
-                return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
+    // Log the API response for debugging
+    \Log::info('API Response: ', [$response]);
+
+    // Close cURL session
+    curl_close($curl);
+
+    // Handle potential cURL errors
+    if ($err) {
+        return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
+    } else {
+        // Decode the JSON response from the API
+        $responses = json_decode($response);
+
+        // Check if the API returned a valid room code and type
+        if (isset($responses->result->roomcode) && isset($responses->result->type) && $responses->result->type == "classic") {
+            // Find the challenge by ID
+            $dataa = Challenge::where('id', $r->id)->first();
+
+            // If the challenge exists and is in a valid state, update the room code
+            if ($dataa && $dataa->status >= 3) {
+                Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
+                return redirect('/challenge-detail/' . $r->id);
+            } else {
+                return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled');
             }
-            return redirect('/challenge-detail/' . $r->id)->with('error', 'Something wents wrong!');
+        } else {
+            return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
         }
     }
+}
+
     public function add_rommcode_automaticByController($id)
     {
         $curl = curl_init();
 
+        // Set the new API URL with the appropriate query parameters
         curl_setopt_array($curl, [
-            CURLOPT_URL => "https://ludo-king-room-code-api.p.rapidapi.com/roomCode/",
+            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $id . "&apikey=733f4afa",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER => [
-                "X-RapidAPI-Host: ludo-king-api-room-code.p.rapidapi.com",
-                "X-RapidAPI-Key: d61aebb273msh6f5746aeb667b5dp1f6dd5jsn76dfbc76c31d"
-            ],
         ]);
 
+        // Execute cURL request and capture the response
         $response = curl_exec($curl);
         $err = curl_error($curl);
 
+        // Close the cURL session
         curl_close($curl);
 
+        // Handle cURL errors
         if ($err) {
             return false;
         } else {
+            // Decode the JSON response
             $responses = json_decode($response);
-            if (isset($responses->roomcode)) {
+
+            // Check if the response contains the room code
+            if (isset($responses->result->roomcode)) {
+                // Retrieve the challenge record from the database
                 $dataa = Challenge::where('id', $id)->first();
+
+                // Check if the challenge exists and is in a valid state
                 if ($dataa && $dataa->status >= 3) {
-                    $chData = Challenge::where('id', $id)->update(['rcode' => $responses->roomcode]);
+                    // Update the room code in the database
+                    Challenge::where('id', $id)->update(['rcode' => $responses->result->roomcode]);
                     return true;
                 }
             }
             return false;
         }
     }
-    public function add_rommcode_automatic($id)
-    {
+
+        public function add_rommcode_automatic($id)
+        {
         $curl = curl_init();
 
+        // Set the new API URL with the appropriate query parameters
         curl_setopt_array($curl, [
-            CURLOPT_URL => "https://ludo-king-api-room-code.p.rapidapi.com/roomCode/",
+            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $id . "&apikey=733f4afa",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER => [
-                "X-RapidAPI-Host: ludo-king-api-room-code.p.rapidapi.com",
-                "X-RapidAPI-Key: d61aebb273msh6f5746aeb667b5dp1f6dd5jsn76dfbc76c31d"
-            ],
         ]);
 
+        // Execute cURL request and capture the response
         $response = curl_exec($curl);
         $err = curl_error($curl);
 
+        // Close the cURL session
         curl_close($curl);
 
+        // Handle cURL errors
         if ($err) {
             return redirect('/challenge-detail/' . $id)->with('error', 'Room Code Error');
         } else {
-            // return $response;
+            // Decode the JSON response
             $responses = json_decode($response);
-            // 	return $responses->roomType;
-            if (isset($responses->roomcode)) {
+
+            // Check if the response contains the room code
+            if (isset($responses->result->roomcode)) {
+                // Retrieve the challenge record from the database
                 $dataa = Challenge::where('id', $id)->first();
+
+                // Check if the challenge exists and is in a valid state
                 if ($dataa && $dataa->status >= 3) {
-                    $chData = Challenge::where('id', $id)->update(['rcode' => $responses->roomcode]);
+                    // Update the room code in the database
+                    Challenge::where('id', $id)->update(['rcode' => $responses->result->roomcode]);
                     return redirect('/challenge-detail/' . $id);
                 } else {
                     return redirect('/challenge-detail/' . $id)->with('error', 'Already Cancelled');
                 }
+            } else {
                 return redirect('/challenge-detail/' . $id)->with('error', 'Room not found!');
             }
-            return redirect('/challenge-detail/' . $id)->with('error', 'Something wents wrong!');
         }
     }
+
     public function acceptChallenge(Request $request)
     {
         $request->validate([
