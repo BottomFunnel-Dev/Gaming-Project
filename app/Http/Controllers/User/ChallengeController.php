@@ -30,11 +30,11 @@ class ChallengeController
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function generateRandomMultiples($number, $minRange, $maxRange)
-    {
-        $randomMultiple = $number * rand(floor($minRange / $number), floor($maxRange / $number));
-        return $randomMultiple;
-    }
+    // public function generateRandomMultiples($number, $minRange, $maxRange)
+    // {
+    //     $randomMultiple = $number * rand(floor($minRange / $number), floor($maxRange / $number));
+    //     return $randomMultiple;
+    // }
 
     public function create_fakechanllenges()
     {
