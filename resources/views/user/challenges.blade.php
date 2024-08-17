@@ -2,7 +2,7 @@
 @section('content')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
+    
     <script type="text/javascript">
         $(document).ready(function() {
             $.ajax({
@@ -36,7 +36,7 @@
                         //	$('#d2').html(data.playChallenges);
                     }
                 });
-            }, 5000);
+            },  5000);
         });
     </script>
 
@@ -45,8 +45,8 @@
             style="dispaly:none;position:fixed;top:50px;width:100%;z-index:100;">
             <span id="success-error-message"></span>
         </div>
-        @if ($notice != '')
-            <span class="btn btn-danger" style="width:100%;font-size:12px"><b>Important</b>:- {{ $notice }}</span>
+        @if($notice != '')
+        <span class="btn btn-danger" style="width:100%;font-size:12px"><b>Important</b>:- {{$notice}}</span>
         @endif
         <div id="content"></div>
 
@@ -84,11 +84,11 @@
                     '';
                 });
             </script>
-            <style>
-                .no_animation * {
-                    animation: none !important;
-                }
-            </style>
+<style>
+        .no_animation *{
+            animation: none !important;
+        }
+    </style>
             <div id="my-challenge-div">
                 <div id="rf2">
                     <div id="rp2"></div>
@@ -121,21 +121,20 @@
     <div class="divider-y"></div>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
         crossorigin="anonymous"></script>
-    <!--<script src="https://cdn.socket.io/4.4.1/socket.io.min.js" -->
-        <!--    integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous">
-        -->
+    <!--<script src="https://cdn.socket.io/4.4.1/socket.io.min.js"-->
+    <!--    integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous">-->
     <!--</script>-->
     <script>
         $(function() {
             $('#success-error-div').hide();
             $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				}
+			});
 
             @if (isset($payment_status))
-                hideSuccessErrorDiv('alert-danger', 'alert-success', '{{ $payment_status }}');
+                hideSuccessErrorDiv('alert-danger', 'alert-success', '{{$payment_status}}');
             @endif
 
 
@@ -207,7 +206,7 @@
                         error: function(data) {
                             var errors = $.parseJSON(data.responseText);
                             hideSuccessErrorDiv('alert-success', 'alert-danger', errors
-                                .message);
+                            .message);
                         },
                         complete: function() {
                             $('#challenge-amount').val('');
@@ -283,9 +282,7 @@
                 '-buttons"><button class="btn btn-danger px-3 btn-sm" onclick="cancelChallengeCre(' + data.id +
                 ')">DELETE</button>';
             html +=
-                '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2">
-                    <img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
-                    <img src="{{ asset('front/images/award-blue.png') }}" width="20px" alt="">
+                '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
             html += '<div style="line-height: 1;"><span class="betCard-playerName">' + data.cname +
                 '</span></div></div><div class="pr-3 text-center col-2 cxy">';
             html +=
@@ -322,13 +319,13 @@
             html += '<img  class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
                 prize + '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5">';
             html +=
-                '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
             html += '<div style="line-height: 1;"><span class="betCard-playerName">' + data.cname +
                 '</span></div></div><div class="pr-3 text-center col-2 cxy">';
             html +=
                 '<div><img src="{{ asset('front/images/vs.png') }}" width="30px" alt=""></div></div><div class="text-center col-5">';
             html +=
-                '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
             html += '<div style="line-height: 1;"><span class="betCard-playerName">' + data.oname +
                 '</span></div></div></div></div></div>';
 
@@ -352,13 +349,13 @@
                 '-deny" class="btn btn-danger px-3 btn-sm" style="cursor: pointer;float: right;width: 72px;height: 31px;" onclick="denyChallenge(' +
                 data.id + ')">REJECT</button>';
             html +=
-                '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
             html += '<div style="line-height: 1;"><span class="betCard-playerName">' + data.cname +
                 '</span></div></div><div class="pr-3 text-center col-2 cxy">';
             html +=
                 '<div><img src="{{ asset('front/images/vs.png') }}" width="30px" alt=""></div></div><div class="text-center col-5"><div class="pl-2">';
             html +=
-                '<img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div><div style="line-height: 1;"><span class="betCard-playerName">' +
+                '<img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div><div style="line-height: 1;"><span class="betCard-playerName">' +
                 data.oname + '</span></div></div></div></div></div>';
             return html;
         }
@@ -406,13 +403,13 @@
             html +=
                 '<span class="ml-auto"><a href="{{ route('challenge-detail', '+data.id+') }}"  class="btn btn-info px-3 btn-sm" >View</a>	</span></div></div>';
             html +=
-                '<div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                '<div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
             html += '<div style="line-height: 1;"><span class="betCard-playerName">' + data.cname +
                 '</span></div></div><div class="pr-3 text-center col-2 cxy">';
             html +=
                 '<div><img src="{{ asset('front/images/vs.png') }}" width="30px" alt=""></div></div><div class="text-center col-5">';
             html +=
-                '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
             html += '<div style="line-height: 1;"><span class="betCard-playerName">' + data.oname +
                 '</span></div></div></div></div></div>';
             return html;
@@ -439,8 +436,9 @@
 
                 var loading = document.getElementById(data.id + "-loading");
                 loading.setAttribute("src", "");
-                loading.setAttribute("src", "{{ asset('front/images/author.png') }}");
-            } else if (data.o_id == user_id) {} else {
+                loading.setAttribute("src", "{{ asset('front/images/author.svg') }}");
+            } else if (data.o_id == user_id) {
+            } else {
                 $('#chdiv-' + data.id).remove();
                 var htmlCode = playingGameHtml(data);
             }
@@ -458,7 +456,7 @@
                 var loading = document.getElementById(data.id + "-loading");
                 loading.setAttribute("src", "");
                 loading.setAttribute("src", "{{ asset('front/images/small-loading.gif') }}");
-                //$('#chdiv-'+data.id).remove();
+                //$('#chdiv-'+data.id).remove();	
                 //var htmlData	=	listChallengeCre(data);
                 //$("#my-challenge-div").prepend(htmlData);
             } else if (data.o_id == user_id) {
@@ -512,7 +510,7 @@
                 requestBtn.setAttribute("id", data.id + "-start-btn");
                 requestBtn.setAttribute("onclick", "startChallenge(" + data.id + ");");
                 //$('#chdiv-'+data.id).remove();
-                //var htmlCode	=	startGameHtml(data);
+                //var htmlCode	=	startGameHtml(data);				
                 //$('#challenge-div').prepend(htmlCode);
             }
         }
@@ -791,7 +789,7 @@
                         '-buttons"><button class="btn btn-danger px-3 btn-sm" onclick="cancelChallengeCre(' + challenges[i]
                         .id + ')">DELETE</button>';
                     html +=
-                        '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                        '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
                     html += '<div style="line-height: 1;"><span class="betCard-playerName">' + challenges[i].cname +
                         '</span></div></div><div class="pr-3 text-center col-2 cxy">';
                     html +=
@@ -837,7 +835,7 @@
                         '-buttons"><button class="btn btn-danger px-3 btn-sm" onclick="cancelChallengeCre(' + myChallenges[
                             i].id + ')">DELETE</button>';
                     html +=
-                        '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                        '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
                     html += '<div style="line-height: 1;"><span class="betCard-playerName">' + myChallenges[i].cname +
                         '</span></div></div><div class="pr-3 text-center col-2 cxy">';
                     html +=
@@ -874,13 +872,13 @@
                         '-deny" class="btn btn-danger px-3 btn-sm" style="cursor: pointer;float: right;width: 72px;height: 31px;" onclick="denyChallenge(' +
                         myChallenges[i].id + ')">REJECT</button>';
                     html +=
-                        '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                        '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
                     html += '<div style="line-height: 1;"><span class="betCard-playerName">' + myChallenges[i].cname +
                         '</span></div></div><div class="pr-3 text-center col-2 cxy">';
                     html +=
                         '<div><img src="{{ asset('front/images/vs.png') }}" width="30px" alt=""></div></div><div class="text-center col-5"><div class="pl-2">';
                     html +=
-                        '<img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div><div style="line-height: 1;"><span class="betCard-playerName">' +
+                        '<img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div><div style="line-height: 1;"><span class="betCard-playerName">' +
                         myChallenges[i].oname + '</span></div></div></div></div></div>';
                 } else if (myChallenges[i].status == 2 && myChallenges[i].o_id == user_id) {
                     html += '<div id="pp2"><div id="chdiv-' + myChallenges[i].id +
@@ -924,13 +922,13 @@
                 html += '<span class="ml-auto"><a href="https://apnaludo.com/challenge-detail/' + myPlayChallenges[i].id +
                     '"  class="btn btn-info px-3 btn-sm" >View</a>	</span></div></div>';
                 html +=
-                    '<div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                    '<div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
                 html += '<div style="line-height: 1;"><span class="betCard-playerName">' + myPlayChallenges[i].cname +
                     '</span></div></div><div class="pr-3 text-center col-2 cxy">';
                 html +=
                     '<div><img src="{{ asset('front/images/vs.png') }}" width="30px" alt=""></div></div><div class="text-center col-5">';
                 html +=
-                    '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.png') }}" width="21px" height="21px" alt=""></div>';
+                    '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
                 html += '<div style="line-height: 1;"><span class="betCard-playerName">' + myPlayChallenges[i].oname +
                     '</span></div></div></div></div></div>';
             }

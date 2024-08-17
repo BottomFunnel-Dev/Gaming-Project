@@ -1,6 +1,6 @@
 @extends('layouts.front.front')
 @section('content')
- <style data-jss="" data-meta="MuiSvgIcon">
+    <style data-jss="" data-meta="MuiSvgIcon">
         .MuiSvgIcon-root {
             fill: currentColor;
             width: 1em;
@@ -604,55 +604,66 @@
             background-color: #b1aeae17;
         }
     </style>
-         <div class="divider-x"></div>
-         <div class="main-area" style="padding-top: 60px;">
-   <div class="px-4 py-3">
-      <div class="d-flex flex-column">
-         <div class="games-section-title">
-            Add Withdrawal Mode
-            <form method="post" onsubmit="$('#popup').show()">
-                @csrf
-            <div class="MuiFormControl-root MuiTextField-root mt-2 w-100">
-                @if(session()->has('error'))
-                <p class="alert alert-danger">{{session()->get('error')}}</p>
-                @endif
-                @if($type=='upi')
-                <div class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-formControl">
-                   <input aria-invalid="false" name="upi_id" placeholder="Enter UPI ID" type="text" class="MuiInputBase-input MuiFilledInput-input" value="" style="padding-top: 10px;" required>
+    <div class="divider-x"></div>
+    <div class="main-area" style="padding-top: 60px;">
+        <div class="px-4 py-3">
+            <div class="d-flex flex-column">
+                <div class="games-section-title">
+                    Add Withdrawal Mode
+                    <form method="post" onsubmit="$('#popup').show()">
+                        @csrf
+                        <div class="MuiFormControl-root MuiTextField-root mt-2 w-100">
+                            @if (session()->has('error'))
+                                <p class="alert alert-danger">{{ session()->get('error') }}</p>
+                            @endif
+                            @if ($type == 'upi')
+                                <div
+                                    class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-formControl">
+                                    <input aria-invalid="false" name="upi_id" placeholder="Enter UPI ID" type="text"
+                                        class="MuiInputBase-input MuiFilledInput-input" value=""
+                                        style="padding-top: 10px;" required>
+                                </div>
+                            @endif
+                            @if ($type == 'imps')
+                                <div class="MuiFormControl-root MuiTextField-root mt-2 w-100">
+                                    <div
+                                        class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-formControl">
+                                        <input aria-invalid="false" name="accountNumber" placeholder="Enter Account Number"
+                                            type="number" class="MuiInputBase-input MuiFilledInput-input" value=""
+                                            style="padding-top: 10px;" required>
+                                    </div>
+                                </div>
+                                <div class="MuiFormControl-root MuiTextField-root mt-2 w-100">
+                                    <div
+                                        class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-formControl">
+                                        <input aria-invalid="false" name="ifsc" onchange="handleIFSCChange(this)"
+                                            placeholder="Enter IFSC Code" type="text"
+                                            class="MuiInputBase-input MuiFilledInput-input" value=""
+                                            style="padding-top: 10px;" required>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        <p id="validation_message"></p>
+                        <button type="submit" class="refer-button mt-4 cxy w-100 bg-primary">Verify Detail</button>
+                    </form>
                 </div>
-                @endif
-                @if($type=='imps')
-                <div class="MuiFormControl-root MuiTextField-root mt-2 w-100">
-   <div class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-formControl">
-       <input aria-invalid="false" name="accountNumber" placeholder="Enter Account Number" type="number" class="MuiInputBase-input MuiFilledInput-input" value="" style="padding-top: 10px;" required>
-    </div>
-</div>
-<div class="MuiFormControl-root MuiTextField-root mt-2 w-100">
-    <div class="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline MuiInputBase-formControl">
-       <input aria-invalid="false" name="ifsc" onchange="handleIFSCChange(this)" placeholder="Enter IFSC Code" type="text" class="MuiInputBase-input MuiFilledInput-input" value="" style="padding-top: 10px;" required>
-    </div>
-</div>
-                @endif
             </div>
-            <p id="validation_message"></p>
-            <button type="submit" class="refer-button mt-4 cxy w-100 bg-primary">Verify Detail</button>
-            </form>
-         </div>
-      </div>
-   </div>
-</div>
-      </div>
-   </div>
-   <audio id="myAudio" controls style="display:none;">
+        </div>
+    </div>
+    </div>
+    </div>
+    <audio id="myAudio" controls style="display:none;">
         <source src="preview.mp3" type="audio/mp3">
         Your browser does not support the audio tag.
     </audio>
-   <div id="popup" style="display:none;position:fixed;width:100dvw;height:100dvh;top: 0;left: 0;z-index: 11111111;flex-direction: row;flex-wrap: nowrap;align-content: center;justify-content: center;align-items: center;background: #808080cc;color: white;">
-       <h1 style="text-align:center;">Loading..</h1>
-   </div>
-   <div class="divider-y"></div>
-   <script>
-       function validateIFSC(ifsc) {
+    <div id="popup"
+        style="display:none;position:fixed;width:100dvw;height:100dvh;top: 0;left: 0;z-index: 11111111;flex-direction: row;flex-wrap: nowrap;align-content: center;justify-content: center;align-items: center;background: #808080cc;color: white;">
+        <h1 style="text-align:center;">Loading..</h1>
+    </div>
+    <div class="divider-y"></div>
+    <script>
+        function validateIFSC(ifsc) {
             // Regular expression for validating IFSC code
             const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
             return ifscRegex.test(ifsc);
@@ -662,7 +673,7 @@
             const ifscCode = $(a).val();
             const isValid = validateIFSC(ifscCode);
             const messageElement = $('#validation_message');
-            
+
             if (isValid) {
                 messageElement.text('Valid IFSC code').css('color', 'green');
             } else {
@@ -670,7 +681,5 @@
                 $(a).val('');
             }
         }
-        
-   </script>
+    </script>
 @endsection
-

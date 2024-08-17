@@ -13,6 +13,7 @@ use App\UserData;
 use Auth;
 use DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class WithdrawRequestController
 {
@@ -128,60 +129,72 @@ class WithdrawRequestController
     public function universalWithdraw(Request $request)
     {
         $user_id = Auth::user()->id;
-        $sett = Setting::where('field_name','WithdrawalTimer')->first();
-        $WithdrawalStatus = Setting::where('field_name','WithdrawalStatus')->first();
+        $sett = Setting::where('field_name', 'WithdrawalTimer')->first();
+        $WithdrawalStatus = Setting::where('field_name', 'WithdrawalStatus')->first();
         $WithdrawalStatusS = $WithdrawalStatus->field_value;
-        if($WithdrawalStatusS == "no"){
-            return redirect('/wallet')->with('error','Withdrawal currently pause due to some Bank issue, Please try after sometime!');
+
+        if ($WithdrawalStatusS == "no") {
+            return redirect('/wallet')->with('error', 'Withdrawal currently paused due to some Bank issue, Please try after some time!');
         }
-        $existdata = Transaction::where('user_id',$user_id)->where(function($query){
-            return $query
-            ->where('status','Withdrawing')
-            ->orWhere('status','Withdraw');
-        })->where('created_at', '>=', now()->subMinutes($sett->field_value))->orderBy('id','desc')->first();
-        // return $existdata;
-        if($existdata){
-        $Created_atLastData = $existdata->created_at;
-        $RemainMinutesconst = $sett->field_value;
-        // Convert the created_at timestamp to a Carbon instance
-        $lastCreatedAt = Carbon::parse($Created_atLastData);
 
-        // Get the current time
-        $currentTime = Carbon::now();
+        // Cast field_value to an integer
+        $withdrawalTimer = (int)$sett->field_value;
 
-        // Calculate the difference in seconds
-        $elapsedTimeInSeconds = $lastCreatedAt->diffInSeconds($currentTime);
+        $existdata = Transaction::where('user_id', $user_id)
+            ->where(function ($query) {
+                return $query
+                    ->where('status', 'Withdrawing')
+                    ->orWhere('status', 'Withdraw');
+            })
+            ->where('created_at', '>=', now()->subMinutes($withdrawalTimer))
+            ->orderBy('id', 'desc')
+            ->first();
 
-        // Convert elapsed time to hours, minutes, and seconds
-        $elapsedHours = floor($elapsedTimeInSeconds / 3600);
-        $elapsedMinutes = floor(($elapsedTimeInSeconds % 3600) / 60);
-        $elapsedSeconds = $elapsedTimeInSeconds % 60;
-                // Calculate the remaining time in seconds
-        $remainingTimeInSeconds = ($RemainMinutesconst * 60) - $elapsedTimeInSeconds;
+        if ($existdata) {
+            $Created_atLastData = $existdata->created_at;
+            $RemainMinutesconst = $withdrawalTimer;
 
-        // Convert remaining time to hours, minutes, and seconds
-        $remainingHours = floor($remainingTimeInSeconds / 3600);
-        $remainingMinutes = floor(($remainingTimeInSeconds % 3600) / 60);
-        $remainingSeconds = $remainingTimeInSeconds % 60;
-        $finalDifferenceTime = $remainingHours."hrs. ".$remainingMinutes."min. ".$remainingSeconds."sec";
-            return redirect('/wallet')->with('error','Next Withdrawal allowed after '.$finalDifferenceTime);
+            // Convert the created_at timestamp to a Carbon instance
+            $lastCreatedAt = Carbon::parse($Created_atLastData);
+
+            // Get the current time
+            $currentTime = Carbon::now();
+
+            // Calculate the difference in seconds
+            $elapsedTimeInSeconds = $lastCreatedAt->diffInSeconds($currentTime);
+
+            // Calculate the remaining time in seconds
+            $remainingTimeInSeconds = ($RemainMinutesconst * 60) - $elapsedTimeInSeconds;
+
+            // Convert remaining time to hours, minutes, and seconds
+            $remainingHours = floor($remainingTimeInSeconds / 3600);
+            $remainingMinutes = floor(($remainingTimeInSeconds % 3600) / 60);
+            $remainingSeconds = $remainingTimeInSeconds % 60;
+
+            $finalDifferenceTime = $remainingHours . "hrs. " . $remainingMinutes . "min. " . $remainingSeconds . "sec";
+            return redirect('/wallet')->with('error', 'Next Withdrawal allowed after ' . $finalDifferenceTime);
         }
-        $winningAmount  = $this->findWinningWallet($user_id);
-     	$user_kyc = UserData::where('user_id',$user_id)->first();
-        $winningAmount  = $this->findWinningWallet($user_id);
+
+        $winningAmount = $this->findWinningWallet($user_id);
+        $user_kyc = UserData::where('user_id', $user_id)->first();
+
         $UPIbankDetail = null;
         $IMPSbankDetail = null;
-        $WithdrawalUPIStatus = Setting::where('field_name','UpiWithdrawal')->first();
-        if($WithdrawalUPIStatus->field_value == "yes"){
-            $UPIbankDetail = UserBank::where('uid',$user_id)->where('type','upi')->where('status',1)->orderBy('id','desc')->first();
+
+        $WithdrawalUPIStatus = Setting::where('field_name', 'UpiWithdrawal')->first();
+        if ($WithdrawalUPIStatus->field_value == "yes") {
+            $UPIbankDetail = UserBank::where('uid', $user_id)->where('type', 'upi')->where('status', 1)->orderBy('id', 'desc')->first();
         }
-        $WithdrawalIMPSStatus = Setting::where('field_name','ImpsWithdrawal')->first();
-        if($WithdrawalIMPSStatus->field_value == "yes"){
-            $IMPSbankDetail = UserBank::where('uid',$user_id)->where('type','imps')->where('status',1)->orderBy('id','desc')->first();
+
+        $WithdrawalIMPSStatus = Setting::where('field_name', 'ImpsWithdrawal')->first();
+        if ($WithdrawalIMPSStatus->field_value == "yes") {
+            $IMPSbankDetail = UserBank::where('uid', $user_id)->where('type', 'imps')->where('status', 1)->orderBy('id', 'desc')->first();
         }
-        $ModeOn = [$WithdrawalUPIStatus->field_value,$WithdrawalIMPSStatus->field_value];
-        return view('user.universal-withdraw',compact('winningAmount','ModeOn','IMPSbankDetail','UPIbankDetail','user_kyc'));
+
+        $ModeOn = [$WithdrawalUPIStatus->field_value, $WithdrawalIMPSStatus->field_value];
+        return view('user.universal-withdraw', compact('winningAmount', 'ModeOn', 'IMPSbankDetail', 'UPIbankDetail', 'user_kyc'));
     }
+
     public function editBankDetail(Request $request)
     {
         $user_id = Auth::user()->id;
@@ -394,53 +407,84 @@ class WithdrawRequestController
         }
     }
     public function POSTuniversalWithdraw(Request $request)
-	{
-	        session()->forget('withdrawalPending');
-            if(session()->has('withdrawalPending')){
-                return response()->json(['error'=>'Dublicate Withdrawal not Allowed!!']);
-            }
-            $user_id    =   Auth::user()->id;
-            $walletData =   User::find($user_id);
-            $winningamount = $this->findWinningWallet($user_id);
-            $bankDetail = UserBank::where('uid',$user_id)->where('type',$request->type)->where('status',1)->orderBy('id','desc')->first();
-            if(!$bankDetail){
-                return response()->json(['error'=>'Banking detail not added.']);
-            }
-            $creGames   =   Challenge::where('c_id',$user_id)->where('status','!=',0)->sum('amount');
-            $oppGames   =   Challenge::where('o_id',$user_id)->where('status','!=',0)->sum('amount');
-            $sett = Setting::where('field_name','WithdrawalTimer')->first();
-            $existdata = Transaction::where('user_id',$user_id)->where(function($query){
+    {
+        // Start by logging the request
+        Log::info('POSTuniversalWithdraw called', ['user_id' => Auth::user()->id, 'request_data' => $request->all()]);
+
+        session()->forget('withdrawalPending');
+        if(session()->has('withdrawalPending')){
+            Log::warning('Duplicate withdrawal attempt', ['user_id' => Auth::user()->id]);
+            return response()->json(['error'=>'Duplicate Withdrawal not Allowed!!']);
+        }
+
+        $user_id = Auth::user()->id;
+        $walletData = User::find($user_id);
+        $winningamount = $this->findWinningWallet($user_id);
+        $bankDetail = UserBank::where('uid', $user_id)->where('type', $request->type)->where('status', 1)->orderBy('id', 'desc')->first();
+
+        if(!$bankDetail){
+            Log::error('Banking detail not found', ['user_id' => $user_id, 'type' => $request->type]);
+            return response()->json(['error'=>'Banking detail not added.']);
+        }
+
+        $creGames = Challenge::where('c_id', $user_id)->where('status', '!=', 0)->sum('amount');
+        $oppGames = Challenge::where('o_id', $user_id)->where('status', '!=', 0)->sum('amount');
+        $sett = Setting::where('field_name', 'WithdrawalTimer')->first();
+
+
+        if (!is_numeric($sett->field_value) || empty($sett->field_value)) {
+            Log::error('Invalid or empty WithdrawalTimer value', ['field_value' => $sett->field_value]);
+            return response()->json(['error' => 'Invalid withdrawal timer setting.']);
+        }
+
+        Log::info('WithdrawalTimer value', ['field_value' => $sett->field_value]);
+
+        $existdata = Transaction::where('user_id', $user_id)
+            ->where(function($query){
                 return $query
-                ->where('status','Withdrawing')
-                ->orWhere('status','Withdraw');
-            })->where('created_at', '>=', now()->subMinutes($sett->field_value))->count();
-            if($existdata > 0){
-                return response()->json(['error'=>'Add 1 withdrawal in a '.$sett->field_value.'min.']);
+                    ->where('status', 'Withdrawing')
+                    ->orWhere('status', 'Withdraw');
+            })
+            ->where('created_at', '>=', now()->subMinutes($sett->field_value))
+            ->count();
+
+            if ($existdata > 0) {
+                Log::info('Withdrawal attempt within restricted time', ['user_id' => $user_id, 'minutes' => $sett->field_value]);
+                return response()->json(['error' => 'Add 1 withdrawal in a ' . $sett->field_value . 'min.']);
             }
-            if($creGames > 0 || $oppGames > 0){
-                return response()->json(['error'=>'Please complete remianing games.']);
-            }
-            if($walletData->wallet <=0 || $winningamount < $request->amount){
-                return response()->json(['error'=>'Insufficient balance or clear your pending game first!']);
-            }
-            $request->session()->put('withdrawalPending',true);
-            $request->validate([
-                'amount' => 'required|numeric|min:200',
-                'type' => 'required'
-            ]);
-            $wallet = $walletData->wallet;
-            $amount = $request->amount;
-            //Withdrawal Is UPI
-            if($request->type == "upi"){
-                $transaction = Transaction::create([
-            'user_id'           => $user_id,
-            'source_id'         => $bankDetail->number,
-            'amount'            => $request->amount,
-            'status'            => 'Withdrawing',
-            'remark'            => 'Pending',
-            'response'          => $bankDetail->number,
-            'ip'                =>  $request->ip(),
-            'closing_balance' =>  $wallet-$amount,
+
+        if($creGames > 0 || $oppGames > 0){
+            Log::info('User has pending games', ['user_id' => $user_id, 'creGames' => $creGames, 'oppGames' => $oppGames]);
+            return response()->json(['error'=>'Please complete remaining games.']);
+        }
+
+        if($walletData->wallet <= 0 || $winningamount < $request->amount){
+            Log::error('Insufficient balance', ['user_id' => $user_id, 'wallet' => $walletData->wallet, 'winningamount' => $winningamount, 'requested_amount' => $request->amount]);
+            return response()->json(['error'=>'Insufficient balance or clear your pending game first!']);
+        }
+
+        $request->session()->put('withdrawalPending', true);
+        $request->validate([
+            'amount' => 'required|numeric|min:200',
+            'type' => 'required'
+        ]);
+
+        // Logging before the transaction is created
+        Log::info('Creating transaction', ['user_id' => $user_id, 'amount' => $request->amount, 'type' => $request->type]);
+
+        $wallet = $walletData->wallet;
+        $amount = $request->amount;
+
+        if($request->type == "upi"){
+            $transaction = Transaction::create([
+                'user_id'           => $user_id,
+                'source_id'         => $bankDetail->number,
+                'amount'            => $request->amount,
+                'status'            => 'Withdrawing',
+                'remark'            => 'Pending',
+                'response'          => $bankDetail->number,
+                'ip'                =>  $request->ip(),
+                'closing_balance' =>  $wallet-$amount,
             ]);
             $withdraw = WithdrawRequest::create([
                 'user_id'       =>  $user_id,
@@ -448,66 +492,62 @@ class WithdrawRequestController
                 'upi'           =>  $bankDetail->number,
                 'holdername'    =>  $bankDetail->name,
                 'type'          =>  'UPI',
-                'status'          =>  'Unpaid',
+                'status'        =>  'Unpaid',
                 'ip'            =>  $request->ip(),
-                'tid'            =>  $transaction->id
+                'tid'           =>  $transaction->id
             ]);
-            }elseif($request->type == "imps"){
-                $transaction = Transaction::create([
-                    'user_id'           => $user_id,
-                    'source_id'         => $bankDetail->number,
-                    'amount'            => $request->amount,
-                    'status'            => 'Withdrawing',
-                    'remark'            => 'Pending',
-                    'ip'                =>  $request->ip()
-                ]);
-                $withdraw = WithdrawRequest::create([
-                    'user_id'       =>  $user_id,
-                    'amount'        =>  $request->amount,
-                    'ifsc_code'     =>  $bankDetail->ifsc,
-                    'account_no'    =>  $bankDetail->number,
-                    'holdername'    =>  $bankDetail->name,
-                    'type'          =>  'Bank',
-                    'ip'            =>  $request->ip(),
-                    'tid'           =>  $transaction->id
-                ]);
-            }
-            //Order id
-            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-            $orderid = '';
+        } elseif($request->type == "imps"){
+            $transaction = Transaction::create([
+                'user_id'           => $user_id,
+                'source_id'         => $bankDetail->number,
+                'amount'            => $request->amount,
+                'status'            => 'Withdrawing',
+                'remark'            => 'Pending',
+                'ip'                =>  $request->ip()
+            ]);
+            $withdraw = WithdrawRequest::create([
+                'user_id'       =>  $user_id,
+                'amount'        =>  $request->amount,
+                'ifsc_code'     =>  $bankDetail->ifsc,
+                'account_no'    =>  $bankDetail->number,
+                'holdername'    =>  $bankDetail->name,
+                'type'          =>  'Bank',
+                'ip'            =>  $request->ip(),
+                'tid'           =>  $transaction->id
+            ]);
+        }
 
-            for ($i = 0; $i < 35; $i++) {
-                $orderid .= $characters[rand(0, strlen($characters) - 1)];
+        // Log order id generation
+        Log::info('Generating order id', ['withdraw_id' => $withdraw->id]);
+
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        $orderid = '';
+        for ($i = 0; $i < 35; $i++) {
+            $orderid .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        $order_idd = $orderid.$withdraw->id;
+        Transaction::where('id',$transaction->id)->update(["source_id"=>$order_idd]);
+
+        if($withdraw){
+            $ammmmm = $request->amount;
+            if($winningamount >= $ammmmm){
+                if($walletData->wallet >= $walletData->win_amount){
+                    $walletData->decrement('win_amount',$ammmmm);
+                }else{
+                    $amwin = $winningamount - $ammmmm;
+                    User::where('id',$user_id)->update(['win_amount'=>$amwin]);
+                }
             }
-            $order_idd = $orderid.$withdraw->id;
-            Transaction::where('id',$transaction->id)->update(["source_id"=>$order_idd]);
-            if($withdraw){
-                $ammmmm = $request->amount;
-                    if($winningamount >= $ammmmm){
-                        if($walletData->wallet >= $walletData->win_amount){
-                            $walletData->decrement('win_amount',$ammmmm);
-                        }else{
-                            $amwin = $winningamount - $ammmmm;
-                            User::where('id',$user_id)->update(['win_amount'=>$amwin]);
-                        }
-                    }
-                    $walletData->decrement('wallet',$ammmmm);
-                    // $sett = Setting::where('field_name','auto_withdraw')->first();
-                    // if($sett && $sett->field_value == "yes"){
-                    //     $auto_withdraw = $sett->field_value;
-                    //     $gateway_status = $this->sendpayment($request->amount,$request->upi_id,$order_idd,$upiexist->message);
-                    //     $GatewayPitput = $gateway_status['data'];
-                    //     if($GatewayPitput->status == "processing" || $GatewayPitput->status == "queued"){
-                    //         $data        =  WithdrawRequest::find($withdraw->id);
-                    //         $transaction = Transaction::where('id',$transaction->id)->update(["status"=>"Withdraw","remark"=>"Processing"]);
-                    //         $data->account_no   =   $GatewayPitput->id;
-                    //         $data->remark   =   'Processing';
-                    //         $data->save();
-                    //     }
-                    // }
-                    $request->session()->forget('withdrawalPending');
-                    return response()->json(['success'=>'Withdraw request paid successfully!','wallet_amount' => number_format($walletData->wallet,2)]);
-            }
+            $walletData->decrement('wallet',$ammmmm);
+
+            // Final log before response
+            Log::info('Withdrawal request processed', ['user_id' => $user_id, 'amount' => $ammmmm, 'remaining_wallet' => $walletData->wallet]);
+
+            $request->session()->forget('withdrawalPending');
+            return response()->json(['success'=>'Withdraw request paid successfully!','wallet_amount' => number_format($walletData->wallet,2)]);
+        } else {
+            Log::error('Withdrawal request failed', ['user_id' => $user_id]);
+        }
     }
     public function upiWithdrawPost(Request $request)
 	{

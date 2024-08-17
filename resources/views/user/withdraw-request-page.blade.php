@@ -24,7 +24,7 @@
 				@if($user_kyc && $user_kyc->verify_status == 1)
 
             <div class="mt-3">
-               <div class="add-fund-box d-flex align-items-center mt-4" style="padding-top: 15px; height: 60px;">
+               {{-- <div class="add-fund-box d-flex align-items-center mt-4" style="padding-top: 15px; height: 60px;">
                   <a href="{{url('upi-withdraw')}}">
                   <div class="d-flex align-items-center"><img width="48px" src="{{asset('front/images/upi.webp')}}" alt="">
                      <div class="d-flex justify-content-center flex-column ml-4">
@@ -33,7 +33,7 @@
                      </div>
                   </div>
                </a>
-               </div>
+               </div> --}}
                <!--<div class="add-fund-box d-flex align-items-center mt-4" style="padding-top: 15px; height: 60px;">-->
                <!--   <a href="{{url('bank-withdraw')}}">-->
                <!--   <div class="d-flex align-items-center"><img width="48px" src="{{asset('front/images/bank.png')}}" alt="">-->

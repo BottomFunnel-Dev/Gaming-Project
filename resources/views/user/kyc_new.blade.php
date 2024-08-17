@@ -21,12 +21,17 @@
                <div class="label" style="color: rgb(0, 0, 0); font-weight: bold; padding-bottom: 2%; font-size: 18px;">Aadhar Number</div>
                <input type="tel" name="aadhar" placeholder=" Aadhar Number" required="">
             </div>
+            <div class="kyc-doc-input mt-4">
+                <img src="{{$DataTokenCaptch}}" style="width: 91px;margin-bottom: 16px;">
+               <div class="label" style="color: rgb(0, 0, 0); font-weight: bold; padding-bottom: 2%; font-size: 18px;">Enter Captch</div>
+               <input type="text" name="captcha" placeholder="Enter Captch" required="" style="text-transform:none;">
+               <input type="hidden" name="sessionid" value="{{$DataTokenSession}}">
+            </div>
             @else
             <div class="kyc-doc-input mt-4">
                <div class="label" style="color: rgb(0, 0, 0); font-weight: bold; padding-bottom: 2%; font-size: 18px;">OTP</div>
                <input type="number" name="otp" placeholder=" Enter Aadhar OTP" required="">
-               <input name="ref_id" value="{{session()->get('otp')[0]}}" type="hidden">
-				<input name="auth" value="{{session()->get('otp')[1]}}" type="hidden">
+               <input name="ref_id" value="{{session()->get('otp')}}" type="hidden">
             </div>
             @endif
              @if(session()->has('error'))

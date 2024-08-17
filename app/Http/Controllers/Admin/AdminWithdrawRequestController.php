@@ -22,7 +22,7 @@ class AdminWithdrawRequestController extends Controller
         }else{
             $requests       =   WithdrawRequest::with('playername')->latest()->paginate(2000);
         }
-        
+
         //echo "<pre>";print_r($requests);die;
         return view('admin/withdraw/requests',compact('requests','search'));
     }
@@ -52,10 +52,10 @@ class AdminWithdrawRequestController extends Controller
             "Content-Type: application/json"
           ],
         ]);
-        
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
-        
+
         curl_close($curl);
         if ($err) {
             return array('status'=>false,'data'=>json_decode($err));
@@ -65,12 +65,12 @@ class AdminWithdrawRequestController extends Controller
     }
     public function checkUpi($newupiid){
         $url = base64_decode('aHR0cHM6Ly93d3cucGF5bmltby5jb20vYXBpL0NvbW1vbkFQSS9WUEFWYWxpZGF0aW9u');
-        
+
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        
+
         $headers = array(
            "Accept: */*",
            "Accept-Language: en-US,en;q=0.9",
@@ -91,7 +91,7 @@ class AdminWithdrawRequestController extends Controller
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        
+
         return curl_exec($curl);
         curl_close($curl);
     }
@@ -177,10 +177,10 @@ class AdminWithdrawRequestController extends Controller
             $walletData->increment('win_amount',$data->amount);
             $walletData->increment('wallet',$data->amount);
             $transaction = Transaction::where('id',$data->tid)->update(["status"=>"Withdraw_cancel"]);
-            return redirect('admin\withdraw-requests')->with('success', 'Withdraw request declined successfully!'); 
+            return redirect('admin\withdraw-requests')->with('success', 'Withdraw request declined successfully!');
         }
         return redirect('admin\withdraw-requests')->with('error', 'Selected request approved already!');
-               
+
     }
-    
+
 }
