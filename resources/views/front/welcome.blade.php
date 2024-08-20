@@ -1,4 +1,9 @@
 @extends('layouts.front.front')
+
+@push('meta')
+<meta name="robots" content="index follow">
+@endpush
+
 @section('content')
 
 <!-- <div class="leftContainer">
