@@ -1,7 +1,7 @@
 @extends('layouts.front.front')
 
 @push('meta')
-<meta name="robots" content="index follow">
+<meta name="robots" content="noindex">
 @endpush
 
 @section('content')
