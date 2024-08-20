@@ -38,5 +38,5 @@ class ManualPaymentController extends Controller
         //echo "<pre>"; print_r($transactions);die;
         return view('admin/manual-payment/index',compact('transactions','search'));
     }
-    
+
 }

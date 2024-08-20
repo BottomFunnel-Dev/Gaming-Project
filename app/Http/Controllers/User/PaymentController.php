@@ -555,7 +555,7 @@ class PaymentController
     public function createOrdernew(Request $request)
     {
         $request->validate([
-            'orderAmount' => 'required|numeric|gt:0|between:10,20000',
+            'orderAmount' => 'required|numeric|gt:0|between:1,20000',
         ]);
         $amount = $request->orderAmount;
         $GatewayChoice_setting = Setting::find(7);
@@ -632,8 +632,12 @@ class PaymentController
                 "amt" => $request->orderAmount,
                 "trxnote" => Auth::user()->username,
                 "custmobile" => "8524785698",
-                "redirecturl" => "http://127.0.0.1:8000",
-                "mcallback_url" => "http://127.0.0.1:8000/new-upi-gateway-response"
+                "redirecturl" => "https://game.bottomfunnel.net/",
+                "mcallback_url" => "https://game.bottomfunnel.net/new-upi-gateway-response"
+                // "redirecturl" => "http://192.168.29.197:8080/",
+                // "mcallback_url" => "http://192.168.29.197:8080/new-upi-gateway-response"
+                // "redirecturl" => "http://127.0.0.1:8000",
+                // "mcallback_url" => "http://127.0.0.1:8000/new-upi-gateway-response"
             ];
 
             //UITELGATEWAY
@@ -734,18 +738,26 @@ class PaymentController
         $orders = PaymentOrder::where('status', 0)->get();
         foreach ($orders as $key => $value) {
             $payOrder = PaymentOrder::find($value->id);
-            if(!empty($payOrder)){
-                $client = new Client();
-                $res = $client->request('GET', 'https://upipg.gtelararia.com/order/statuscheck.php?loginid=6375030393&apikey=hdcupxeg2m&request_id='.$payOrder->order_id);
+            if (!empty($payOrder)) {
+                \Log::info("Processing order ID: " . $payOrder->id);
 
-                if ($res->getStatusCode() == 200) { // 200 OK
+                $client = new Client();
+                $res = $client->request('GET', 'https://upipg.gtelararia.com/order/statuscheck.php?loginid=6375030393&apikey=hdcupxeg2m&request_id=' . $payOrder->order_id);
+
+                if ($res->getStatusCode() == 200) {
                     $response_data = $res->getBody()->getContents();
                     $response = json_decode($response_data, true);
-                    if($response['status'] == 'success'){
-                        $user_id = $payOrder->user_id;
-                        $user_data = User::where('id', $user_id)->first();
-                        $wallet = $user_data->wallet;
+                    \Log::info("API Response: " . $response_data);
 
+                    // Set the $user_id variable early
+                    $user_id = $payOrder->user_id;
+                    \Log::info("User ID: " . $user_id);
+
+                    if ($response['status'] == 'success') {
+                        $user_data = User::where('id', $user_id)->first();
+                        \Log::info("User Wallet Before: " . $user_data->wallet);
+
+                        $wallet = $user_data->wallet;
                         $txn = Transaction::create([
                             'user_id' => $user_id,
                             'source_id' => $payOrder->order_id,
@@ -758,17 +770,22 @@ class PaymentController
                         ]);
 
                         $payOrder->status = 1;
-                    }elseif($response['status'] == 'fail'){
+                        \Log::info("Transaction Created: " . $txn->id);
+                    } elseif ($response['status'] == 'fail') {
                         $payOrder->status = 2;
+                        \Log::info("Payment failed for order ID: " . $payOrder->id);
                     }
 
                     $payOrder->save();
+                    \Log::info("Order status updated: " . $payOrder->status);
 
-                    User::where('id', $user_id)->increment('wallet', $payOrder->amount);
+                    // Only update wallet balance if the payment was successful
+                    if ($payOrder->status == 1) {
+                        User::where('id', $user_id)->increment('wallet', $payOrder->amount);
+                        \Log::info("User Wallet After: " . ($wallet + $payOrder->amount));
+                    }
                 }
-
             }
-
         }
     }
 
