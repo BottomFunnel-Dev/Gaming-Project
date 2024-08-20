@@ -9,7 +9,6 @@ use App\ChallengeResult;
 use App\Transaction;
 use App\User;
 use App\UserSetting;
-
 use Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminChallengeController extends Controller
 {
-  
+
     protected $paging   =   200;
 
     /**
@@ -60,7 +59,7 @@ class AdminChallengeController extends Controller
             $search_in         =  $request->search_in;
 
             $challenges  = Challenge::select('challenges.*','users.username')->with(['creator','opponent','result'])
-                            ->leftJoin('users','challenges.'.$search_in,'=','users.id')                            
+                            ->leftJoin('users','challenges.'.$search_in,'=','users.id')
                             ->where('challenges.id','LIKE','%'.$search.'%')
                             ->orWhere('challenges.amount','LIKE','%'.$search.'%')
                             ->orWhere('challenges.type','LIKE','%'.$search.'%')
@@ -70,15 +69,13 @@ class AdminChallengeController extends Controller
         }else{
             $challenges  = Challenge::with(['creator','opponent','result'])->latest()->paginate($this->paging);
         }
-        
-      
         //echo "<pre>";print_r($challenges);die;
         return view('admin/challenge/challenges',compact('challenges','search','search_in'));
     }
     public function changeStatus($status,$uid)
     {
         // return $status;
-        
+
         // if($status == 0){
         //     $status = 1;
         // }elseif($status == 1){
@@ -100,46 +97,54 @@ class AdminChallengeController extends Controller
             return redirect()->back()->with('error', 'Record not found');
         }
     }
+    public function ApiResult($resultowner){
+        // return $resultowner;
+        if($resultowner == "waiting" || $resultowner == "Waiting"){
+            return '<span style="color:blue;font-weight:900;">Waiting</span>';
+        }elseif($resultowner == "Won" || $resultowner == "won"){
+            return '<span style="color:green;font-weight:900;">Winner</span>';
+        }elseif($resultowner == "Exit" || $resultowner == "exit"){
+            return '<span style="color:red;font-weight:900;">Exit</span>';
+        }elseif($resultowner == "Playing" || $resultowner == "playing"){
+            return '<span style="color:orange;font-weight:900;">Playing</span>';
+        }elseif($resultowner == "Hold" || $resultowner == "hold"){
+            return '<span style="color:orange;font-weight:900;">Hold</span>';
+        }else{
+            return '<span style="color:orange;font-weight:900;">Lost</span>';
+        }
+    }
     public function details($id)
     {
         $challenge  = Challenge::with(['creator','opponent','result','usersresult','transactions'])->where('id',$id)->first();
-
         $curl = curl_init();
         curl_setopt_array($curl, [
-        	CURLOPT_URL => "https://ludo-king-room-code-api.p.rapidapi.com/result2?code=".$challenge->rcode,
+        	CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=".$challenge->rcode."&apikey=5c055f88",
         	CURLOPT_RETURNTRANSFER => true,
         	CURLOPT_ENCODING => "",
         	CURLOPT_MAXREDIRS => 10,
         	CURLOPT_TIMEOUT => 30,
         	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        	CURLOPT_CUSTOMREQUEST => "GET",
-        	CURLOPT_HTTPHEADER => [
-        	    "X-RapidAPI-Host: ludo-king-room-code-api.p.rapidapi.com",
-        		"X-RapidAPI-Key: 2f052eb9f1msh32e7919b12c922fp1343acjsn99fe7d89ea92"
-        	],
+        	CURLOPT_CUSTOMREQUEST => "GET"
         ]);
-        
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
-        
+
         curl_close($curl);
-        
+
         if ($err) {
             return $err;
         } else {
-            $dataa = json_decode($response);
-     $resultowner ="";
-     $resultplayer1="";
-            
-if (isset($dataa->creator_id)) {
-    if ($dataa->creator_id == $dataa->player1_id) {
-        $resultowner = isset($dataa->player1_status) ? $dataa->player1_status : "";
-        $resultplayer1 = isset($dataa->player2_status) ? $dataa->player2_status : "";
-    } elseif ($dataa->creator_id == $dataa->player2_id) {
-        $resultowner = isset($dataa->player2_status) ? $dataa->player2_status : "";
-        $resultplayer1 = isset($dataa->player1_status) ? $dataa->player1_status : "";
-    }
-}            // return $dataa;
+            $dataaa = json_decode($response);
+            if(isset($dataaa->result->ownerid) && $dataaa->status){
+                $dataa = $dataaa->result;
+                $CreatorPlayer = 2;
+                $resultowner = isset($dataa->ownerstatus) ? $this->ApiResult($dataa->ownerstatus) : "";
+                $resultplayer1 = isset($dataa->player1status) ? $this->ApiResult($dataa->player1status) : "";
+            }else{
+                $resultplayer1 = $this->ApiResult("Hold");
+                $resultowner = $this->ApiResult("Hold");
+            }
         }
         return view('admin/challenge/details',compact('challenge','resultowner','resultplayer1'));
     }
@@ -155,7 +160,7 @@ if (isset($dataa->creator_id)) {
         }
 
         try
-        {                   
+        {
             $update = $this->setChStatus($request->ch_id);
 
             if($update){
@@ -166,14 +171,14 @@ if (isset($dataa->creator_id)) {
                                         return $query
                                         ->where('status','Create')
                                         ->orWhere('status','Play');
-                                    })->get();            
-            
+                                    })->get();
+
             foreach($transactions as $key => $val){
-				$user_data = User::where('id', $val->user_id)->first();		
-			    $wallet = $user_data->wallet;		
-            
-				$closing_balance = 	 $wallet+$val->amount;			
-            
+				$user_data = User::where('id', $val->user_id)->first();
+			    $wallet = $user_data->wallet;
+
+				$closing_balance = 	 $wallet+$val->amount;
+
                 $refund = Transaction::create([
                     'source_id'        => $request->ch_id,
                     'user_id'          => $val->user_id,
@@ -191,7 +196,7 @@ if (isset($dataa->creator_id)) {
                 'message'        => 'Game cancelled successfully!'
             ]);
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -200,7 +205,7 @@ if (isset($dataa->creator_id)) {
     public function cancelGameInParameter($ch_id)
     {
         try
-        {                   
+        {
             $update = $this->setChStatus($ch_id);
 
             if($update){
@@ -210,14 +215,14 @@ if (isset($dataa->creator_id)) {
                                         return $query
                                         ->where('status','Create')
                                         ->orWhere('status','Play');
-                                    })->get();            
-            
+                                    })->get();
+
             foreach($transactions as $key => $val){
-				$user_data = User::where('id', $val->user_id)->first();		
-			$wallet = $user_data->wallet;		
-            
-				$closing_balance = 	 $wallet+$val->amount;			
-            
+				$user_data = User::where('id', $val->user_id)->first();
+			$wallet = $user_data->wallet;
+
+				$closing_balance = 	 $wallet+$val->amount;
+
                 $refund = Transaction::create([
                     'source_id'        => $ch_id,
                     'user_id'          => $val->user_id,
@@ -235,7 +240,7 @@ if (isset($dataa->creator_id)) {
                 'message'        => 'Game cancelled successfully!'
             ]);
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -243,7 +248,7 @@ if (isset($dataa->creator_id)) {
     }
 
     public function gameWinner(Request $request)
-    {        
+    {
         $validator              = Validator::make($request->all(), [
             'ch_id'             => 'required',
             'user_id'           => 'required',
@@ -251,10 +256,10 @@ if (isset($dataa->creator_id)) {
 
         if($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
-        } 
+        }
 
         try
-        {      
+        {
             $update = $this->setChStatus($request->ch_id);
 
             if($update){
@@ -270,16 +275,16 @@ if (isset($dataa->creator_id)) {
             if($chData->o_id    ==  $request->user_id){
                 $transaction   =   $this->getTransaction($request->ch_id, $request->user_id, 'Play');
             }
-                                    
-            if($transaction){		
+
+            if($transaction){
 			$user_data = User::where('id', $request->user_id)->first();
 			$wallet = $user_data->wallet;
                 $a_amount       =   $this->calculateCom($chData->amount);
                 $f_amount       =   (2 * $chData->amount - $a_amount);
                 $p_amount       =   ((2 * $chData->amount - $a_amount)-$chData->amount);
                 $r_amount       =   0.02 * $chData->amount;
-               
-				$closing_balance = 	 $wallet+$f_amount;			
+
+				$closing_balance = 	 $wallet+$f_amount;
                 $winner         = Transaction::create([
                     'source_id'        => $request->ch_id,
                     'user_id'          => $request->user_id,
@@ -287,8 +292,8 @@ if (isset($dataa->creator_id)) {
                     'a_amount'         => $a_amount,
                     'status'           => 'Won',
                     'remark'           => 'Set winner by admin',
-                    'ip'               => $request->ip(),			
-					'closing_balance'  =>  $closing_balance         
+                    'ip'               => $request->ip(),
+					'closing_balance'  =>  $closing_balance
                 ]);
 
                 if($winner){
@@ -305,7 +310,7 @@ if (isset($dataa->creator_id)) {
                 'message'        => 'Unable to set winner!'
             ],400);
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -315,7 +320,7 @@ if (isset($dataa->creator_id)) {
     public function makeWinner($ch_id, $user_id, Request $request)
     {
         try
-        {                      
+        {
             $chData            =   Challenge::find($ch_id);
 
             if($chData->status == 4){
@@ -325,15 +330,15 @@ if (isset($dataa->creator_id)) {
                     $this->setChResult($ch_id, 0, $user_id);
                 }
 
-			$user_data = User::where('id', $user_id)->first();		
-			$wallet = $user_data->wallet;		
-        
+			$user_data = User::where('id', $user_id)->first();
+			$wallet = $user_data->wallet;
+
                 $a_amount       =   $this->calculateCom($chData->amount);
                 $f_amount       =   (2 * $chData->amount - $a_amount);
                 $r_amount       =   0.02 * $chData->amount;
-		
-				$closing_balance = 	 $wallet+$f_amount;			
-            
+
+				$closing_balance = 	 $wallet+$f_amount;
+
                 $winner         = Transaction::create([
                     'source_id'        => $ch_id,
                     'user_id'          => $user_id,
@@ -342,8 +347,8 @@ if (isset($dataa->creator_id)) {
                     'status'           => 'Won',
                     'remark'           => 'Set winner by admin manually',
                     'ip'               => $request->ip(),
-					'closing_balance' =>  $closing_balance         
-              
+					'closing_balance' =>  $closing_balance
+
                 ]);
 
                 if($winner){
@@ -368,7 +373,7 @@ if (isset($dataa->creator_id)) {
                         if($txn){
                             $uData->increment('usd_wallet', $r_amount);
                             $uData->increment('wallet', $r_amount);
-                        }                                    
+                        }
                     }
                 }
 
@@ -377,7 +382,7 @@ if (isset($dataa->creator_id)) {
 
             return redirect()->back()->with('error', 'Unable to set winner!');
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -415,7 +420,7 @@ if (isset($dataa->creator_id)) {
         }elseif($amount > 250 && $amount <=500){
             $a_amount	=	25;
         }elseif($amount > 500){
-        $a_amount	=	5/100*($amount);
+        $a_amount	=	5/100*($amount); //5/100
         }
         return $a_amount;
     }
@@ -439,9 +444,9 @@ if (isset($dataa->creator_id)) {
             if($txn){
                 $uData->increment('win_amount', $amount);
                 $uData->increment('wallet', $amount);
-            }            
+            }
         }
-        
+
     }
 
     private function getTransaction($ch_id, $user_id, $status){
@@ -452,13 +457,13 @@ if (isset($dataa->creator_id)) {
 
     public function roomCode($ch_id){
         $challenge   =   Challenge::find($ch_id);
-        if(($challenge->status != 0 || $challenge->status != 5) && $challenge->rcode == 0){ 
+        if(($challenge->status != 0 || $challenge->status != 5) && $challenge->rcode == 0){
             return view('admin/challenge/room-code',compact('challenge'));
         }else{
             return redirect()->back()->with('error', 'Unable to change room code');
         }
         //echo "<pre>";print_r($user_id);die;ManualPayment
-        
+
     }
 
     public function updateRoomCode(Request $request)
@@ -468,17 +473,17 @@ if (isset($dataa->creator_id)) {
 			'ch_id'   => 'required|numeric'
 		]);
         $challenge   =   Challenge::find($request->ch_id);
-                     
+
         if(($challenge->status != 0 || $challenge->status != 5) && $challenge->rcode == 0){
             $challenge->update([
                 'rcode' =>  $request->rcode,
             ]);
-            return response()->json(['data'=>$challenge]);            
+            return response()->json(['data'=>$challenge]);
         }else{
             return response([
                 'message'        => 'Unable to process your request at this time!'
             ],400);
         }
     }
-   
+
 }
