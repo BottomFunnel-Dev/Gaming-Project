@@ -9,6 +9,7 @@
     <link rel="icon" href="{{ asset('front/images/khelmoj123.png') }}" />
     <title>AK Adda| Khelo Dil se, Jeeto Dimag se</title>
     <meta content="KhelBro" name="description">
+    <meta name="robots" content="noindex">
     <meta
         content="ludo khelo,online ludo, online games, play with real players, best ludo website, ludo earning, earn by playing ludo, playing ludo king,  ludo contest, Best Ludo website in kota , ludo tournament , ludo khelo paise kamao, khelo ludo, Ludo Players, Ludo king."
         name="keywords">
