@@ -1004,7 +1004,7 @@ class ChallengeController
         curl_setopt_array($curl, [
             // CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $id . "&apikey=733f4afa",
             // CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=". $id ."&apikey=733f4afa",
-            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=". $id ."&apikey=733f4afa",
+            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=".$id."&apikey=733f4afa",
 
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
