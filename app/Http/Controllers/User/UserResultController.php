@@ -33,9 +33,9 @@ class UserResultController
             //     return view('user.challenge-detail-old',compact('chData'));
         }
 
-        die('Access denied!');		
+        die('Access denied!');
     }
-    
+
     public function challengeDetailChk(Request $request,$chid)
     {
 		$chData			=	Challenge::with('userresult')->where('id',$chid)->first();
@@ -49,11 +49,11 @@ class UserResultController
             //     return view('user.challenge-detail-old',compact('chData'));
         }
 
-        die('Access denied!');		
+        die('Access denied!');
     }
 
 
-  
+
     public function getRoomCode(Request $request){
       $chData			=	Challenge::find($request->ch_id);
       $roomcode   =   $chData->rcode;
@@ -64,11 +64,11 @@ class UserResultController
     }
 
     public function getRoomCodeChk(Request $request){
-  
+
     }
 
     public function roomCode(Request $request)
-    { 
+    {
 		$request->validate( [
 			'room_id' => 'required|numeric|unique:challenges,rcode',
 			'ch_id'   => 'required|numeric'
@@ -86,12 +86,12 @@ class UserResultController
                 'message'        => 'We are unable to process your request at this time!'
             ],400);
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
         }
-        
+
     }
 
     public function create(Request $request)
@@ -106,7 +106,7 @@ class UserResultController
             $chData     =   Challenge::find($request->ch_id);
             $user_id    =   Auth::user()->id;
             $resData    =   UserResult::where('ch_id',$request->ch_id)->where('user_id',$user_id)->count();
-            
+
             if($resData){
                 return response([
                     'message'        => 'You have already submitted the result for this game!'
@@ -124,7 +124,7 @@ class UserResultController
                         $request->validate([
                                     'result_img' => 'required|image|mimes:jpeg,png,jpg,gif,JPG,JPEG|max:10240',
                                 ]);
-                        $imageName = time().'-'.$user_id.'.'.$request->result_img->extension(); 
+                        $imageName = time().'-'.$user_id.'.'.$request->result_img->extension();
                         //@chmod(public_path('uploads/'.$result->c_id), 0777);
                         $request->result_img->move(public_path('uploads/'), $imageName);
                         $result->image 	=	'uploads/'.$imageName;
@@ -133,10 +133,10 @@ class UserResultController
                 if($chData->rcode == 0 && $request->result == 'Cancel' && $request->status != 5){
                     $adminInstance = new AdminChallengeController(); // Create an instance of the Admin class
                     $adminInstance->cancelGameInParameter($chData->id);
-                    
+
                 }
                     if($chData->c_id == $user_id){
-                    $rslUpload  =  UserResult::where('ch_id',$request->ch_id)->where('user_id',$chData->o_id)->first(); 
+                    $rslUpload  =  UserResult::where('ch_id',$request->ch_id)->where('user_id',$chData->o_id)->first();
                     if(isset($rslUpload->result)){
                         switch($rslUpload->result){
                             case 'Won':
@@ -155,7 +155,7 @@ class UserResultController
                                     $txn        =   $this->createTxn($request,$f_amount,$a_amount,'Won',$chData->o_id,$ff_amount);
                                     if($txn){
                                         $this->submitChResult($request->ch_id,$chData->o_id,0);
-                                        $this->updateWallet($ff_amount,$chData->o_id);                                        
+                                        $this->updateWallet($ff_amount,$chData->o_id);
                                         $this->updateReferral($request, $r_amount, $chData->o_id);
                                     }
                                 }
@@ -169,7 +169,7 @@ class UserResultController
                                     $a_amount   =   $this->calculateCom($chData->amount);
                                     $f_amount   =   ( $chData->amount - $a_amount);
 									$ff_amount   =   (2 * $chData->amount - $a_amount);
-                                   
+
                                    // $f_amount   =   (2 * $chData->amount - $a_amount);
                                     $r_amount   =   0.02 * $chData->amount;
                                     $chData->status =   0;
@@ -177,7 +177,7 @@ class UserResultController
                                     $txn        =   $this->createTxn($request,$f_amount,$a_amount,'Won',$chData->c_id,$ff_amount);
                                     if($txn){
                                         $this->submitChResult($request->ch_id,$chData->c_id,0);
-                                        $this->updateWallet($ff_amount,$chData->c_id);                                        
+                                        $this->updateWallet($ff_amount,$chData->c_id);
                                         $this->updateReferral($request, $r_amount, $chData->c_id);
                                     }
                                 }
@@ -207,7 +207,7 @@ class UserResultController
                                     if($txnCre && $txnOpp){
                                         $this->submitChResult($request->ch_id,0,1);
                                         $this->updateWallet($chData->amount,$chData->o_id);
-                                        $this->updateWallet($chData->amount,$chData->c_id);                                        
+                                        $this->updateWallet($chData->amount,$chData->c_id);
                                     }
                                 }
                             break;
@@ -216,7 +216,7 @@ class UserResultController
                     }
 
                     if($chData->o_id == $user_id){
-                    $rslUpload  =  UserResult::where('ch_id',$request->ch_id)->where('user_id',$chData->c_id)->first(); 
+                    $rslUpload  =  UserResult::where('ch_id',$request->ch_id)->where('user_id',$chData->c_id)->first();
                     //echo $rslUpload->result ; die;
                     //if($rslUpload->result) die('nrj');
                     if(isset($rslUpload->result)){
@@ -230,7 +230,7 @@ class UserResultController
                                     $a_amount   =   $this->calculateCom($chData->amount);
                                    // $f_amount   =   (2 * $chData->amount - $a_amount);
 									$ff_amount   =   (2 * $chData->amount - $a_amount);
-								   
+
                                     $f_amount   =   ($chData->amount - $a_amount);
                                     $r_amount   =   0.02 * $chData->amount;
                                     $chData->status =   0;
@@ -238,7 +238,7 @@ class UserResultController
                                     $txn        =   $this->createTxn($request,$f_amount,$a_amount,'Won',$chData->c_id,$ff_amount);
                                     if($txn){
                                         $this->submitChResult($request->ch_id,$chData->c_id,0);
-                                        $this->updateWallet($ff_amount,$chData->c_id);                                        
+                                        $this->updateWallet($ff_amount,$chData->c_id);
                                         $this->updateReferral($request, $r_amount, $chData->c_id);
                                     }
                                 }
@@ -259,7 +259,7 @@ class UserResultController
                                     $txn        =   $this->createTxn($request,$f_amount,$a_amount,'Won',$chData->o_id,$ff_amount);
                                     if($txn){
                                         $this->submitChResult($request->ch_id,$chData->o_id,0);
-                                        $this->updateWallet($ff_amount,$chData->o_id);                                        
+                                        $this->updateWallet($ff_amount,$chData->o_id);
                                         $this->updateReferral($request, $r_amount, $chData->o_id);
                                     }
                                 }
@@ -289,21 +289,21 @@ class UserResultController
                                     if($txnCre && $txnOpp){
                                         $this->submitChResult($request->ch_id,0,1);
                                         $this->updateWallet($chData->amount,$chData->o_id);
-                                        $this->updateWallet($chData->amount,$chData->c_id);                                        
+                                        $this->updateWallet($chData->amount,$chData->c_id);
                                     }
                                 }
                             break;
                         }
                     }
                 }
-                
+
                 return response()->json(['data'=>$chData]);
             }
             return response([
                 'message'        => 'We are unable to process your request at this time!'
             ],400);
         } catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -314,7 +314,7 @@ class UserResultController
         if($amount > 0 && $amount <= 250){
         $a_amount	=	10/100*($amount);
         }else{
-        $a_amount	=	5/100*($amount);
+        $a_amount	=	5/100*($amount); //5/100
         }
         return $a_amount;
     }
@@ -334,7 +334,7 @@ class UserResultController
             //echo "<pre>";print_r($uData);die('kk');
 			  	$user_data = User::where('id', $usertData->setting->rf_user_id)->first();
 				$wallet = $user_data->wallet;
-				
+
             $txn    =   Transaction::create([
                 'user_id'       =>  $usertData->setting->rf_user_id,
                 'source_id'     =>  $request->ch_id,
@@ -349,9 +349,9 @@ class UserResultController
             if($txn){
                 $uData->increment('win_amount',$amount);
                 $uData->increment('wallet', $amount);
-            }            
+            }
         }
-        
+
     }
 
     private function createTxn($request, $f_amount, $a_amount,$status, $user_id,$ff_amount){
@@ -361,7 +361,7 @@ class UserResultController
 			$closing_balance = 	 $wallet+$ff_amount;
 			} else {
 			$closing_balance = 	 $wallet-$f_amount;
-				
+
 			}
         $txn    =   Transaction::create([
             'user_id'       =>  $user_id,
@@ -370,13 +370,13 @@ class UserResultController
             'a_amount'      =>  $a_amount,
             'status'        =>  $status,
             'remark'        =>  'Result submit by user '.$status,
-            'ip'            =>  $request->ip(), 
+            'ip'            =>  $request->ip(),
 			'closing_balance' =>  $closing_balance,
-            
+
         ]);
         return $txn;
     }
- 
+
     private function submitChResult($ch_id,$user_id,$type){
         ChallengeResult::create([
             'ch_id'     =>  $ch_id,
