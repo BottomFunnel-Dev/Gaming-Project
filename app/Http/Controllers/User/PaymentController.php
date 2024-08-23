@@ -124,45 +124,40 @@ class PaymentController
         }
     }
 
-    private function checkDepositStatus() {
-        $DepositStatusS = Setting::where('key', 'DepositStatusS')->value('value');
+    private function checkDepositStatus()
+    {
+        // Use 'field_value' instead of 'value' and ensure the correct key is being used
+        $DepositStatusS = Setting::where('field_name', 'DepositStatusS')->value('field_value');
+
         if ($DepositStatusS == "no") {
             return redirect('/wallet')->with('error', 'Deposit currently paused due to some Bank issue, Please try after some time!');
         }
     }
 
+
     public function addMoney(Request $request)
     {
+        $DepositStatus = Setting::where('field_name', 'DepositStatus')->first();
+        $DepositStatus = $DepositStatus->field_value;
+
+        if ($DepositStatus == "no") {
+            return redirect('/wallet')->with('error', 'Withdrawal currently paused due to some Bank issue, Please try after some time!');
+        }
         return view('user.add-money');
     }
 
     public function addMoneyChk(Request $request)
     {
-        $statusCheck = $this->checkDepositStatus();
-        if ($statusCheck) return $statusCheck;
         return view('user.add-money-chk');
     }
 
 
     public function createOrderChk(Request $request)
     {
-        $DepositStatusS = Setting::where('key', 'DepositStatus')->value('value');
-
-        if ($DepositStatusS == "no") {
-            return redirect('/wallet')->with('error', 'Deposits currently paused due to some Bank issue, Please try after some time!');
-        }
-
         return redirect("https://google.com");
     }
     public function createOrder(Request $request)
     {
-        // Retrieve the deposit status setting directly
-        $DepositStatusS = Setting::where('key', 'DepositStatusS')->value('value');
-
-        if ($DepositStatusS == "no") {
-            return redirect('/wallet')->with('error', 'Deposit currently paused due to some Bank issue, Please try after some time!');
-        }
-
         $request->validate([
             'orderAmount' => 'required|numeric|gt:0|between:1,20000',
         ]);

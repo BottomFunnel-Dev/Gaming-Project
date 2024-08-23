@@ -122,18 +122,15 @@
                                     <div class="form-group">
                                         <label for="name">{{ __('Deposit Open') }}<span
                                                 class="text-red">*</span></label>
-                                        <select id="DepositStatus" value="{{ isset($settings[12]) ? $settings[12] : '' }}"
-                                            class="form-control" name="DepositStatus">
+                                        <select id="DepositStatus" class="form-control" name="DepositStatus">
                                             <option value="yes"
-                                                {{ isset($settings[12]) && $settings[12] == 'yes' ? 'selected' : '' }}>Yes
-                                            </option>
+                                                {{ isset($settings[12]) && $settings[12] == 'yes' ? 'selected' : '' }}>
+                                                Yes</option>
                                             <option value="no"
                                                 {{ isset($settings[12]) && $settings[12] == 'no' ? 'selected' : '' }}>No
                                             </option>
                                         </select>
-
                                         <div class="help-block with-errors"></div>
-
                                         @error('DepositStatus')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
