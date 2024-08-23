@@ -36,98 +36,98 @@ class ChallengeController
     //     return $randomMultiple;
     // }
 
-    public function create_fakechanllenges()
-    {
-        // echo Carbon::now();
-        $fakedata = 50;
-        $fakename = [
-            "Aarav Sharma",
-            "Aditi Verma",
-            "Alok Kapoor",
-            "Amrita Desai",
-            "Aniket Patel",
-            "Ananya Singh",
-            "Arjun Yadav",
-            "Asha Gupta",
-            "Ayush Kapoor",
-            "Bhavya Sharma",
-            "Chetan Verma",
-            "Deepika Singh",
-            "Dhruv Yadav",
-            "Divya Patel",
-            "Gaurav Kumar",
-            "Geeta Desai",
-            "Hari Gupta",
-            "Ishaan Kapoor",
-            "Jyoti Verma",
-            "Kabir Sharma",
-            "Kavita Singh",
-            "Krishna Yadav",
-            "Lavanya Patel",
-            "Manish Desai",
-            "Meera Kumar",
-            "Mohit Verma",
-            "Neha Sharma",
-            "Nikhil Singh",
-            "Nisha Yadav",
-            "Pankaj Gupta",
-            "Pooja Kapoor",
-            "Pranav Patel",
-            "Prisha Desai",
-            "Rahul Kumar",
-            "Riya Verma",
-            "Rohan Sharma",
-            "Sakshi Singh",
-            "Sameer Yadav",
-            "Shikha Gupta",
-            "Shiv Kapoor",
-            "Shreya Patel",
-            "Snehal Desai",
-            "Sumit Kumar",
-            "Tanvi Verma",
-            "Utkarsh Sharma",
-            "Vaishali Singh",
-            "Varun Yadav",
-            "Vidya Patel",
-            "Vijay Gupta",
-            "Yash Kapoor",
-            "Zara Desai",
-        ];
-        $amountstart = 1000;
-        $amountend = 10000;
-        for ($i = 0; $i < rand(1, 3); $i++) {
-            $amount = $this->generateRandomMultiples(10, $amountstart, $amountend);
-            $name = $fakename[array_rand($fakename)];
-            $name2 = $fakename[array_rand($fakename)];
-            $exist = Fakechallenge::where('status', 1)->where('amount', '>', 1000)->count();
-            if ($exist >= 5) {
-                $amount = $this->generateRandomMultiples(10, 100, 500);
-            }
-            $d = new Fakechallenge;
-            $d->amount = $amount;
-            $d->c_id = 11;
-            $d->cname = $name;
-            $d->o_id = 11;
-            $d->oname = $name2;
-            $d->ip = 11111111111;
-            // $d->save();
-        }
-        $lastdata = Fakechallenge::where('status', 1)->orWhere('status', 2)->get();
-        foreach ($lastdata as $row) {
-            $startDate = Carbon::parse($row->created_at);
-            $endDate = Carbon::now(); // Use the current date and time as an example
-            $minutesDifference = $startDate->diffInMinutes($endDate);
-            if ($row->status > 1) {
-                if ($minutesDifference >= 7) {
-                    Fakechallenge::where('id', $row->id)->delete();
-                }
-            } else {
-                if ($minutesDifference >= 1) {
-                    Fakechallenge::where('id', $row->id)->update(["status" => 2]);
-                }
-            }
-        }
-    }
+    // public function create_fakechanllenges()
+    // {
+    //     // echo Carbon::now();
+    //     $fakedata = 50;
+    //     $fakename = [
+    //         "Aarav Sharma",
+    //         "Aditi Verma",
+    //         "Alok Kapoor",
+    //         "Amrita Desai",
+    //         "Aniket Patel",
+    //         "Ananya Singh",
+    //         "Arjun Yadav",
+    //         "Asha Gupta",
+    //         "Ayush Kapoor",
+    //         "Bhavya Sharma",
+    //         "Chetan Verma",
+    //         "Deepika Singh",
+    //         "Dhruv Yadav",
+    //         "Divya Patel",
+    //         "Gaurav Kumar",
+    //         "Geeta Desai",
+    //         "Hari Gupta",
+    //         "Ishaan Kapoor",
+    //         "Jyoti Verma",
+    //         "Kabir Sharma",
+    //         "Kavita Singh",
+    //         "Krishna Yadav",
+    //         "Lavanya Patel",
+    //         "Manish Desai",
+    //         "Meera Kumar",
+    //         "Mohit Verma",
+    //         "Neha Sharma",
+    //         "Nikhil Singh",
+    //         "Nisha Yadav",
+    //         "Pankaj Gupta",
+    //         "Pooja Kapoor",
+    //         "Pranav Patel",
+    //         "Prisha Desai",
+    //         "Rahul Kumar",
+    //         "Riya Verma",
+    //         "Rohan Sharma",
+    //         "Sakshi Singh",
+    //         "Sameer Yadav",
+    //         "Shikha Gupta",
+    //         "Shiv Kapoor",
+    //         "Shreya Patel",
+    //         "Snehal Desai",
+    //         "Sumit Kumar",
+    //         "Tanvi Verma",
+    //         "Utkarsh Sharma",
+    //         "Vaishali Singh",
+    //         "Varun Yadav",
+    //         "Vidya Patel",
+    //         "Vijay Gupta",
+    //         "Yash Kapoor",
+    //         "Zara Desai",
+    //     ];
+    //     $amountstart = 1000;
+    //     $amountend = 10000;
+    //     for ($i = 0; $i < rand(1, 3); $i++) {
+    //         $amount = $this->generateRandomMultiples(10, $amountstart, $amountend);
+    //         $name = $fakename[array_rand($fakename)];
+    //         $name2 = $fakename[array_rand($fakename)];
+    //         $exist = Fakechallenge::where('status', 1)->where('amount', '>', 1000)->count();
+    //         if ($exist >= 5) {
+    //             $amount = $this->generateRandomMultiples(10, 100, 500);
+    //         }
+    //         $d = new Fakechallenge;
+    //         $d->amount = $amount;
+    //         $d->c_id = 11;
+    //         $d->cname = $name;
+    //         $d->o_id = 11;
+    //         $d->oname = $name2;
+    //         $d->ip = 11111111111;
+    //         // $d->save();
+    //     }
+    //     $lastdata = Fakechallenge::where('status', 1)->orWhere('status', 2)->get();
+    //     foreach ($lastdata as $row) {
+    //         $startDate = Carbon::parse($row->created_at);
+    //         $endDate = Carbon::now(); // Use the current date and time as an example
+    //         $minutesDifference = $startDate->diffInMinutes($endDate);
+    //         if ($row->status > 1) {
+    //             if ($minutesDifference >= 7) {
+    //                 Fakechallenge::where('id', $row->id)->delete();
+    //             }
+    //         } else {
+    //             if ($minutesDifference >= 1) {
+    //                 Fakechallenge::where('id', $row->id)->update(["status" => 2]);
+    //             }
+    //         }
+    //     }
+    // }
     public function index(Request $request)
     {
         $status = Setting::where('id', 3)->first();
@@ -895,62 +895,62 @@ class ChallengeController
 
     }
     public function add_rommcode(Request $r)
-{
-    // Validate the request parameters
-    $r->validate([
-        'id' => 'required',
-        'code' => 'required'
-    ]);
+    {
+        // Validate the request parameters
+        $r->validate([
+            'id' => 'required',
+            'code' => 'required'
+        ]);
 
-    // Initialize cURL session
-    $curl = curl_init();
+        // Initialize cURL session
+        $curl = curl_init();
 
-    // Set cURL options
-    curl_setopt_array($curl, [
-        // CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $r->code . "&apikey=733f4afa", // New API URL
-        CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=".$r->code."&apikey=733f4afa", // New API URL
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "GET",
-    ]);
+        // Set cURL options
+        curl_setopt_array($curl, [
+            // Use the tested API URL
+            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=" . $r->code . "&apikey=733f4afa",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+        ]);
 
-    // Execute cURL request and capture response
-    $response = curl_exec($curl);
-    $err = curl_error($curl);
+        // Execute cURL request and capture response
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
 
-    // Log the API response for debugging
-    \Log::info('API Response: ', [$response]);
+        // Log the full API response for debugging
+        \Log::info('Full API Response add_rommcode function: ', [$response]);
 
-    // Close cURL session
-    curl_close($curl);
+        // Close cURL session
+        curl_close($curl);
 
-    // Handle potential cURL errors
-    if ($err) {
-        return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
-    } else {
-        // Decode the JSON response from the API
-        $responses = json_decode($response);
-
-        // Check if the API returned a valid room code and type
-        if (isset($responses->result->roomcode) && isset($responses->result->type) && $responses->result->type == "classic") {
-            // Find the challenge by ID
-            $dataa = Challenge::where('id', $r->id)->first();
-
-            // If the challenge exists and is in a valid state, update the room code
-            if ($dataa && $dataa->status >= 3) {
-                Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
-                return redirect('/challenge-detail/' . $r->id);
-            } else {
-                return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled');
-            }
+        // Handle potential cURL errors
+        if ($err) {
+            return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
         } else {
-            return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
+            // Decode the JSON response from the API
+            $responses = json_decode($response);
+
+            // Check if the API returned a valid room code and status
+            if (isset($responses->result->roomcode) && isset($responses->result->status)) {
+                // Find the challenge by ID
+                $dataa = Challenge::where('id', $r->id)->first();
+
+                // If the challenge exists and is in a valid state, update the room code
+                if ($dataa && $dataa->status >= 3) {
+                    Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
+                    return redirect('/challenge-detail/' . $r->id);
+                } else {
+                    return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled');
+                }
+            } else {
+                return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
+            }
         }
     }
-}
 
     public function add_rommcode_automaticByController($id)
     {
@@ -958,7 +958,8 @@ class ChallengeController
 
         // Set the new API URL with the appropriate query parameters
         curl_setopt_array($curl, [
-            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $id . "&apikey=733f4afa",
+            // CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=" . $id . "&apikey=733f4afa",
+            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/roomtypeold?roomtype=".$id."&apikey=733f4afa", // New API URL
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -970,7 +971,8 @@ class ChallengeController
         // Execute cURL request and capture the response
         $response = curl_exec($curl);
         $err = curl_error($curl);
-
+        // Log the full API response for debugging
+        \Log::info('Full API Response: ', [$response]);
         // Close the cURL session
         curl_close($curl);
 
@@ -997,7 +999,7 @@ class ChallengeController
         }
     }
 
-        public function add_rommcode_automatic($id)
+    public function add_rommcode_automatic($id)
         {
         $curl = curl_init();
 

@@ -96,6 +96,7 @@
                                         @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label for="name">{{ __('Withdrawal Open') }}<span
@@ -103,12 +104,37 @@
                                         <select id="WithdrawalStatus" value="{{ $settings[8] }}" class="form-control"
                                             name="WithdrawalStatus">
                                             <option value="">Select Mode</option>
-                                            <option value="yes" {{ $settings[8] == 'yes' ? 'selected' : '' }}>Yes</option>
+                                            <option value="yes" {{ $settings[8] == 'yes' ? 'selected' : '' }}>Yes
+                                            </option>
                                             <option value="no" {{ $settings[8] == 'no' ? 'selected' : '' }}>No</option>
                                         </select>
                                         <div class="help-block with-errors"></div>
 
                                         @error('room_code_expire_in')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="name">{{ __('Deposit Open') }}<span
+                                                class="text-red">*</span></label>
+                                        <select id="DepositStatus" value="{{ isset($settings[12]) ? $settings[12] : '' }}"
+                                            class="form-control" name="DepositStatus">
+                                            <option value="yes"
+                                                {{ isset($settings[12]) && $settings[12] == 'yes' ? 'selected' : '' }}>Yes
+                                            </option>
+                                            <option value="no"
+                                                {{ isset($settings[12]) && $settings[12] == 'no' ? 'selected' : '' }}>No
+                                            </option>
+                                        </select>
+
+                                        <div class="help-block with-errors"></div>
+
+                                        @error('DepositStatus')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -136,6 +162,7 @@
                                         @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label for="name">{{ __('Withdraw automatic') }}<span
@@ -145,7 +172,8 @@
                                             <option value="">Select Status</option>
                                             <option value="yes" {{ $settings[3] == 'yes' ? 'selected' : '' }}>Yes
                                             </option>
-                                            <option value="no" {{ $settings[3] == 'no' ? 'selected' : '' }}>No</option>
+                                            <option value="no" {{ $settings[3] == 'no' ? 'selected' : '' }}>No
+                                            </option>
                                         </select>
                                         <div class="help-block with-errors"></div>
 
@@ -156,6 +184,7 @@
                                         @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label for="name">{{ __('UPI Withdraw') }}<span
@@ -165,7 +194,8 @@
                                             <option value="">Select Status</option>
                                             <option value="yes" {{ $settings[9] == 'yes' ? 'selected' : '' }}>Yes
                                             </option>
-                                            <option value="no" {{ $settings[9] == 'no' ? 'selected' : '' }}>No</option>
+                                            <option value="no" {{ $settings[9] == 'no' ? 'selected' : '' }}>No
+                                            </option>
                                         </select>
                                         <div class="help-block with-errors"></div>
 
@@ -176,6 +206,7 @@
                                         @enderror
                                     </div>
                                 </div>
+
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label for="name">{{ __('Notice') }}<span class="text-red">*</span></label>

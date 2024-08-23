@@ -41,6 +41,8 @@ class SettingController extends Controller
             $WithdrawalStatus  =   Setting::find(9);
             $UPIWithdrawalStatus  =   Setting::find(10);
             $IMPSWithdrawalStatus  =   Setting::find(11);
+            // New setting for DepositStatus
+            $DepositStatus  =   Setting::find(12);
 
             if(isset($request->auto_room_code)){
                 $rcode       =  1;
@@ -80,6 +82,13 @@ class SettingController extends Controller
             $IMPSWithdrawalStatus->field_value    =   $request->IMPSwithdraw;
             $IMPSWithdrawalStatus->save();
             }
+
+            // Update DepositStatus
+            if(isset($request->DepositStatus)){
+                $DepositStatus->field_value = $request->DepositStatus;
+                $DepositStatus->save();
+            }
+
             return redirect()->back()->with('success', 'Room codes added successfully!');
         }catch (\Exception $e) {
             $bug = $e->getMessage();
