@@ -10,14 +10,14 @@ use App\UserSetting;
 
 class KYCController extends Controller
 {
-
+   
     public function kyc_pending()
     {
 // 		$pending = UserData::where('verify_status','2')->where('DOCUMENT_NAME','!=',null)->where('DOCUMENT_NUMBER','!=',null)->where('DOCUMENT_FRONT_IMAGE','!=',null)->where('DOCUMENT_BACK_IMAGE','!=',null)->get();
 		$pending = UserData::where('verify_status','2')->get();
 		 return view('admin.kycs.pending',compact('pending'));
     }
-
+	
 	  public function kyc_view($id)
     {
 		  $user_id = $id;
@@ -36,18 +36,18 @@ class KYCController extends Controller
     // return $approved;
         return view('admin.kycs.approved',compact('approved'));
     }
-
-
-
+	
+	
+	
 	public function kyc_verify($id)
     {
 		$userData = UserData::find($id);
 		$userData->verify_status = '1';
 		$userData->save();
-
+		
         return redirect('/admin/kyc-pending');
     }
-
+	
 	public function kyc_rejected($id)
     {
 		$userData = UserData::find($id);
@@ -61,7 +61,7 @@ class KYCController extends Controller
 		$userData->DOCUMENT_BACK_IMAGE = null;
 		$userData->verify_status = null;
 		$userData->save();
-
+		
         return redirect('/admin/kyc-pending');
     }
 }

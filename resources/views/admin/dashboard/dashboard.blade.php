@@ -354,7 +354,7 @@
                                     @foreach ($data['recharges'] as $key => $val)
                                         <tr>
                                             <td>{{ $val->id }}</td>
-                                            <td>{{ $val->playername->username }}</td>
+                                            {{-- <td>{{ $val->playername->username }}</td> --}}
                                             <td>{{ $val->source_id }}</td>
                                             <td>{{ $val->amount }}</td>
                                             <td>{{ $val->created_at }}</td>

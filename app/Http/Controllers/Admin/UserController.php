@@ -72,7 +72,7 @@ class UserController extends Controller
 
     protected function store(Request $request)
     { //echo "<pre>";print_r($request->all());die;
-		$this->validate($request, [            
+		$this->validate($request, [
             'mobile' => [
                 'required','digits:10',
                 'unique:users,mobile',
@@ -81,7 +81,7 @@ class UserController extends Controller
                 'nullable','exists:user_settings,referral',
             ]
         ]);
-		
+
         $mobile		=	$request->mobile;
 
 		$user	=	User::create([
@@ -89,10 +89,10 @@ class UserController extends Controller
             'mobile' => $mobile,
 			'ip'		=>	$request->ip()
         ]);
-		
+
 		if($user){
 			$user->syncRoles('Member');
-			
+
 			$used_referral		=	0;
             $rf_user_id         =   0;
 			if(isset($request->referral)){
@@ -109,7 +109,9 @@ class UserController extends Controller
 			]);
 
 		}
-		
+
+        \Log::info("Processing order ID: " . $request);
+
         return redirect()->back()->with('success', 'User added successfully!');
     }
 
@@ -125,12 +127,12 @@ class UserController extends Controller
             'id'            => 'required',
             'mobile'        => 'required | digits:10',
         ]);
-       
+
         if ($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
         }
 
-        try{ 
+        try{
             $user       = User::find($request->id);
             $setting    = UserSetting::where('user_id',$request->id)->first();
 
@@ -140,7 +142,7 @@ class UserController extends Controller
                 'email'             => $request->email,
             ]);
 
-            
+
 			if(isset($request->referral)){
                 $rf_user_data    =   UserSetting::where('referral',$request->referral)->first();
                 if(isset($rf_user_data)){
@@ -149,9 +151,9 @@ class UserController extends Controller
                     $setting->update([
                         'used_referral'     => $request->referral,
                         'rf_user_id'        => $rf_user_id,
-                    ]);       
-                }                
-			}                 
+                    ]);
+                }
+			}
 
             return redirect('admin/users')->with('success', 'User information updated succesfully!');
         }catch (\Exception $e) {
@@ -165,7 +167,7 @@ class UserController extends Controller
         //echo "<pre>";print_r($user_id);die;ManualPayment
         return view('admin/user/wallet',compact('user'));
     }
-    
+
     public function updateWallet(Request $request)
     { //echo "<pre>";print_r($request->all());die;
         $user   =   User::find($request->user_id);
@@ -188,7 +190,7 @@ class UserController extends Controller
         if($payment){
             $user->wallet   =   $request->wallet;
             $user->save();
-            
+
             return redirect('admin/users')->with('success', 'Wallet balance updated successfully!');
         }else{
             return redirect()->back()->with('error', 'Record not found');
@@ -197,15 +199,12 @@ class UserController extends Controller
 
     public function changeStatus($status,$uid)
     {
-        return $uid;
-        $data   = UserSetting::where('user_id',$uid)->first();
+        $data   = User::find($uid);
         if($data){
-            $data->status   =   $status;
-            $data->save();
-            
+            $data->update(['status' => $status]);
             return redirect()->back()->with('success', 'Status updated successfully!');
         }else{
-            return redirect()->back()->with('error', 'Record not found');
+            return redirect()->back()->with('error', 'Record not found for this user in the user_setting table');
         }
     }
 
@@ -224,7 +223,7 @@ class UserController extends Controller
     {
         $user   =   User::withSum('recharges','amount')->withSum('wonamount','amount')->withSum('withdrawamt','amount')
                     ->withSum('referralamt','amount')->withSum('prizeamt','amount')->find($id);
-                
+
         $txns   =   Transaction::where('user_id',$id)->latest()->paginate($this->paging);
         //echo "<pre>";print_r($user);die;
         return view('admin/user/statement',compact('user','txns'));

@@ -1,5 +1,6 @@
 @extends('layouts.front.front')
 @section('content')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <div class="main-area" style="padding-top: 50px;">
         <div class="px-4 py-3">
             <!--<div class="games-section">-->
@@ -84,12 +85,12 @@
         style="display:none;position:fixed;width:100dvw;height:100dvh;top: 0;left: 0;z-index: 11111111;flex-direction: row;flex-wrap: nowrap;align-content: center;justify-content: center;align-items: center;background: #808080cc;color: white;">
         <h1 style="text-align:center;">
             <img src="https://media1.giphy.com/media/3NwOyKt1n7S6KccVQg/giphy.gif">
-            <!--           <svg xml:space="preserve" viewBox="0 0 100 100" y="0" x="0" xmlns="http://www.w3.org/2000/svg" id="Layer_1" version="1.1" style="height: 100%; width: 100%; background: rgb(255, 255, 255);" width="200px" height="200px"><g class="ldl-scale" style="transform-origin: 50% 50%; transform: rotate(0deg) scale(0.6, 0.6);"><g class="ldl-ani" style="transform: rotate(0deg); transform-origin: 50px 50px; animation: 1s linear 0s infinite normal forwards running cycle-dc384288-fd43-4a3c-b434-9f498285d9d8;"><g class="ldl-layer"><g class="ldl-ani"><path fill="#f7b26a" d="M28 33.7C32.4 27.8 38.8 24 46.1 23l-1.6-11.5C34.1 13 25 18.4 18.7 26.7 12.7 34.5 10 44.2 11 54l-6.9 1 14.4 10.8 10.8-14.4-6.8 1c-.5-6.8 1.4-13.3 5.5-18.7z" style="fill: rgb(1, 129, 103);"></path></g></g><g class="ldl-layer"><g class="ldl-ani"><path fill="#e15c64" d="M79.1 69.7l-17.9-2.2 4.2 5.4c-11.9 8.1-28.2 5.7-37.2-5.7L19 74.4c7.7 9.9 19.2 15 30.9 15 7.9 0 15.8-2.4 22.7-7.3l4.3 5.5 2.2-17.9z" style="fill: rgb(26, 179, 148);"></path></g></g><g class="ldl-layer"><g class="ldl-ani"><path fill="#f47e5f" d="M85.9 34.9C82 25.8 75 18.6 66.1 14.6l2.6-6.5-16.6 7 7 16.6 2.6-6.4c6.1 2.9 10.8 7.8 13.4 14 2.9 6.8 2.9 14.2.2 21l10.8 4.4c4-9.5 3.9-20.2-.2-29.8z" style="fill: rgb(120, 231, 208);"></path></g></g><metadata xmlns:d="https://loading.io/stock/">-->
+            {{-- <!--<svg xml:space="preserve" viewBox="0 0 100 100" y="0" x="0" xmlns="http://www.w3.org/2000/svg" id="Layer_1" version="1.1" style="height: 100%; width: 100%; background: rgb(255, 255, 255);" width="200px" height="200px"><g class="ldl-scale" style="transform-origin: 50% 50%; transform: rotate(0deg) scale(0.6, 0.6);"><g class="ldl-ani" style="transform: rotate(0deg); transform-origin: 50px 50px; animation: 1s linear 0s infinite normal forwards running cycle-dc384288-fd43-4a3c-b434-9f498285d9d8;"><g class="ldl-layer"><g class="ldl-ani"><path fill="#f7b26a" d="M28 33.7C32.4 27.8 38.8 24 46.1 23l-1.6-11.5C34.1 13 25 18.4 18.7 26.7 12.7 34.5 10 44.2 11 54l-6.9 1 14.4 10.8 10.8-14.4-6.8 1c-.5-6.8 1.4-13.3 5.5-18.7z" style="fill: rgb(1, 129, 103);"></path></g></g><g class="ldl-layer"><g class="ldl-ani"><path fill="#e15c64" d="M79.1 69.7l-17.9-2.2 4.2 5.4c-11.9 8.1-28.2 5.7-37.2-5.7L19 74.4c7.7 9.9 19.2 15 30.9 15 7.9 0 15.8-2.4 22.7-7.3l4.3 5.5 2.2-17.9z" style="fill: rgb(26, 179, 148);"></path></g></g><g class="ldl-layer"><g class="ldl-ani"><path fill="#f47e5f" d="M85.9 34.9C82 25.8 75 18.6 66.1 14.6l2.6-6.5-16.6 7 7 16.6 2.6-6.4c6.1 2.9 10.8 7.8 13.4 14 2.9 6.8 2.9 14.2.2 21l10.8 4.4c4-9.5 3.9-20.2-.2-29.8z" style="fill: rgb(120, 231, 208);"></path></g></g><metadata xmlns:d="https://loading.io/stock/">-->
             <!--<d:name>roundabout,recycle,state,step,progress,next,circulate,turnaround</d:name>-->
             <!--<d:tags>cc-by,roundabout,recycle,state,step,progress,next,circulate,turnaround</d:tags>-->
             <!--<d:license>by</d:license>-->
             <!--<d:slug>a46a64</d:slug>-->
-            <!--</metadata></g></g></svg>-->
+            <!--</metadata></g></g></svg>--> --}}
         </h1>
     </div>
     <div class="divider-y"></div>
@@ -99,4 +100,14 @@
             $('#add-amount').val(amount);
         }
     </script>
+
+    @if (session()->has('error'))
+        <script>
+            Swal.fire({
+                title: "Oops!",
+                text: "{{ session()->get('error') }}",
+                icon: "error"
+            });
+        </script>
+    @endif
 @endsection

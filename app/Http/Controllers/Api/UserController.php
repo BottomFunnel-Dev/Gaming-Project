@@ -14,12 +14,12 @@ class UserController extends Controller
 {
     public function list(Request $request)
     {
-        $creators               =   User::with('nextevent')->where('status',1)->role('Creator')->paginate(6); 
+        $creators               =   User::with('nextevent')->where('status',1)->role('Creator')->paginate(6);
         if(isset($request->search)){
             $creators           =   User::with('nextevent')->where('status',1)
-                                    ->where('name','LIKE','%'.$request->search.'%')->role('Creator')->paginate(6);   
+                                    ->where('name','LIKE','%'.$request->search.'%')->role('Creator')->paginate(6);
         }
-        
+
         return response([
                 'creators' => $creators,
                 'success' => 1
@@ -28,8 +28,8 @@ class UserController extends Controller
 
     public function transactions(Request $request)
     {
-        $transactions           =   Transaction::select('id','amount','status','created_at')->where('user_id',Auth::user()->id)->paginate(10); 
-       
+        $transactions           =   Transaction::select('id','amount','status','created_at')->where('user_id',Auth::user()->id)->paginate(10);
+
         return response([
                 'transactions' => $transactions,
                 'success' => 1
@@ -54,15 +54,15 @@ class UserController extends Controller
                     'success' => 1
                 ],200);
     }
-    
+
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
         $validData = $request->validate([
             'name'      => 'required|string',
-            'email'     => 'required | email ', 
-            'mobile'    => 'required | numeric ', 
-            'dob'       => 'required', 
+            'email'     => 'required | email ',
+            'mobile'    => 'required | numeric ',
+            'dob'       => 'required',
         ]);
 
         if(isset($request->email)){
@@ -90,7 +90,7 @@ class UserController extends Controller
         }
 
         $user->update($validData);
-   
+
         $user = Auth::user();
         $roles = $user->getRoleNames();
 
@@ -102,9 +102,9 @@ class UserController extends Controller
     }
 
     public function updateFCMToken(Request $request)
-    {        
+    {
         $validData = $request->validate([
-            'fcm_token' => 'required', 
+            'fcm_token' => 'required',
         ]);
 
         $user = Auth::user();
@@ -129,7 +129,7 @@ class UserController extends Controller
                 'success'       => 0
             ],400);
         }
-        
+
         $user = Auth::user();
 
         //Upload image on AWS S3
@@ -138,11 +138,11 @@ class UserController extends Controller
             $imageName = 'profile/'.time().'-'. $user->id.'.'.$file->getClientOriginalExtension();
             Storage::disk('s3')->put($imageName, file_get_contents($file));
         }
-        
+
         if($user->profile_pic){
             Storage::disk('s3')->delete($user->profile_pic);
         }
-        
+
         $user->update([
             'profile_pic'       => $imageName,
         ]);

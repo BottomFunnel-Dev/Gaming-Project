@@ -13,6 +13,8 @@ use Spatie\Permission\Models\Permission;
 use DataTables,Auth;
 use Illuminate\Support\Facades\Storage;
 
+use App\UserSetting;
+use Illuminate\Support\Facades\Log;
 class CreatorController extends Controller
 {
     /**
@@ -31,12 +33,12 @@ class CreatorController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    { 
+    {
         return view('admin/creator/creators');
     }
 
     public function getCreatorList(Request $request)
-    { 
+    {
         $admin_id   =   Auth::user()->id;
         $data   =   User::role('Creator')->orderBy('id','desc')->get();
         //echo "<pre>";print_r($data);die;
@@ -54,11 +56,11 @@ class CreatorController extends Controller
                             $sHtml  =   '<a title="Make Creator Inactive" onclick="return confirm('.$msg.')" href="'.url('admin/creator/status/0/'.$data->id).'"><i class="ik ik-x f-16 ml-10 "></i></a>';
                         else
                             $sHtml  =   '<a title="Make Creator Active" onclick="return confirm('.$msg.')" href="'.url('admin/creator/status/1/'.$data->id).'"><i class="ik ik-check f-16 ml-10"></i></a>';
-                        
+
                         return '<div class="table-actions" style="text-align:left">
                                 <a href="'.url('admin/creator/profile/'.$data->id).'"><i class="ik ik-eye f-16" title="View Details"></i></a>
                                 <a href="'.url('admin/creator/'.$data->id).'" ><i class="ik ik-edit-2 f-16 mr-15" title="Edit User"></i></a> '.$sHtml.'
-                            </div>';                            
+                            </div>';
                     }else{
                         return '';
                     }
@@ -68,60 +70,59 @@ class CreatorController extends Controller
     }
 
     public function store(Request $request)
-    {  //echo "<pre>"; print_r($request->all()); die;
-        // create creator 
-        $validator              = Validator::make($request->all(), [
-            'name'              => 'required | string ',
-            'description'       => 'required | string ',
-            'email'             => 'required | email | unique:users',
-            'mobile'            => 'required | digits:10 | unique:users',
-            'password'          => 'required | confirmed',
-            //'profile_pic'       => 'required | image|mimes:jpeg,png,jpg|max:2048',
-            //'cover_pic'         => 'required | image|mimes:jpeg,png,jpg|max:2048',
+    {
+        // Validate the request
+        $this->validate($request, [
+            'mobile' => [
+                'required', 'digits:10',
+                'unique:users,mobile',
+            ],
+            'referral' => [
+                'nullable', 'exists:user_settings,referral',
+            ]
         ]);
-        //echo "<pre>"; print_r($request->all());die;
-        if($validator->fails()) {
-            return redirect()->back()->withInput()->with('error', $validator->messages()->first());
-        }
-        try
-        {
-            // $profile_pic = $request->file('profile_pic');
-            // if($profile_pic){
-            //     $imageName = 'profile/'.time().'.'.$profile_pic->getClientOriginalExtension();
-            //     //echo $imageName;die;
-            //     Storage::disk('s3')->put($imageName, file_get_contents($profile_pic));
-            // }
 
-            // $profile_pic = $request->file('profile_pic');
-            // if($profile_pic){
-            //     $coverName = 'cover/'.time().'-'. $user->id.'.'.$profile_pic->getClientOriginalExtension();
-            //     Storage::disk('s3')->put($coverName, file_get_contents($profile_pic));
-            // }
+        \Log::info('Store method called with mobile: ' . $request->mobile);
 
-            // store user information
-            $user = User::create([
-                        'name'              => $request->name,
-                        'email'             => $request->email,
-                        'mobile'            => $request->mobile,
-                        'description'       => $request->description,
-                        //'profile_pic'       => $imageName,
-                        //'cover_pic'         => $coverName,
-                        'password'          => Hash::make($request->password),
-                        'ip'                =>  $request->ip(),
-                    ]);
+        // Create user
+        $user = User::create([
+            'username' => ucfirst(substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4)) . ucfirst(substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4)),
+            'mobile' => $request->mobile,
+            'ip' => $request->ip()
+        ]);
 
-            $user->syncRoles('Creator');
+        if ($user) {
+            Log::info('User created successfully with ID: ' . $user->id);
+            $user->syncRoles('Member');
 
-            if($user){ 
-                return redirect('admin\creators')->with('success', 'New creator created!');
-            }else{
-                return redirect('admin\creators')->with('error', 'Failed to create new creator! Try again.');
+            $used_referral = 0;
+            $rf_user_id = 0;
+            if (isset($request->referral)) {
+                $rf_user_data = UserSetting::where('referral', $request->referral)->first();
+                if ($rf_user_data) {
+                    $rf_user_id = $rf_user_data->user_id;
+                    $used_referral = $request->referral;
+                }
             }
-        }catch (\Exception $e) {
-            $bug = $e->getMessage();
-            return redirect()->back()->with('error', $bug);
+
+            // Create user settings
+            $userSetting = UserSetting::create([
+                'user_id' => $user->id,
+                'used_referral' => $used_referral,
+                'rf_user_id' => $rf_user_id,
+                'referral' => bin2hex(random_bytes(4)),
+            ]);
+
+            \Log::info('UserSetting creation attempted for user ID: ' . $user->id);
+            \Log::info('UserSetting Created:', ['user_id' => $user->id, 'result' => $userSetting]);
+
+            return redirect()->back()->with('success', 'User added successfully!');
         }
+
+        \Log::error('Failed to create user.');
+        return redirect()->back()->with('error', 'Failed to create user.');
     }
+
 
     public function create()
     {
@@ -197,12 +198,12 @@ class CreatorController extends Controller
                 'cover_pic' => 'image|mimes:jpeg,png,jpg|max:2048',
             ]);
         }
-        
+
         if ($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
         }
 
-        try{ 
+        try{
             $user = User::find($request->id);
 
             $update = $user->update([
@@ -222,7 +223,7 @@ class CreatorController extends Controller
             // update profile image of user
             $file = $request->file('profile_pic');
             if($file){
-                $imageName=$file->getClientOriginalName(); 
+                $imageName=$file->getClientOriginalName();
                 $filePath = 'profile/'.time().'-'. $imageName;
                 Storage::disk('s3')->put($filePath, file_get_contents($file));
                 Storage::disk('s3')->delete($user->profile_pic);
@@ -234,7 +235,7 @@ class CreatorController extends Controller
 
             $cover = $request->file('cover_pic');
             if($cover){
-                $imageName=$cover->getClientOriginalName(); 
+                $imageName=$cover->getClientOriginalName();
                 $filePath = time().'-'. $imageName;
                 Storage::disk('s3')->put($filePath, file_get_contents($cover));
                 Storage::disk('s3')->delete($user->cover_pic);
@@ -250,7 +251,7 @@ class CreatorController extends Controller
             return redirect()->back()->with('error', $bug);
         }
     }
-   
+
     public function userProfile($id)
     {
         try

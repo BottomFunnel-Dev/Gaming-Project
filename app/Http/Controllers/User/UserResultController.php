@@ -310,14 +310,34 @@ class UserResultController
         }
     }
 
+    // private function calculateCom($amount){
+    //     if($amount > 0 && $amount <= 250){
+    //     $a_amount	=	10/100*($amount);
+    //     }else{
+    //     $a_amount	=	5/100*($amount); //5/100
+    //     }
+    //     return $a_amount;
+    // }
+
     private function calculateCom($amount){
-        if($amount > 0 && $amount <= 250){
-        $a_amount	=	10/100*($amount);
-        }else{
-        $a_amount	=	5/100*($amount); //5/100
+        if($amount > 50 && $amount <= 250){
+            // 10% commission for amount between 50 and 250
+            $a_amount = 10/100 * $amount;
+        } elseif($amount > 250 && $amount <= 500){
+            // Fixed ₹25 commission for amount between 250 and 500
+            $a_amount = 25;
+        } elseif($amount > 500){
+            // 5% commission for amount above 500
+            $a_amount = 5/100 * $amount;
+        } else {
+            // No commission for amount less than or equal to 50
+            $a_amount = 0;
         }
         return $a_amount;
     }
+
+
+    // https://apiv2.ludoadda.co.in/api/all/result?roomcode=07852617&apikey=733f4afa
 
     private function updateWallet($amount,$user_id){
         $walletData =   User::find($user_id);

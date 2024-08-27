@@ -1,4 +1,4 @@
-@extends('layouts.main') 
+@extends('layouts.main')
 
 @section('head')
 <title> Transcation History  </title>
@@ -38,14 +38,14 @@
 							<img src="{{ asset('frontend/images/lost.png') }}" style="width:60px"> <span style="font-size:40px; color:red; float:right">{{ $user_details->total_lost }}</span>
 						</div>
 					</div>
-					
+
 					<div class="col-md-1"></div>
 					<div class="col-md-2">
 						<div class="status" style="padding-top:24px">
-							@if($user_kyc_details->verify_status==1) 
+							@if($user_kyc_details->verify_status==1)
 							<img src="{{ asset('/backend/img/image_verified.png') }}" style="width:50px; float:left">
-							&nbsp; <span style="font-size:25px; color:Green;">Verified</span> 
-							@else 
+							&nbsp; <span style="font-size:25px; color:Green;">Verified</span>
+							@else
 							<img src="{{ asset('/backend/img/under_review.png') }}"  style="width:50px; float:left">&nbsp; <span style="font-size:20px; color:red;">Un-Verified</span> @endif
 						</div>
 					</div>
@@ -64,8 +64,8 @@
 								    <h5><a href="{{ url('admin/kyc-verify/'.$user_kyc_details->id) }}" class="btn btn-xs btn-success">Approve</a></h5>
 								    <h5><a href="{{ url('admin/kyc-reject/'.$user_kyc_details->id) }}" class="btn btn-xs btn-danger">Reject</a></h5>
 								  @endif
-									
-									
+
+
 								</th>
 							</tr>
 						</table>
@@ -107,14 +107,14 @@
 							<tr>
 								<th>Front Side Image</th>
 								<td align="center">
-								    
-                                  <img src="{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_FRONT_IMAGE) }}" onclick="location.href='{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_FRONT_IMAGE) }}'" style="width:50px" alt=""> 
+
+                                  <img src="{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_FRONT_IMAGE) }}" onclick="location.href='{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_FRONT_IMAGE) }}'" style="width:50px" alt="">
                                   </td>
 							</tr>
 							<tr>
 								<th>Back Side Image</th>
 								<td align="center">
-                                  <img src="{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_BACK_IMAGE) }}" onclick="location.href='{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_BACK_IMAGE) }}'" style="width:50px" alt=""> 
+                                  <img src="{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_BACK_IMAGE) }}" onclick="location.href='{{ asset('/images/kycdata/'.$user_kyc_details->user_id.'/'.$user_kyc_details->DOCUMENT_BACK_IMAGE) }}'" style="width:50px" alt="">
                                  </td>
 							</tr>
 							<tr>
@@ -128,7 +128,7 @@
 							</tr>
 						</table>
 					</div>
-					
+
 					<div class="col-md-4">
 						<table class="table table-bordered">
 							<tr  style="background-color:#4e73df; color:white; font-weight:600">
@@ -152,14 +152,14 @@
 								<th>Reffered By</th>
 								<td>{{ isset($user_setting->used_referral) ? $user_setting->used_referral : '' }}</td>
 							</tr>
-							
+
 							<tr>
 								<th>Created at</th>
 								<td>{{ $user_details->created_at }}</td>
 							</tr>
 						</table>
 					</div>
-					
+
 				</div>
 
 			</div>
