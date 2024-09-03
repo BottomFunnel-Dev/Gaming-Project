@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Challenge;
@@ -23,111 +24,8 @@ use Illuminate\Support\Facades\Log;
 
 use GuzzleHttp\Client;
 
-class ChallengeController
+class ChallengeController extends Controller
 {
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    // public function generateRandomMultiples($number, $minRange, $maxRange)
-    // {
-    //     $randomMultiple = $number * rand(floor($minRange / $number), floor($maxRange / $number));
-    //     return $randomMultiple;
-    // }
-
-    // public function create_fakechanllenges()
-    // {
-    //     // echo Carbon::now();
-    //     $fakedata = 50;
-    //     $fakename = [
-    //         "Aarav Sharma",
-    //         "Aditi Verma",
-    //         "Alok Kapoor",
-    //         "Amrita Desai",
-    //         "Aniket Patel",
-    //         "Ananya Singh",
-    //         "Arjun Yadav",
-    //         "Asha Gupta",
-    //         "Ayush Kapoor",
-    //         "Bhavya Sharma",
-    //         "Chetan Verma",
-    //         "Deepika Singh",
-    //         "Dhruv Yadav",
-    //         "Divya Patel",
-    //         "Gaurav Kumar",
-    //         "Geeta Desai",
-    //         "Hari Gupta",
-    //         "Ishaan Kapoor",
-    //         "Jyoti Verma",
-    //         "Kabir Sharma",
-    //         "Kavita Singh",
-    //         "Krishna Yadav",
-    //         "Lavanya Patel",
-    //         "Manish Desai",
-    //         "Meera Kumar",
-    //         "Mohit Verma",
-    //         "Neha Sharma",
-    //         "Nikhil Singh",
-    //         "Nisha Yadav",
-    //         "Pankaj Gupta",
-    //         "Pooja Kapoor",
-    //         "Pranav Patel",
-    //         "Prisha Desai",
-    //         "Rahul Kumar",
-    //         "Riya Verma",
-    //         "Rohan Sharma",
-    //         "Sakshi Singh",
-    //         "Sameer Yadav",
-    //         "Shikha Gupta",
-    //         "Shiv Kapoor",
-    //         "Shreya Patel",
-    //         "Snehal Desai",
-    //         "Sumit Kumar",
-    //         "Tanvi Verma",
-    //         "Utkarsh Sharma",
-    //         "Vaishali Singh",
-    //         "Varun Yadav",
-    //         "Vidya Patel",
-    //         "Vijay Gupta",
-    //         "Yash Kapoor",
-    //         "Zara Desai",
-    //     ];
-    //     $amountstart = 1000;
-    //     $amountend = 10000;
-    //     for ($i = 0; $i < rand(1, 3); $i++) {
-    //         $amount = $this->generateRandomMultiples(10, $amountstart, $amountend);
-    //         $name = $fakename[array_rand($fakename)];
-    //         $name2 = $fakename[array_rand($fakename)];
-    //         $exist = Fakechallenge::where('status', 1)->where('amount', '>', 1000)->count();
-    //         if ($exist >= 5) {
-    //             $amount = $this->generateRandomMultiples(10, 100, 500);
-    //         }
-    //         $d = new Fakechallenge;
-    //         $d->amount = $amount;
-    //         $d->c_id = 11;
-    //         $d->cname = $name;
-    //         $d->o_id = 11;
-    //         $d->oname = $name2;
-    //         $d->ip = 11111111111;
-    //         // $d->save();
-    //     }
-    //     $lastdata = Fakechallenge::where('status', 1)->orWhere('status', 2)->get();
-    //     foreach ($lastdata as $row) {
-    //         $startDate = Carbon::parse($row->created_at);
-    //         $endDate = Carbon::now(); // Use the current date and time as an example
-    //         $minutesDifference = $startDate->diffInMinutes($endDate);
-    //         if ($row->status > 1) {
-    //             if ($minutesDifference >= 7) {
-    //                 Fakechallenge::where('id', $row->id)->delete();
-    //             }
-    //         } else {
-    //             if ($minutesDifference >= 1) {
-    //                 Fakechallenge::where('id', $row->id)->update(["status" => 2]);
-    //             }
-    //         }
-    //     }
-    // }
     public function index(Request $request)
     {
         $status = Setting::where('id', 3)->first();
@@ -152,11 +50,33 @@ class ChallengeController
         // return view('user.challenges2',compact('notice','challenges','playChallenges','myChallenges','myPlayChallenges'));
         // else
     }
+
+    private function calculateCom($amount)
+    {
+        if ($amount >= 50 && $amount <= 250) {
+            \Log::info("Commission  amount {$amount}: 10% of {$amount}");
+            return 10 / 100 * $amount;  // 10% commission for amounts between 50 and 250
+        } elseif ($amount > 250 && $amount <= 500) {
+            \Log::info("Commission  amount {$amount}: Fixed 25 rupees");
+            return 25;  // Fixed 25 rupees commission for amounts between 250 and 500
+        } elseif ($amount > 500) {
+            \Log::info("Commission  amount {$amount}: 5% of {$amount}");
+            return 5 / 100 * $amount;  // 5% commission for amounts above 500
+        }
+        \Log::info("No commission applied for amount {$amount}");
+        return 0;
+    }
+
     public function ajax_chalange()
     {
+        \Log::info("ajax_chalange method called.");
+
         $url = URL::to("../public/") . "/";
         $wurl = URL::to("/") . "/";
         $user_id = Auth::user()->id;
+
+        \Log::info("User ID: {$user_id}");
+
         $myChallenges = DB::select(
             "select * from challenges where (status = 1 or status = 2 or status = 3) and (c_id = " .
             $user_id .
@@ -164,6 +84,8 @@ class ChallengeController
             $user_id .
             ") and deleted_at is null ORDER BY id ASC"
         );
+
+        \Log::info("Challenges retrieved: " . json_encode($myChallenges));
 
         $output = "";
         foreach ($myChallenges as $key => $mval) {
@@ -175,9 +97,20 @@ class ChallengeController
             //     $a_amount = 25;
             // } elseif ($mval->amount > 500) {
             // }
-            $a_amount = (5 / 100) * $mval->amount;
-            $prize = 2 * ($mval->amount - $a_amount);
+            // $a_amount = (5 / 100) * $mval->amount;
+            // $prize = 2 * ($mval->amount - $a_amount);
             // $prize  =   (2 * $mval->amount) - $a_amount;
+
+            try {
+                // Existing logic
+                $a_amount = $this->calculateCom($mval->amount);
+                \Log::info("Original amount: {$mval->amount}, Calculated commission: {$a_amount}");
+                $prize = (2 * $mval->amount) - $a_amount;
+                \Log::info("Final prize for amount {$mval->amount}: {$prize}");
+            } catch (\Exception $e) {
+                \Log::error("Error in prize calculation: " . $e->getMessage());
+            }
+
 
             if ($mval->status == 1 && $mval->c_id == Auth::user()->id) {
                 $output .=

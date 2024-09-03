@@ -1,30 +1,44 @@
 @extends('layouts.front.front')
 @section('content')
 <style>
-    #rp3 .betCard{
-        animation: none !important;
-    }
-    #rp4 .betCard{
-        animation: none !important;
-    }
+    /*#rp3 .betCard{*/
+    /*    animation: none !important;*/
+    /*}*/
+    /*#rp4 .betCard{*/
+    /*    animation: none !important;*/
+    /*}*/
+    /*.betCard > div > div:nth-child(2) > .betCard-subTitle{*/
+    /*    display:none;*/
+    /*}*/
+
+    /*.betCard > div > div:nth-child(2) > div > .betCard-amount{*/
+    /*    display:none;*/
+    /*}*/
+    /*.betCard > div > div:nth-child(2) > div > img{*/
+    /*    display:none;*/
+    /*}*/
+
+    /*.betCard > div.d-flex > div.betCard-title{*/
+    /*    display:none !important;*/
+    /*}*/
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <div class="main-area" style="padding-top: 70px;">
 		<div class="alert alert-danger alert-dismissible fade show" id="success-error-div" role="alert" style="dispaly:none;position:fixed;top:50px;width:100%;z-index:100;">
-			<span id="success-error-message"></span>			
+			<span id="success-error-message"></span>
 		</div>
 		@if($notice != '')
         <span class="btn btn-danger" style="width:100%;font-size:12px"><b>Important</b>:- {{$notice}}</span>
         @endif
       <div id="content"></div>
-  
+
   <span class="cxy battle-input-header">Create a Battle!</span>
       <div class="mx-auto d-flex my-2 w-50">
 	  	<form action="{{route('create-challenge')}}" id="create-challenge" method="POST">
 		  @csrf
 			<div>
-				<input style="width:60%;" class="form-control pull-left" name="amount" autocomplete="off" id="challenge-amount" type="tel" placeholder="Amount" value="">				
-			
+				<input style="width:60%;" class="form-control pull-left" name="amount" autocomplete="off" id="challenge-amount" type="tel" placeholder="Amount" value="">
+
 			<button  class="bg-green playButton cxy position-static pull-left" style="height:36px; @media (max-width: 366px) { margin-left:3px } @media (min-width: 365px){ margin-right:5px } { margin-left:10px }">Set</button>
 			</div>
 			<span style="color:red;display:none" id="challenge-amount-error">this is errro</span>
@@ -36,15 +50,15 @@
             class="ml-2 games-section-title">Open Battles</span>
           <span class="games-section-headline text-uppercase position-relative mt-2 font-weight-bold float-right" style="top: -0.2rem;">
             <a href="{{route('front.game-rules')}}">Rules <i class="fa fa-info-circle" aria-hidden="true"></i></a></span></div>
-        
+
         <div id="my-challenge-div">
           <div id="rf2">
           <div id="rp2">
-			
+
 
       		</div>
       		<div id="rp21">
-			
+
 
       		</div>
 </div>
@@ -55,22 +69,22 @@
             class="ml-2 games-section-title">Running Battles</span>
           <span class="games-section-headline text-uppercase position-relative mt-2 font-weight-bold float-right" style="top: -0.2rem;">
             </span></div>
-      
-      
+
+
 		<div id="mychallenge-div-play" class="no_animation">
             <div id="rf3"></div>
             <div id="rp3"></div>
             <div id="rp4"></div>
             <div id="rp31"></div>
         </div>
-          
+
 		<div id="challenge-div-play">
 			 <div id="d2">
 			 </div>
         </div>
 		</div>
-      
-    
+
+
   <div class="divider-y"></div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
@@ -86,7 +100,7 @@
 
 			@if (isset($payment_status))
 				//alert( "<?php echo $payment_status; ?>" );
-				hideSuccessErrorDiv('alert-danger','alert-success','<?php echo $payment_status; ?>');	
+				hideSuccessErrorDiv('alert-danger','alert-success','<?php echo $payment_status; ?>');
 			@endif
 
 
@@ -118,7 +132,7 @@
 			socket.on('playChallengeClient',(data) => {
 				playChallengeSoc(data);
 			});
-			
+
 			socket.on('removePlayChallengeClient',(data) => {
 			    $("#playing-chdiv-"+data.id).remove();
 			});
@@ -133,19 +147,19 @@
 
 			socket.on('userResultClient',(data) => {
 				$('#chdiv-'+data).hide();
-			});	
-			
+			});
+
 			socket.on('running_games_add',(data) => {
 				let htmlCode = playingGameHtml(data);
 				$('#rp3').append(htmlCode);
-			});	
-			
+			});
+
 			// $('#challenge-amount').keyup(function(e)
-			// { 
+			// {
 			// 	var amount	=	$('#challenge-amount').val();
 			// 	var flag			=	1;
 			// 	var valid			=	1;
-				
+
 			// 	if(!amount){
 			// 		$('#challenge-amount-error').text('Please enter amount');
 			// 		$('#challenge-amount-error').addClass('error');
@@ -157,7 +171,7 @@
 			// 		$('#challenge-amount-error').show();
 			// 		$('#challenge-amount').val('');
 			// 		flag = 0;
-			// 	}else if(!(amount == 30 || amount == 40 || amount%50==0)){							
+			// 	}else if(!(amount == 30 || amount == 40 || amount%50==0)){
 			// 		$('#challenge-amount-error').text('Invalid amount!');
 			// 		$('#challenge-amount-error').addClass('error');
 			// 		$('#challenge-amount-error').show();
@@ -166,16 +180,16 @@
 			// 		$('#challenge-amount-error').text('');
 			// 		$('#challenge-amount-error').removeClass('error');
 			// 		$('#challenge-amount-error').hide();
-			// 	}						
+			// 	}
 			// });
 
 			$('#create-challenge').submit(function(e)
-			{ 				
+			{
 				e.preventDefault();
 				var amount	=	$('#challenge-amount').val();
-				
+
 				var flag			=	1;
-				
+
 				if(!amount){
 					hideSuccessErrorDiv('alert-success','alert-danger','Please enter amount');
 					// $('#challenge-amount-error').text('Please enter amount');
@@ -190,20 +204,20 @@
 					$('#challenge-amount').val('');
 					flag = 0;
 				}else if(amount < 20){
-					hideSuccessErrorDiv('alert-success','alert-danger','Please enter a valid amount');					
+					hideSuccessErrorDiv('alert-success','alert-danger','Please enter a valid amount');
 					// $('#challenge-amount-error').text('Invalid amount!');
 					// $('#challenge-amount-error').addClass('error');
 					// $('#challenge-amount-error').show();
 					flag = 0;
 				}else if(!(amount%5===0)){
-					hideSuccessErrorDiv('alert-success','alert-danger','Please enter a valid amount');					
+					hideSuccessErrorDiv('alert-success','alert-danger','Please enter a valid amount');
 					// $('#challenge-amount-error').text('Invalid amount!');
 					// $('#challenge-amount-error').addClass('error');
 					// $('#challenge-amount-error').show();
 					flag = 0;
 				}
-				
-				
+
+
 				if(flag){
 					$form = $(this);
 					$.ajax({
@@ -225,18 +239,18 @@
 						var errors = $.parseJSON(data.responseText);
 						// $('#challenge-amount-error').text(errors.message);
 						// $('#challenge-amount-error').show();
-						hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+						hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 					},
-					complete:function(){	
-						$('#challenge-amount').val('');					
+					complete:function(){
+						$('#challenge-amount').val('');
 						$('.loading').hide();
 					}
-						
+
 					});
-				}			
+				}
           });
 
-			
+
 		});
 
 		function hideSuccessErrorDiv(remove_class,add_class,message){
@@ -266,10 +280,10 @@
 			return socket;
 		}
 
-		function createChallengeSoc(data){ 
+		function createChallengeSoc(data){
 			var prize	=	getPrizeAmount(data.amount);
 			var html=	'';
-			
+
 			html	+='<div id="pp2"><div id="chdiv-'+data.id+'" class="betCard mt-1">';
 			html	+='<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">'+data.cname+' </span></span>';
 			html	+='<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span>';
@@ -387,7 +401,7 @@
 				html	=	'<div id="pp2"><button id="'+data.id+'-accept" class="btn btn-success px-3 btn-sm" style="cursor: pointer;float: left;width: 65px;height: 31px; " onclick="acceptChallenge('+data.id+')">START</button><button id="'+data.id+'-deny" class="btn btn-danger px-3 btn-sm" style="cursor: pointer;float: right;width: 72px;height: 31px;" onclick="denyChallenge('+data.id+')">REJECT</button></div>';
 				document.getElementById(data.id+'-buttons').innerHTML	=	html;
 				document.getElementById(data.id+'-finding').innerHTML	=	data.oname;
-				
+
 				var loading	=	document.getElementById(data.id+"-loading");
 				loading.setAttribute("src","");
 				loading.setAttribute("src","{{ asset('front/images/author.svg')}}");
@@ -395,19 +409,19 @@
 				// var htmlData	=	acceptDenyHtml(data);
 				// $("#my-challenge-div").prepend(htmlData);
 			}else if(data.o_id == user_id){
-				//var htmlData	=	cancelReqHtml(data);				
+				//var htmlData	=	cancelReqHtml(data);
 				//$("#my-challenge-div").prepend(htmlData);
 			}else{
 				$('#chdiv-'+data.id).remove();
 				var htmlCode	=	playingGameHtml(data);
 				$('#rp4').append(htmlCode);
-			}			
+			}
 		}
 
 		function cancelReqSoc(data){
 			var user_id	=	'{{Auth::user()->id}}';
 			console.log('Socc '+data.id+'-buttons');
-			if(data.c_id == user_id){			
+			if(data.c_id == user_id){
 				document.getElementById(data.id+'-buttons').innerHTML	=	'';
 				html	=	'<div id="pp2"><button class="btn btn-danger px-3 btn-sm" onclick="cancelChallengeCre('+data.id+')">DELETE</button></div>';
 				document.getElementById(data.id+'-buttons').innerHTML	=	html;
@@ -416,14 +430,14 @@
 				var loading	=	document.getElementById(data.id+"-loading");
 				loading.setAttribute("src","");
 				loading.setAttribute("src","{{ asset('front/images/small-loading.gif')}}");
-				//$('#chdiv-'+data.id).remove();	
+				//$('#chdiv-'+data.id).remove();
 				//var htmlData	=	listChallengeCre(data);
 				//$("#my-challenge-div").prepend(htmlData);
 			}else if(data.o_id == user_id){
 				document.getElementById(data.id+'-buttons').innerHTML	=	'';
 				html	=	'<div id="pp2"><button id="'+data.id+'-play" class="bg-secondary playButton cxy" onclick="playChallenge('+data.id+');">Play</button></div>';
 				document.getElementById(data.id+'-buttons').innerHTML	=	html;
-			}else{				
+			}else{
 				var requestBtn	=	document.getElementById(data.id+"-requested");
 				if(requestBtn != null || requestBtn != undefined){
 					$("#"+data.id+"-requested").removeClass('bg-warning');
@@ -442,15 +456,15 @@
 					var htmlCode	=	createChallengeSoc(data);
 					$('#challenge-div').append(htmlCode);
 				}
-			}			
+			}
 		}
 
 		function acceptChallengeSoc(data){
 			var html=	'';
 			var user_id	=	'{{Auth::user()->id}}';
-			if(data.c_id == user_id){ 
+			if(data.c_id == user_id){
 				$('#chdiv-'+data.id).remove();
-				var htmlCode	=	viewGameHtml(data);				
+				var htmlCode	=	viewGameHtml(data);
 			//	$('#mychallenge-div-play').append(htmlCode);
 				let redirectURL = "{{ route('challenge-detail', ':id') }}";
 				redirectURL = redirectURL.replace(':id', data.id);
@@ -468,7 +482,7 @@
 				requestBtn.setAttribute("id",data.id+"-start-btn");
 				requestBtn.setAttribute("onclick","startChallenge("+data.id+");");
 				//$('#chdiv-'+data.id).remove();
-				//var htmlCode	=	startGameHtml(data);				
+				//var htmlCode	=	startGameHtml(data);
 				//$('#challenge-div').prepend(htmlCode);
 			}
 		}
@@ -478,17 +492,17 @@
 			var user_id	=	'{{Auth::user()->id}}';
 			if(data.c_id == user_id || data.o_id == user_id){
 				$('#chdiv-'+data.id).remove();
-				var htmlCode	=	viewGameHtml(data);				
+				var htmlCode	=	viewGameHtml(data);
 			//	$('#mychallenge-div-play').append(htmlCode);
 				let redirectURL = "{{ route('challenge-detail', ':id') }}";
 				redirectURL = redirectURL.replace(':id', data.id);
 				window.location.href = redirectURL;
 			}
 		}
-		
+
 		function cancelChallengeCre(ch_id){
 			let socket = createSocket();
-			$('.loading').show();						
+			$('.loading').show();
 			$.ajax({
 				type: "POST",
 				async: false,
@@ -496,7 +510,7 @@
 				url: '{{ route('cancel-challenge') }}',
 				data: 'ch_id='+ch_id,
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){
 					socket.emit('cancelChallengeServer', data.data);
@@ -506,19 +520,19 @@
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});		
+
+			});
 		}
 
 		function playChallenge(ch_id){
 			let socket = createSocket();
-			$('.loading').show();						
+			$('.loading').show();
 			$.ajax({
 				type: "POST",
 				async: false,
@@ -526,7 +540,7 @@
 				url: '{{ route('play-challenge') }}',
 				data: 'ch_id='+ch_id,
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){
 					socket.emit('playChallengeServer', data.data);
@@ -548,19 +562,19 @@
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});		
+
+			});
 		}
 
 		function acceptChallenge(ch_id){
 			let socket = createSocket();
-			$('.loading').show();						
+			$('.loading').show();
 			$.ajax({
 				type: "POST",
 				async: false,
@@ -568,7 +582,7 @@
 				url: '{{ route('accept-challenge') }}',
 				data: 'ch_id='+ch_id,
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){
 					socket.emit('acceptChallengeServer', data.data);
@@ -578,20 +592,20 @@
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});		
+
+			});
 		}
 
 		function denyChallenge(ch_id){
 			let socket = createSocket();
-			$('.loading').show();	
-				
+			$('.loading').show();
+
 			$.ajax({
 				type: "POST",
 				async: false,
@@ -599,7 +613,7 @@
 				url: '{{ route('deny-challenge') }}',
 				data: 'ch_id='+ch_id,
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){ console.log('Deny  '+ch_id+'-buttons');
 					socket.emit('cancelReqServer', data.data);
@@ -613,19 +627,19 @@
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});		
+
+			});
 		}
 
 		function startChallenge(ch_id){
 			let socket = createSocket();
-			$('.loading').show();						
+			$('.loading').show();
 			$.ajax({
 				type: "POST",
 				async: false,
@@ -633,7 +647,7 @@
 				url: '{{ route('start-challenge') }}',
 				data: 'ch_id='+ch_id,
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){
 					socket.emit('startChallengeServer', data.data);
@@ -643,19 +657,19 @@
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});		
+
+			});
 		}
 
 		function cancelChallengeReq(ch_id){
 			let socket = createSocket();
-			$('.loading').show();						
+			$('.loading').show();
 			$.ajax({
 				type: "POST",
 				async: false,
@@ -663,7 +677,7 @@
 				url: '{{ route('cancel-challenge-req') }}',
 				data: 'ch_id='+ch_id,
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){
 					socket.emit('cancelReqServer', data.data);
@@ -684,14 +698,14 @@
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});		
+
+			});
 		}
 
 		$(window).on('focus', function () {
@@ -699,15 +713,15 @@
 			$.ajax({
 				type: "GET",
 				dataType: 'json',
-				url: '{{ route('challenge-listing') }}',				
+				url: '{{ route('challenge-listing') }}',
 				beforeSend: function(){
-					
+
 				},
 				success:function(data){
 					var myChallenges 		= data.data.myChallenges;
 					var challenges 			= data.data.challenges;
 					var myPlayChallenges 	= data.data.myPlayChallenges;
-					
+
 					var challengeDivHtml	=	setChallengsOpen(challenges);
 					$("#challenge-div").empty();
 					$("#challenge-div").append(challengeDivHtml);
@@ -719,21 +733,21 @@
 					var myPlayChallengeDivHtml	=	setMyPlayChallenges(myPlayChallenges);
 				//	$("#mychallenge-div-play").empty();
 					//$("#mychallenge-div-play").append(myPlayChallengeDivHtml);
-					
+
 				//	$("#challenge-div").innerHTML = '<h1>HIIII</h1>';
 				},
 				error:function(data){
 					var errors = $.parseJSON(data.responseText);
 					// $('#challenge-amount-error').text(errors.message);
 					// $('#challenge-amount-error').show();
-					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);	
+					hideSuccessErrorDiv('alert-success','alert-danger',errors.message);
 				},
 				complete:function(){
 					// $('#create-challenge')[0].reset();
 					$('.loading').hide();
 				}
-				
-			});	
+
+			});
 		});
 
 		function setChallengsOpen(challenges){
@@ -741,7 +755,7 @@
 			var html	=	'';
 			for (let i = 0; i < challenges.length; i++) {
 				var prize = getPrizeAmount(challenges[i].amount);
-				if(challenges[i].c_id == user_id){					
+				if(challenges[i].c_id == user_id){
 					html	+='<div id="pp2"><div id="chdiv-'+challenges[i].id+'" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
 					html	+='<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt="">'+challenges[i].amount+'</span><div class="betCard-title d-flex align-items-center text-uppercase">';
 					html	+='<span class="ml-auto" id="'+challenges[i].id+'-buttons"><button class="btn btn-danger px-3 btn-sm" onclick="cancelChallengeCre('+challenges[i].id+')">DELETE</button>';
@@ -756,7 +770,7 @@
 					html	+='<div class="global-rupee-icon"><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">'+challenges[i].amount+'</span></div></div>';
 					html	+='<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">'+prize+'</span></div>';
 					html	+='</div><button id="'+challenges[i].id+'-play" class="bg-secondary playButton cxy" onclick="playChallenge('+challenges[i].id+');">Play</button></div></div></div>';
-				}			
+				}
 			}
 
 			return html;
@@ -794,7 +808,7 @@
 					html	+='<div id="pp2"><div id="chdiv-'+myChallenges[i].id+'" class="betCard mt-1"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">You </span></span>';
 					html	+='<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">'+myChallenges[i].amount+'</span></div></div>';
 					html	+='<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">'+prize+'</span>';
-					html	+='</div></div><button id="'+myChallenges[i].id+'-requested" class="bg-warning playButton cxy" onclick="cancelChallengeReq('+myChallenges[i].id+')">Requested</button></div></div></div>	';	
+					html	+='</div></div><button id="'+myChallenges[i].id+'-requested" class="bg-warning playButton cxy" onclick="cancelChallengeReq('+myChallenges[i].id+')">Requested</button></div></div></div>	';
 				}else if(myChallenges[i].status == 3 && myChallenges[i].o_id == user_id){
 					html    +='<div id="pp2"><div id="chdiv-'+myChallenges[i].id+'" class="betCard mt-1"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">'+myChallenges[i].cname+' </span></span>';
 					html    +='<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">'+myChallenges[i].amount+'</span>';

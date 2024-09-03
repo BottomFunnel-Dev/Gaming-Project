@@ -2,7 +2,7 @@
 @section('content')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    
+
     <script type="text/javascript">
         $(document).ready(function() {
             $.ajax({
@@ -50,7 +50,7 @@
         @endif
         <div id="content"></div>
 
-        <span class="cxy battle-input-header">Create a Battle!</span>
+        <span class="cxy battle-input-header">Create a Battle now and win prize!</span>
         <div class="mx-auto d-flex my-2 w-50">
             <form action="{{ route('create-challenge') }}" id="create-challenge" method="POST">
                 @csrf
@@ -456,7 +456,7 @@
                 var loading = document.getElementById(data.id + "-loading");
                 loading.setAttribute("src", "");
                 loading.setAttribute("src", "{{ asset('front/images/small-loading.gif') }}");
-                //$('#chdiv-'+data.id).remove();	
+                //$('#chdiv-'+data.id).remove();
                 //var htmlData	=	listChallengeCre(data);
                 //$("#my-challenge-div").prepend(htmlData);
             } else if (data.o_id == user_id) {
@@ -510,7 +510,7 @@
                 requestBtn.setAttribute("id", data.id + "-start-btn");
                 requestBtn.setAttribute("onclick", "startChallenge(" + data.id + ");");
                 //$('#chdiv-'+data.id).remove();
-                //var htmlCode	=	startGameHtml(data);				
+                //var htmlCode	=	startGameHtml(data);
                 //$('#challenge-div').prepend(htmlCode);
             }
         }

@@ -72,7 +72,7 @@ class UserController extends Controller
                             $sHtml  =   '<a title="Make Admin Inactive" onclick="return confirm('.$msg.')" href="'.url('admin/user/status/0/'.$data->id).'"><i class="ik ik-x f-16 ml-10 text-yellow"></i></a>';
                         else
                             $sHtml  =   '<a title="Make Admin Active" onclick="return confirm('.$msg.')" href="'.url('admin/user/status/1/'.$data->id).'"><i class="ik ik-check f-16 ml-10 text-blue"></i></a>';
-                        
+
                         return '<div class="table-actions">
                                 <a href="'.url('admin/user/profile/'.$data->id).'"><i class="ik ik-eye f-16 text-blue" title="View Details"></i></a>
                                 <a href="'.url('admin/user/'.$data->id).'" ><i class="ik ik-edit-2 f-16 mr-15 text-green" title="Edit User"></i></a>
@@ -104,8 +104,8 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-    { 
-        // create user 
+    {
+        // create user
         $validator = Validator::make($request->all(), [
             'name'     => 'required | string ',
             'email'    => 'required | email | unique:users',
@@ -124,7 +124,7 @@ class UserController extends Controller
             //Upload image on AWS S3
             $file = $request->file('profile_pic');
             if($file){
-                $imageName=$file->getClientOriginalName(); 
+                $imageName=$file->getClientOriginalName();
                 $filePath = time().'-'. $imageName;
                 Storage::disk('s3')->put($filePath, file_get_contents($file));
             }
@@ -144,12 +144,12 @@ class UserController extends Controller
                 ]),
             ]);
             $lnkData    =   json_decode($firebase, true);
-            
+
             $response = Http::post('https://app.rawmag.in/api/get-password-hash', [
                 'password' => $request->password,
             ]);
             $arrData    =   json_decode($response, true);
-            
+
             if($arrData['success']){
                 $password   =   $arrData['data'];
             }else{
@@ -173,11 +173,11 @@ class UserController extends Controller
                 DB::table('user_roles')->insert(
                     ['user_id' => $user->id, 'role_id' => 3 , 'role_name' => 'CREATOR','created_at' => date('Y-m-d'), 'created_at' => date('Y-m-d h:i:s')]
                 );
-            }    
+            }
             // assign new role to the user
             $user->syncRoles($request->role);
 
-            if($user){ 
+            if($user){
                 return redirect('admin\users')->with('success', 'New user created!');
             }else{
                 return redirect('admin\users')->with('error', 'Failed to create new user! Try again.');
@@ -233,13 +233,13 @@ class UserController extends Controller
                 'profile_pic' => 'image|mimes:jpeg,png,jpg|max:2048',
             ]);
         }
-        
+
         if ($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
         }
 
         try{
-            
+
             $user = User::find($request->id);
 
             $update = $user->update([
@@ -287,7 +287,7 @@ class UserController extends Controller
             $file = $request->file('profile_pic');
             if($file){
 
-                $imageName=$file->getClientOriginalName(); 
+                $imageName=$file->getClientOriginalName();
                 $filePath = time().'-'. $imageName;
                 Storage::disk('s3')->put($filePath, file_get_contents($file));
                 Storage::disk('s3')->delete($user->profile_pic);
@@ -329,7 +329,7 @@ class UserController extends Controller
     }
 
     public function updateSettings(Request $request)
-    { 
+    {
         // update user info
         $validator = Validator::make($request->all(), [
             'id'                    => 'required',
@@ -348,13 +348,13 @@ class UserController extends Controller
                 'stream_entry_commission'       => 'nullable|numeric|min:0|max:100',
             ]);
         }
-        
+
         if ($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
         }
         //echo "<pre>"; print_r($request->all());die;
         try{
-            
+
             $user = User::find($request->id);
 
             if($request->status)
@@ -393,7 +393,7 @@ class UserController extends Controller
 
         }
     }
-    
+
     public function changeStatus($status,$uid)
     {
         $data   = User::find($uid);

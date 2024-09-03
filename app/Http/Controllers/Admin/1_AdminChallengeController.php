@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminChallengeController extends Controller
 {
-  
+
     protected $paging   =   200;
 
     /**
@@ -46,7 +46,7 @@ class AdminChallengeController extends Controller
             $search_in         =  $request->search_in;
 
             $challenges  = Challenge::select('challenges.*','users.username')->with(['creator','opponent','result'])
-                            ->leftJoin('users','challenges.'.$search_in,'=','users.id')                            
+                            ->leftJoin('users','challenges.'.$search_in,'=','users.id')
                             ->where('challenges.id','LIKE','%'.$search.'%')
                             ->orWhere('challenges.amount','LIKE','%'.$search.'%')
                             ->orWhere('challenges.type','LIKE','%'.$search.'%')
@@ -56,8 +56,8 @@ class AdminChallengeController extends Controller
         }else{
             $challenges  = Challenge::with(['creator','opponent','result'])->latest()->paginate($this->paging);
         }
-        
-      
+
+
         //echo "<pre>";print_r($challenges);die;
         return view('admin/challenge/challenges',compact('challenges','search','search_in'));
     }
@@ -71,7 +71,7 @@ class AdminChallengeController extends Controller
     }
 
     public function cancelGame(Request $request)
-    {        
+    {
         $validator              = Validator::make($request->all(), [
             'ch_id'              => 'required',
         ]);
@@ -81,7 +81,7 @@ class AdminChallengeController extends Controller
         }
 
         try
-        {                   
+        {
             $update = $this->setChStatus($request->ch_id);
 
             if($update){
@@ -92,14 +92,14 @@ class AdminChallengeController extends Controller
                                         return $query
                                         ->where('status','Create')
                                         ->orWhere('status','Play');
-                                    })->get();            
-            
+                                    })->get();
+
             foreach($transactions as $key => $val){
-				$user_data = User::where('id', $val->user_id)->first();		
-			$wallet = $user_data->wallet;		
-            
-					$closing_balance = 	 $wallet+$val->amount;			
-            
+				$user_data = User::where('id', $val->user_id)->first();
+			$wallet = $user_data->wallet;
+
+					$closing_balance = 	 $wallet+$val->amount;
+
                 $refund = Transaction::create([
                     'source_id'        => $request->ch_id,
                     'user_id'          => $val->user_id,
@@ -107,20 +107,20 @@ class AdminChallengeController extends Controller
                     'status'           => 'Cancel',
                     'remark'           => 'Cancel refund by admin',
                     'ip'               => $request->ip(),
-					'closing_balance' =>  $closing_balance         
-             
+					'closing_balance' =>  $closing_balance
+
                 ]);
 
                 if($refund){
                     $this->updateWallet($val->amount,$val->user_id);
                 }
             }
-            
+
             return response([
                 'message'        => 'Game cancelled successfully!'
             ]);
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -128,7 +128,7 @@ class AdminChallengeController extends Controller
     }
 
     public function gameWinner(Request $request)
-    {        
+    {
         $validator              = Validator::make($request->all(), [
             'ch_id'             => 'required',
             'user_id'           => 'required',
@@ -136,10 +136,10 @@ class AdminChallengeController extends Controller
 
         if($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
-        } 
+        }
 
         try
-        {      
+        {
             $update = $this->setChStatus($request->ch_id);
 
             if($update){
@@ -155,13 +155,13 @@ class AdminChallengeController extends Controller
             if($chData->o_id    ==  $request->user_id){
                 $transaction   =   $this->getTransaction($request->ch_id, $request->user_id, 'Play');
             }
-                                    
+
             if($transaction){
                 $a_amount       =   $this->calculateCom($chData->amount);
                 $f_amount       =   (2 * $chData->amount - $a_amount);
                 $r_amount       =   0.02 * $chData->amount;
                 $closing_balance = 	 $f_amount;
-              
+
                 $winner         = Transaction::create([
                     'source_id'        => $request->ch_id,
                     'user_id'          => $request->user_id,
@@ -171,8 +171,8 @@ class AdminChallengeController extends Controller
                     'remark'           => 'Set winner by admin',
                     'closing_balance'  =>  $closing_balance,
                     'ip'               => $request->ip()
-                    
-                  
+
+
                 ]);
 
                 if($winner){
@@ -189,7 +189,7 @@ class AdminChallengeController extends Controller
                 'message'        => 'Unable to set winner!'
             ],400);
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -197,9 +197,9 @@ class AdminChallengeController extends Controller
     }
 
     public function makeWinner($ch_id, $user_id, Request $request)
-    {        
+    {
         try
-        {                      
+        {
             $chData            =   Challenge::find($ch_id);
 
             if($chData->status == 4){
@@ -209,15 +209,15 @@ class AdminChallengeController extends Controller
                     $this->setChResult($ch_id, 0, $user_id);
                 }
 
-			$user_data = User::where('id', $user_id)->first();		
-			$wallet = $user_data->wallet;		
-        
+			$user_data = User::where('id', $user_id)->first();
+			$wallet = $user_data->wallet;
+
                 $a_amount       =   $this->calculateCom($chData->amount);
                 $f_amount       =   (2 * $chData->amount - $a_amount);
                 $r_amount       =   0.02 * $chData->amount;
-		
-				$closing_balance = 	 $wallet+$f_amount;			
-            
+
+				$closing_balance = 	 $wallet+$f_amount;
+
                 $winner         = Transaction::create([
                     'source_id'        => $ch_id,
                     'user_id'          => $user_id,
@@ -226,8 +226,8 @@ class AdminChallengeController extends Controller
                     'status'           => 'Won',
                     'remark'           => 'Set winner by admin manually',
                     'ip'               => $request->ip(),
-					'closing_balance' =>  $closing_balance         
-              
+					'closing_balance' =>  $closing_balance
+
                 ]);
 
                 if($winner){
@@ -252,7 +252,7 @@ class AdminChallengeController extends Controller
                         if($txn){
                             $uData->increment('usd_wallet', $r_amount);
                             $uData->increment('wallet', $r_amount);
-                        }                                    
+                        }
                     }
                 }
 
@@ -261,7 +261,7 @@ class AdminChallengeController extends Controller
 
             return redirect()->back()->with('error', 'Unable to set winner!');
         }catch (\Exception $e) {
-            $bug = $e->getMessage();    
+            $bug = $e->getMessage();
             return response([
                 'message'        => $bug
             ],400);
@@ -293,18 +293,32 @@ class AdminChallengeController extends Controller
         return 1;
     }
 
-    private function calculateCom($amount){
-        if($amount == 30 || $amount == 40 || $amount == 50){
-            $a_amount	=	5;
-        }elseif($amount > 50 && $amount <=250){
-            $a_amount	=	10/100*($amount);
-        }elseif($amount > 250 && $amount <=500){
-            $a_amount	=	25;
-        }elseif($amount > 500){
-            $a_amount	=	5/100*($amount);
-        }
-        return $a_amount;
-    }
+    // function calculateCom($amount) {
+    //     $commission = 0;
+    //     $prize = 0;
+
+    //     if ($amount >= 50 && $amount < 250) {
+    //         // 10% commission for bets between 50 and 250
+    //         $commission = $amount * 0.10;
+    //         $prize = $amount - $commission;
+    //     } elseif ($amount >= 250 && $amount <= 500) {
+    //         // Fixed 25 rupees commission for bets between 250 and 500
+    //         $commission = 25;
+    //         $prize = $amount - $commission;
+    //     } elseif ($amount > 500) {
+    //         // 5% commission for bets above 500
+    //         $commission = $amount * 0.05;
+    //         $prize = $amount - $commission;
+    //     } else {
+    //         // If the amount doesn't meet any conditions, set prize equal to amount
+    //         $prize = $amount;
+    //     }
+
+    //     return [
+    //         'commission' => $commission,
+    //         'prize' => $prize
+    //     ];
+    // }
 
     private function updateReferral($request, $amount, $user_id){
         $usertData =   User::with('setting')->find($user_id);
@@ -325,9 +339,9 @@ class AdminChallengeController extends Controller
             if($txn){
                 $uData->increment('usd_wallet', $amount);
                 $uData->increment('wallet', $amount);
-            }            
+            }
         }
-        
+
     }
 
     private function getTransaction($ch_id, $user_id, $status){
@@ -339,33 +353,33 @@ class AdminChallengeController extends Controller
 
     public function roomCode($ch_id){
         $challenge   =   Challenge::find($ch_id);
-        if(($challenge->status != 0 || $challenge->status != 5) && $challenge->rcode == 0){ 
+        if(($challenge->status != 0 || $challenge->status != 5) && $challenge->rcode == 0){
             return view('admin/challenge/room-code',compact('challenge'));
         }else{
             return redirect()->back()->with('error', 'Unable to change room code');
         }
         //echo "<pre>";print_r($user_id);die;ManualPayment
-        
+
     }
 
     public function updateRoomCode(Request $request)
-    { 
+    {
         $request->validate( [
 			'rcode' => 'required|numeric|unique:challenges,rcode',
 			'ch_id'   => 'required|numeric'
 		]);
         $challenge   =   Challenge::find($request->ch_id);
-                     
+
         if(($challenge->status != 0 || $challenge->status != 5) && $challenge->rcode == 0){
             $challenge->update([
                 'rcode' =>  $request->rcode,
             ]);
-            return response()->json(['data'=>$challenge]);            
+            return response()->json(['data'=>$challenge]);
         }else{
             return response([
                 'message'        => 'Unable to process your request at this time!'
             ],400);
         }
     }
-   
+
 }

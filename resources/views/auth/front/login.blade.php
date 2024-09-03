@@ -93,10 +93,11 @@
 
                 $('#login-form').submit(function(e) {
                     e.preventDefault();
-
                     var mobile = $('#mobile-no').val();
                     var otp = $('#verify-otp').val();
                     var flag = 1;
+
+                    // Validations (unchanged)
                     if (!mobile) {
                         hideSuccessErrorDiv('alert-success', 'alert-danger', 'Please enter mobile number');
                         flag = 0;
@@ -112,56 +113,69 @@
                     if (otp && !$.isNumeric(otp)) {
                         hideSuccessErrorDiv('alert-success', 'alert-danger', 'Please enter numeric value');
                         flag = 0;
-                        $('#verify-otp').val('')
+                        $('#verify-otp').val('');
                     } else if (otp && otp.length != 6) {
                         hideSuccessErrorDiv('alert-success', 'alert-danger', 'Please enter 6 digit OTP');
                         flag = 0;
-                        $('#verify-otp').val('')
+                        $('#verify-otp').val('');
                     }
 
                     if (flag) {
-                        $form = $(this);
-
                         $.ajax({
                             type: "POST",
                             dataType: 'json',
                             url: '{{ route('login') }}',
-                            data: $form.serialize(),
+                            data: $(this).serialize(),
                             beforeSend: function() {
                                 $('.loading').show();
                             },
                             success: function(data) {
-                                console.log(data);
                                 if (data.status == 1) {
                                     hideSuccessErrorDiv('alert-danger', 'alert-success', data
                                         .message);
                                     $('#verify-otp').val('');
                                     $('#verify-otp-div').show();
                                     $('#mobile-no').attr('readonly', 'readonly');
-                                }
-
-                                if (data.status == 2) {
+                                    startTimer(); // Start the timer when OTP is generated
+                                } else if (data.status == 2) {
                                     window.location.href = data.url;
                                 }
                             },
-                            error: function(data) {
-                                console.log(data);
-                                //alert(data.responseJSON.message);
-                                hideSuccessErrorDiv('alert-success', 'alert-danger', data
-                                    .responseJSON.message);
+                            error: function(xhr) {
+                                console.error("Error Response: ", xhr.responseText);
+                                var errorMessage = xhr.responseJSON ? xhr.responseJSON.message :
+                                    "An error occurred";
+                                hideSuccessErrorDiv('alert-success', 'alert-danger', errorMessage);
                                 $('#verify-otp').val('');
                             },
-                            complete: function(data) {
-                                //    $('.loading').hide();
-                                //    $('#withDraw')[0].reset();
-                                // 	$("#withDraw").trigger("reset");
-                                //location.reload();
+                            complete: function() {
+                                $('.loading').hide();
                             }
-
                         });
                     }
                 });
 
+                function startTimer() {
+                    $('#resend-otp').hide();
+                    $('#timer').show();
+                    var countdown = 30;
+                    $('#timer').text(countdown + " seconds remaining");
+                    var interval = setInterval(function() {
+                        countdown--;
+                        $('#timer').text(countdown + " seconds remaining");
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            $('#timer').hide();
+                            $('#resend-otp').show();
+                        }
+                    }, 1000);
+                }
+
+                function resendOtp() {
+                    // Implement resend OTP logic here
+                    console.log('Resend OTP clicked');
+                    // Make an AJAX call to resend OTP
+                }
             });
 
             function hideSuccessErrorDiv(remove_class, add_class, message) {

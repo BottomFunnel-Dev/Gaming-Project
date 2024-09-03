@@ -19,7 +19,7 @@
 			</button> -->
 		</div>
       <div class="divider-x"></div>
-      
+
   <style>
     .card {
     --bs-card-spacer-y: 1rem;
@@ -51,7 +51,7 @@
     position: relative;
 }
   </style>
-            
+
   <div class="mb-2 shadow card">
     <div class="text-start card-body">
       <div class="d-flex align-items-center justify-content-between">
@@ -66,10 +66,10 @@
             <em><img src="{{asset('front/images/vs.png')}}" alt="verses-icon" width="24" height="35"></em>
           </span>
             <?php
-				$a_amount	=	5/100*($chData->amount);
+				$a_amount	=	10/100*($chData->amount);
 				$prize	=	(2 * $chData->amount) - $a_amount;
 			?>
-          <span class="text-success fw-bold text-center"><b>₹{{$prize}}</b></span>
+          {{-- <span class="text-success fw-bold text-center"><b>₹{{$prize}}</b></span> --}}
         </div>
         <div class="d-flex flex-column align-items-end vstack gap-2">
           <div class="bg-dark rounded-circle" style="height: 24px; width: 24px;">
@@ -84,11 +84,11 @@
           sound.play();
       }
   </script>
-  
-  
-  
-  
-  
+
+
+
+
+
   <div class="room-code">
     <div class="room-code-bg text-center">
         <div >
@@ -125,24 +125,24 @@
 			</button>
           </a>
 		</div>
-      
-      
-      
-      
-      
-      
+
+
+
+
+
+
 		<div class="d-grid mt-1">
-		</div></div></div> 
+		</div></div></div>
             @if(!$chData->rcode)
 				<div  class="alert-success" id="alert-success-div">
 					<p class="blink_me">Wait for room code</p>
 				</div>
 			@endif
-    
-    </div> </div> 
+
+    </div> </div>
            <div class="match-status">
       <h6 class="title">Match Status</h6>
-      <p>After completion of your game, select the status of the game and post your screenshot 
+      <p>After completion of your game, select the status of the game and post your screenshot
         below.</p>
 		@if(isset($chData->userresult))
 		<p style="color:red">You have submitted result as <b>"{{ $chData->userresult->result }}"</b> at {{ $chData->userresult->created_at }}</p>
@@ -158,18 +158,18 @@
 				    	<input type="radio" name="result" value="Won" id="result-won-res">
 				    	<label class="btn btn-success btn-sm" for="result-won-res">I Won</label>
 				    </div>
-				    
+
 					<div class="float-left" style="margin-right:35px">
 						<input type="radio" name="result" value="Loss" id="result-loss-res">
 						<label class="btn btn-danger btn-sm" for="result-loss-res">I Lost</label>
 					</div>
-					
+
 					<div class="float-right">
 						<input type="radio" name="result" value="Cancel" id="result-cancel-res">
 						<label class="btn btn-primary btn-sm" for="result-cancel-res">
 						Cancel</label>
 					</div>
-					
+
 					<div style="display:none" id="cancel-text-res">
 					    <select name="reason" id="cancel_reason-res">
 					        <option value="No Room Code">No Room Code</option>
@@ -182,9 +182,9 @@
 						<!--<textarea name="reason" id="cancel_reason-res" placeholder="Cancel Reason">दूसरा गेम ज्वाइन करने के लिए</textarea>-->
 						<div style="display:none; color:red" id="result-error-reason-res"></div>
 					</div>
-              
+
               <!-------list------>
-              
+
               <!-------list------>
 					<div style="display:none" id="upload-image-res">
 						<input type="file" name="result_img" id="result_img-res" onchange="compressAndUpload(this);" accept="image/*">
@@ -195,9 +195,9 @@
 					</div>
 					</div>
 						<div class="submit-btn mx-4 mb-3" style="display:flex;justify-content:center;">
-                          
+
 						<button class="btn btn-success" style="width: 180px;" type="submit" id="result-submit-btn-res">Submit</button>
-                         
+
                             </div>
 			</form>
 		</div>
@@ -229,7 +229,7 @@
 
 
 		<div class="divider-y"></div>
-		
+
 		 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
   <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
         integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
@@ -326,7 +326,7 @@ function dataURItoBlob(dataURI) {
 			$('#success-error-div').show();
 			$('#success-error-message').text('Room Code Copied!');
 			$("#success-error-div").fadeTo(2000, 500).slideUp(500, function(){
-				$("#success-error-div").hide(500);				
+				$("#success-error-div").hide(500);
 			});
 	  }else{
 		  $('#success-error-div').removeClass('alert-success');
@@ -334,7 +334,7 @@ function dataURItoBlob(dataURI) {
 			$('#success-error-div').show();
 			$('#success-error-message').text('Room Code not found!');
 			$("#success-error-div").fadeTo(2000, 500).slideUp(500, function(){
-				$("#success-error-div").hide(500);				
+				$("#success-error-div").hide(500);
 			});
 	  }
 	}
@@ -360,7 +360,7 @@ function dataURItoBlob(dataURI) {
 			$('#success-error-div').show();
 			$('#success-error-message').text('Room Code Copied!');
 			$("#success-error-div").fadeTo(2000, 500).slideUp(500, function(){
-				$("#success-error-div").hide(500);				
+				$("#success-error-div").hide(500);
 			});
 	  }else{
 		  $('#success-error-div').removeClass('alert-success');
@@ -368,11 +368,11 @@ function dataURItoBlob(dataURI) {
 			$('#success-error-div').show();
 			$('#success-error-message').text('Room Code not found!');
 			$("#success-error-div").fadeTo(2000, 500).slideUp(500, function(){
-				$("#success-error-div").hide(500);				
+				$("#success-error-div").hide(500);
 			});
 	  }
 	}
-	
+
 	function playSound() {
 		var url	=	" {{ asset('front/sound/notification_tone.mp3')}} ";
 		const audio = new Audio(url);
@@ -394,17 +394,17 @@ function dataURItoBlob(dataURI) {
 					dataType: 'json',
 					url: '{{ route('get-room-code') }}',
 					data: 'ch_id='+challenge_id,
-					
+
 					beforeSend: function(){
 						//$('.loading').show();
 					},
-					success:function(data){		
+					success:function(data){
 					    if(data.data != 0){
 						  $('#copyRoomCode').show();
 						  $('#rcode').val(data.data);
 						  $('#res-room-id-new-'+challenge_id).html(data.data);
 					    }
-						$('#chk-room-id-new').hide();						
+						$('#chk-room-id-new').hide();
 					},
 					error:function(data){
 						var errors = $.parseJSON(data.responseText);
@@ -414,13 +414,13 @@ function dataURItoBlob(dataURI) {
 					complete:function(){
 						$('.loading').hide();
 					}
-					
+
 			});
 		}
 	}
-	
-	
-	 $(function () {		 
+
+
+	 $(function () {
 		 $("#success-error-div").hide();
 		 $.ajaxSetup({
 			headers: {
@@ -430,7 +430,7 @@ function dataURItoBlob(dataURI) {
 
 		function roomCodeSoc(data){
 			var html=	'';
-			var user_id	=	'{{Auth::user()->id}}';			
+			var user_id	=	'{{Auth::user()->id}}';
 			$('#res-room-id-submit-'+data.id).attr("disabled", true);
 			$('#res-room-id-submit-'+data.id).hide();
 			$('#clipboard').show();
@@ -440,7 +440,7 @@ function dataURItoBlob(dataURI) {
 			$('.copy-room-code').show();
 			$('#alert-success-div').hide();
 			$('#res-room-id-new-'+data.id).text(data.rcode);
-			
+
 			$('#challenge-div').prepend(html);
 		}
 
@@ -450,10 +450,10 @@ function dataURItoBlob(dataURI) {
 				$(".spinner-border").hide(500);
 			});
 		}
-		
+
 		$('.res-room-id-class').keyup(function(){
 				var room_id	=	$(this).val();
-				
+
 				if(!room_id){
 					$('#room_id-error').text('ू कड डालिे');
 					$('#room_id-error').addClass('error');
@@ -468,13 +468,13 @@ function dataURItoBlob(dataURI) {
 					$('#room_id-error').hide();
 				}
 		});
-		
+
 		$('#chk-room-id-new').submit(function(e){
 			e.preventDefault();
 			var room_id	=	$('.res-room-id-class').val();
 			var ch_id	=	'{{$chData->id}}';
 			var flag			=	1;
-			
+
 			if(!room_id){
 				$('#room_id-error').text('ू कड डािय');
 				$('#room_id-error').addClass('error');
@@ -491,14 +491,14 @@ function dataURItoBlob(dataURI) {
 				$('#room_id-error').hide();
 			}
 			if(flag){
-				
+
 					$form = $('#chk-room-id-new');
 					$.ajax({
 					type: "POST",
 					dataType: 'json',
 					url: '{{ route('chk-room-id') }}',
 					data: $form.serialize(),
-					
+
 					beforeSend: function(){
 						//$('.loading').show();
 					},
@@ -522,18 +522,18 @@ function dataURItoBlob(dataURI) {
 					complete:function(){
 						$('.loading').hide();
 					}
-					
+
 			});
 			}
-		});          
-		
-		$('#resultSubmitRadioBtn input').on('change', function () { 
+		});
+
+		$('#resultSubmitRadioBtn input').on('change', function () {
 			var room_id	=	$('.res-room-id-class').val();
-			
+
 				$('input[name="result"]').attr("readonly", false);
 			var id	=	$(this).attr('ch-id');
 			var selectedResult = $('input[name=result]:checked', '.resultRadioBtn').val();
-			
+
 			$('#result-submit-btn-res').show();
 			if (selectedResult == 'Won') {
 			  $('#cancel-text-res').hide();
@@ -548,14 +548,14 @@ function dataURItoBlob(dataURI) {
 			  $('#cancel-text-res').show();
 			  $('.screeshot-preview').hide();
 			}
-			
+
 			  $('#resultSubmitRadioBtn').submit(function(e)
-			  {  
-				  var ch_id	=	$('#res-ch-id').val();				  
+			  {
+				  var ch_id	=	$('#res-ch-id').val();
 				e.preventDefault();
 				e.stopImmediatePropagation();
 				flag	=	1;
-				var selectedResult1 = $('input[name=result]:checked', '.resultRadioBtn').val();				
+				var selectedResult1 = $('input[name=result]:checked', '.resultRadioBtn').val();
 				if(selectedResult1 == 'Won'){
 					var fileExtension = ['jpeg', 'jpg', 'png'];
 					var file = $('#result_img-res').val();
@@ -567,7 +567,7 @@ function dataURItoBlob(dataURI) {
 						$('#success-error-message').text('Please upload image!');
 						hideSuccessErrorDiv();
 					}else if ($.inArray(file.split('.').pop().toLowerCase(), fileExtension) == -1) {
-						flag = 0;						
+						flag = 0;
 						$('#success-error-div').removeClass('alert-success');
 						$('#success-error-div').addClass('alert-danger');
 						$('#success-error-div').show();
@@ -585,11 +585,11 @@ function dataURItoBlob(dataURI) {
 						flag = 0;
 					}
 				}
-				
+
 				if(flag){
-					
+
 					$form = $(this);
-					
+
 					$(".spinner-border").show();
 					//$('.loading').css('visibility', 'visible'); //to show
 					//$(".loading").attr("style", "display:block");
@@ -610,17 +610,17 @@ function dataURItoBlob(dataURI) {
 							$('#success-error-div').addClass('alert-success');
 							$('#success-error-div').show();
 							$('#success-error-message').text('Result submitted successfully!');
-							window.location.href = "{{ route('challenges') }}";			
+							window.location.href = "{{ route('challenges') }}";
 					   },
 					   error:function(data){
 						//alert('Server Error!');
 						$('#success-error-div').removeClass('alert-success');
 						$('#success-error-div').addClass('alert-danger');
 						$('#success-error-div').show();
-							
+
 						// alert('Result submitted successfully!!!!');
-						// window.location.href = "{{ route('challenges') }}";		
-						    var errors = $.parseJSON(data.responseText);							
+						// window.location.href = "{{ route('challenges') }}";
+						    var errors = $.parseJSON(data.responseText);
 							$('#success-error-message').text(errors.message);
 							console.log(errors.message);
 							hideSuccessErrorDiv();
@@ -633,17 +633,17 @@ function dataURItoBlob(dataURI) {
 							//closePopup();
 							// $('#resultSubmitRadioBtn')[0].reset();
 							// $("#resultSubmitRadioBtn").trigger("reset");
-							
+
 							// $("#chk-room-id-new").trigger("reset");
 							// $('.res-room-id-class').val('');
-							// window.location.href = "{{ route('challenges') }}";							
+							// window.location.href = "{{ route('challenges') }}";
 						}
-						
+
 					});
 				}
-				
+
 			  });
-			
+
 		  });
         //---------------- Submit result new end --------------//
           let Roomcode = setInterval(()=>{
