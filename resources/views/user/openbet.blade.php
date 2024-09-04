@@ -1,9 +1,8 @@
-@foreach($myChallenges as $key => $mval)	
-				<?php 
-					if($mval->amount == 50){
-						$a_amount	=	5;
-					}elseif($mval->amount > 50 && $mval->amount <=250){
+@foreach($myChallenges as $key => $mval)
+				<?php
+					if($mval->amount >= 50 && $mval->amount <=250){
 						$a_amount	=	10/100*($mval->amount);
+                        // return 10 / 100 * $amount;  // 10% commission for amounts between 50 and 250
 					}elseif($mval->amount > 250 && $mval->amount <=500){
 						$a_amount	=	25;
 					}elseif($mval->amount > 500){
@@ -11,10 +10,10 @@
 					}
 					$prize	=	(2 * $mval->amount) - $a_amount;
 				?>
-				@if($mval->status == 1 && $mval->c_id == Auth::user()->id)	
-          
+				@if($mval->status == 1 && $mval->c_id == Auth::user()->id)
 
-         
+
+
 					<div class="betCard mt-1" id="chdiv-{{$mval->id}}">
 						<div class="d-flex">
                           <span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt="">{{$mval->amount}}</span>
@@ -38,12 +37,12 @@
 								alt=""></div>
 							<div style="line-height: 1;"><span class="betCard-playerName" id="{{$mval->id}}-finding">Finding Player</span></div>
 							</div>
-						</div>						
+						</div>
 					</div>
-            
-          
+
+
 				@elseif($mval->status == 1 && $mval->o_id == Auth::user()->id)
-          
+
 					<div id="chdiv-{{$mval->id}}" class="betCard mt-1">
 						<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #f02236;">{{$mval->cname}} </span></span>
 						<div class="d-flex pl-3">
@@ -57,11 +56,11 @@
 							</div><button id="{{$mval->id}}-play" class="bg-secondary playButton cxy" onclick="playChallenge({{$mval->id}});">Play</button>
 						</div>
 					</div>
-          
-          
+
+
 				@elseif($mval->status ==2 && $mval->c_id == Auth::user()->id)
-          
-          
+
+
 					<div class="betCard mt-1" id="chdiv-{{$mval->id}}">
 						<div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR<img
 								class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt="">{{$prize}}</span>
@@ -86,13 +85,13 @@
 								alt=""></div>
 							<div style="line-height: 1;"><span class="betCard-playerName">{{$mval->oname}}</span></div>
 							</div>
-						</div>						
+						</div>
 					</div>
-          
-          
+
+
 				@elseif($mval->status ==2 && $mval->o_id == Auth::user()->id)
-          
-          
+
+
 					<div id="chdiv-{{$mval->id}}" class="betCard mt-1">
 						<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">You </span></span>
 						<div class="d-flex pl-3">
@@ -103,14 +102,14 @@
 							<div><span class="betCard-subTitle">Prize</span>
 							<div><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">{{$prize}}</span>
 							</div>
-							</div>							
+							</div>
 							<button id="{{$mval->id}}-requested" class="bg-warning playButton cxy" onclick="cancelChallengeReq({{$mval->id}})">Requested</button>
 						</div>
-					</div>	
-        
+					</div>
+
 				@elseif($mval->status == 3 && $mval->o_id == Auth::user()->id)
-          
-          
+
+
 					<div id="chdiv-{{$mval->id}}" class="betCard mt-1">
 						<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">{{$mval->cname}} </span></span>
 						<div class="d-flex pl-3">
@@ -121,17 +120,17 @@
 							<div><span class="betCard-subTitle">Prize</span>
 							<div><img src="{{ asset('front/images/global-rupeeIcon.png')}}" width="21px" alt=""><span class="betCard-amount">{{$prize}}</span>
 							</div>
-							</div>							
+							</div>
 							<button id="{{$mval->id}}-start-btn" class="bg-success playButton cxy" onclick="startChallenge({{$mval->id}})">START</button>
 						</div>
 					</div>
-          
+
 				@endif
-			@endforeach	
-		
-		
-			@foreach($challenges as $key => $val)	
-				<?php 
+			@endforeach
+
+
+			@foreach($challenges as $key => $val)
+				<?php
 					if($val->amount == 50){
 						$a_amount	=	5;
 					}elseif($val->amount > 50 && $val->amount <=250){
@@ -143,10 +142,10 @@
 					}
 					$prize	=	(2 * $val->amount) - $a_amount;
 				?>
-        
-        
+
+
 				@if($val->c_id == Auth::user()->id)
-        
+
 
 					<div id="chdiv-{{$val->id}}" class="betCard mt-1">
 						<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">You </span></span>
@@ -164,10 +163,10 @@
 							</span>
 						</div>
 					</div>
-        
+
 				@else($val->c_id != Auth::user()->id)
-        
-      
+
+
 					<div id="chdiv-{{$val->id}}" class="betCard mt-1">
 						<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">{{$val->cname}} </span></span>
 						<div class="d-flex pl-3">
@@ -181,6 +180,6 @@
 							</div><button id="{{$val->id}}-play" class="bg-secondary playButton cxy" onclick="playChallenge({{$val->id}});">Play</button>
 						</div>
 					</div>
-     
-@endif					
-			@endforeach	
+
+@endif
+			@endforeach
