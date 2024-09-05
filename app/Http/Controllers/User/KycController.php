@@ -8,6 +8,8 @@ use App\User;
 use App\UserData;
 use Session;
 use Illuminate\Support\Facades\Http;
+
+use Illuminate\Support\Facades\Log;
 class KycController
 {
 
@@ -92,140 +94,133 @@ $response = curl_exec($curl);
 
       return $imageDataUrl;
     }
-	public function check_aadhar(Request $request){
+	public function check_aadhar(Request $request) {
         $user_id = Auth::user()->id;
-	    if(isset($request->ref_id)){
-	        $sessionIDDD = $request->ref_id;
-	        $uSEROtp = $request->otp;
-	        $url = "https://production.deepvue.tech/v1/ekyc/aadhaar/verify-otp?otp=$uSEROtp&session_id=$sessionIDDD&consent=Y&purpose=For%20KYC";
-            $lastdata = $this->APIHitDeepvue($url);
-            // $curl = curl_init();
-            // curl_setopt_array($curl, [
-            //   CURLOPT_URL => "https://mothersolution.in/api/aadhar_otp_verify",
-            //   CURLOPT_RETURNTRANSFER => true,
-            //   CURLOPT_ENCODING => "",
-            //   CURLOPT_MAXREDIRS => 10,
-            //   CURLOPT_TIMEOUT => 30,
-            //   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //   CURLOPT_CUSTOMREQUEST => "POST",
-            //   CURLOPT_POSTFIELDS => "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"otp\"\r\n\r\n$request->otp\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"ref_id\"\r\n\r\n$request->ref_id\r\n-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"auth\"\r\n\r\n$request->auth\r\n-----011000010111000001101001--\r\n",
-            //   CURLOPT_HTTPHEADER => [
-            //     "Accept: */*",
-            //     "User-Agent: Thunder Client (https://www.thunderclient.com)",
-            //     "content-type: multipart/form-data; boundary=---011000010111000001101001"
-            //   ],
-            // ]);
-            // $response = curl_exec($curl);
-            // $err = curl_error($curl);
-            // curl_close($curl);
-            // $lastdata = json_decode($response);
-            //     return $lastdata;
-            if($lastdata->code == 200){
-		        $user_data_details = UserData::where('user_id', $user_id)->first();
-		        $user_data_details->DOCUMENT_FIRST_NAME =  $lastdata->data->name;
-                $user_data_details->DOCUMENT_DOB =  $lastdata->data->dateOfBirth;
-                $user_data_details->verify_status =  1;
-                $user_data_details->DOCUMENT_STATE =
-                $lastdata->data->address->street
-                .', '.$lastdata->data->address->vtc
-                .', '.$lastdata->data->address->postOffice
-                .', '.$lastdata->data->address->subDistrict
-                .', '.$lastdata->data->address->district
-                .', '.$lastdata->data->address->state
-                .', '.$lastdata->data->address->country
-                .', '.$lastdata->data->address->pin;
-             $user_data_details->save();
-    	     return redirect('/complete-kyc/approve')->with('success',"Aadhar card Registered");
-            }
-    	    return back()->with('error',"Something wents wrong!");
-	    }else{
-	        $DataTokenCaptch = $request->captcha;
-	        $DataTokenSession = $request->sessionid;
-    	    $document_name = "UID";
-    	    $document_number = $request->aadhar;
-    	    $exist = UserData::where('DOCUMENT_NUMBER', $document_number)->where('verify_status', 1)->count();
-    	    if($exist > 0){
-    	        return back()->with('error',"Aadhar card already exist");
-    	    }
+        \Log::info('User ID:', ['user_id' => $user_id]);
 
-		    $user_data_details = UserData::where('user_id', $user_id)->first();
-		    if($user_data_details){
-		    $user_data_details->DOCUMENT_NAME =  $document_name;
-            $user_data_details->DOCUMENT_NUMBER =  $document_number;
-		    }else{
-		        $user_data_details = new UserData;
-		        $user_data_details->user_id = $user_id;
-		        $user_data_details->DOCUMENT_NAME =  $document_name;
-                $user_data_details->DOCUMENT_NUMBER =  $document_number;
-		    }
+        if (isset($request->ref_id)) {
+            $sessionIDDD = $request->ref_id;
+            $uSEROtp = $request->otp;
+            \Log::info('OTP verification initiated.', ['ref_id' => $sessionIDDD, 'otp' => $uSEROtp]);
+
+            $url = "https://production.deepvue.tech/v1/ekyc/aadhaar/verify-otp?otp=$uSEROtp&session_id=$sessionIDDD&consent=Y&purpose=For%20KYC";
+            $lastdata = $this->APIHitDeepvue($url);
+            \Log::info('Aadhaar API response:', (array)$lastdata);
+
+            if ($lastdata->code == 200) {
+                $user_data_details = UserData::where('user_id', $user_id)->first();
+                \Log::info('User data before update:', (array)$user_data_details);
+
+                $user_data_details->DOCUMENT_FIRST_NAME = $lastdata->data->name;
+                $user_data_details->DOCUMENT_DOB = $lastdata->data->dateOfBirth;
+                $user_data_details->verify_status = 1;
+                $user_data_details->DOCUMENT_STATE =
+                    $lastdata->data->address->street . ', ' .
+                    $lastdata->data->address->vtc . ', ' .
+                    $lastdata->data->address->postOffice . ', ' .
+                    $lastdata->data->address->subDistrict . ', ' .
+                    $lastdata->data->address->district . ', ' .
+                    $lastdata->data->address->state . ', ' .
+                    $lastdata->data->address->country . ', ' .
+                    $lastdata->data->address->pin;
+
+                $user_data_details->save();
+                // \Log::info('User data updated successfully.', ['user_id' => $user_id]);
+
+                return redirect('/complete-kyc/approve')->with('success', "Aadhar card Registered");
+            }
+
+            \Log::error('Error in Aadhaar OTP verification:', (array)$lastdata);
+            return back()->with('error', isset($lastdata->message) ? $lastdata->message : "Something went wrong!");
+        } else {
+            // \Log::info('Generating Aadhaar OTP.');
+
+            $DataTokenCaptch = $request->captcha;
+            $DataTokenSession = $request->sessionid;
+            $document_name = "UID";
+            $document_number = $request->aadhar;
+
+            $exist = UserData::where('DOCUMENT_NUMBER', $document_number)->where('verify_status', 1)->count();
+            // \Log::info('Aadhaar existence check:', ['exist' => $exist]);
+
+            if ($exist > 0) {
+                \Log::warning('Aadhaar already exists for user.', ['user_id' => $user_id]);
+                return back()->with('error', "Aadhar card already exist");
+            }
+
+            $user_data_details = UserData::where('user_id', $user_id)->first() ?? new UserData;
+            $user_data_details->user_id = $user_id;
+            $user_data_details->DOCUMENT_NAME = $document_name;
+            $user_data_details->DOCUMENT_NUMBER = $document_number;
+
             $url = "https://production.deepvue.tech/v1/ekyc/aadhaar/generate-otp?aadhaar_number=$document_number&captcha=$DataTokenCaptch&session_id=$DataTokenSession&consent=Y&purpose=For%20KYC";
             $resposne = $this->APIHitDeepvue($url);
-            // $curl = curl_init();
-            // curl_setopt_array($curl, array(
-            //   CURLOPT_URL => 'https://mothersolution.in/api/aadhar_verify',
-            //   CURLOPT_RETURNTRANSFER => true,
-            //   CURLOPT_ENCODING => '',
-            //   CURLOPT_MAXREDIRS => 10,
-            //   CURLOPT_TIMEOUT => 0,
-            //   CURLOPT_FOLLOWLOCATION => true,
-            //   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //   CURLOPT_CUSTOMREQUEST => 'POST',
-            //   CURLOPT_POSTFIELDS =>'{
-            //       "aadhaar_number":'.$document_number.',
-            //       "userid":"MP15751"
-            //   }',
-            //   CURLOPT_HTTPHEADER => array(
-            //     'Content-Type: application/json'
-            //   ),
-            // ));
+            // \Log::info('Aadhaar OTP generation API response:', (array)$resposne);
 
-            // $response = curl_exec($curl);
-            // $err = curl_error($curl);
+            if (isset($resposne->code) && $resposne->code == 200 && $resposne->sub_code == "SUCCESS") {
+                $ref_id = $DataTokenSession;
+                $user_data_details->ref_id = $ref_id;
+                $user_data_details->save();
+                // \Log::info('OTP generated successfully.', ['ref_id' => $ref_id]);
 
-            // curl_close($curl);
-            // $data = json_decode($response);
-            // return $resposne;
-            if(isset($resposne->code) && $resposne->code == 200 && $resposne->sub_code == "SUCCESS"){
-               $ref_id = $DataTokenSession;
-               $user_data_details->save();
-               $user_data_details->ref_id =  $ref_id;
-               return back()->with('otp',$ref_id);
+                return back()->with('otp', $ref_id);
             }
-    	    return back()->with('error',$resposne->message);
-	    }
-    }
-	public function saveStep1(Request $request){
-         $user_id = Auth::user()->id;
-    	 $document_name = "UID";
-    	 $document_number = $request->DOCUMENT_NUMBER;
-    	 $exist = UserData::where('DOCUMENT_NUMBER', $document_number)->where('verify_status', 1)->count();
-    	 if($exist > 0){
-    	     return back()->with('error',"Aadhar card already exist");
-    	 }
-		 if ($request->hasFile('frontPic')) {
-          $frontPic = $request->file('frontPic');
-          $frontPic_name = time().'frontpic.'.$frontPic->getClientOriginalExtension();
-          $destinationPath = public_path('/images/kycdata/'.$user_id.'/');
-          $frontPic->move($destinationPath, $frontPic_name);
+
+            // \Log::error('Error generating OTP:', (array)$resposne);
+            return back()->with('error', $resposne->message);
         }
-       if ($request->hasFile('backPic')) {
-          $backPic = $request->file('backPic');
-          $backPic_name = time().'backPic.'.$backPic->getClientOriginalExtension();
-          $destinationPath = public_path('/images/kycdata/'.$user_id.'/');
-          $backPic->move($destinationPath, $backPic_name);
-       }
-		 $user_data_details = UserData::where('user_id', $user_id)->first();
-		 $user_data_details->DOCUMENT_FIRST_NAME =  $request->fname;
-		 $user_data_details->DOCUMENT_LAST_NAME =  $request->lname;
-		 $user_data_details->DOCUMENT_NAME =  $document_name;
-         $user_data_details->DOCUMENT_NUMBER =  $document_number;
-         $user_data_details->DOCUMENT_FRONT_IMAGE = $frontPic_name;
-         $user_data_details->DOCUMENT_BACK_IMAGE = $backPic_name;
-         $user_data_details->verify_status = 2;
-         if($user_data_details->save()){
+    }
+
+	public function saveStep1(Request $request) {
+        $user_id = Auth::user()->id;
+        // \Log::info('User ID:', ['user_id' => $user_id]);
+
+        $document_name = "UID";
+        $document_number = $request->DOCUMENT_NUMBER;
+        // \Log::info('Document details:', ['document_number' => $document_number]);
+
+        $exist = UserData::where('DOCUMENT_NUMBER', $document_number)->where('verify_status', 1)->count();
+        // \Log::info('Aadhaar existence check:', ['exist' => $exist]);
+
+        if ($exist > 0) {
+            // \Log::warning('Aadhar already exists for user.', ['user_id' => $user_id]);
+            return back()->with('error', "Aadhar card already exist");
+        }
+
+        if ($request->hasFile('frontPic')) {
+            $frontPic = $request->file('frontPic');
+            $frontPic_name = time() . 'frontpic.' . $frontPic->getClientOriginalExtension();
+            $destinationPath = public_path('/images/kycdata/' . $user_id . '/');
+            $frontPic->move($destinationPath, $frontPic_name);
+            \Log::info('Front image uploaded:', ['frontPic_name' => $frontPic_name]);
+        }
+
+        if ($request->hasFile('backPic')) {
+            $backPic = $request->file('backPic');
+            $backPic_name = time() . 'backPic.' . $backPic->getClientOriginalExtension();
+            $destinationPath = public_path('/images/kycdata/' . $user_id . '/');
+            $backPic->move($destinationPath, $backPic_name);
+            \Log::info('Back image uploaded:', ['backPic_name' => $backPic_name]);
+        }
+
+        $user_data_details = UserData::where('user_id', $user_id)->first();
+        \Log::info('User data before update:', (array)$user_data_details);
+
+        $user_data_details->DOCUMENT_FIRST_NAME = $request->fname;
+        $user_data_details->DOCUMENT_LAST_NAME = $request->lname;
+        $user_data_details->DOCUMENT_NAME = $document_name;
+        $user_data_details->DOCUMENT_NUMBER = $document_number;
+        $user_data_details->DOCUMENT_FRONT_IMAGE = $frontPic_name ?? null;
+        $user_data_details->DOCUMENT_BACK_IMAGE = $backPic_name ?? null;
+        $user_data_details->verify_status = 2;
+
+        if ($user_data_details->save()) {
+            \Log::info('User data saved successfully.', ['user_id' => $user_id]);
             return redirect('/complete-kyc/kyc-submit');
-         }
-    	 return back()->with('error',"Something wents wrong");
+        }
+
+        \Log::error('Error saving user data.');
+        return back()->with('error', "Something went wrong");
     }
 
 	public function step2(Request $request){

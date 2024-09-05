@@ -143,7 +143,7 @@ class PaymentController
         $DepositStatus = $DepositStatus->field_value;
 
         if ($DepositStatus == "no") {
-            return redirect('/wallet')->with('error', 'Withdrawal currently paused due to some Bank issue, Please try after some time!');
+            return redirect('/wallet')->with('error', 'Deposit currently paused due to some Bank issue, Please try after some time!');
         }
         return view('user.add-money');
     }
@@ -268,10 +268,10 @@ class PaymentController
                 "amt" => $request->orderAmount,
                 "trxnote" => $user->username,
                 "custmobile" => "8524785698",
-                "redirecturl" => "https://game.bottomfunnel.net/",
-                "mcallback_url" => "https://game.bottomfunnel.net/new-upi-gateway-response"
-                // "redirecturl" => "http://192.168.29.247:8080/",
-                // "mcallback_url" => "http://192.168.29.247:8080/new-upi-gateway-response"
+                // "redirecturl" => "https://game.bottomfunnel.net/",
+                // "mcallback_url" => "https://game.bottomfunnel.net/new-upi-gateway-response"
+                "redirecturl" => "http://192.168.29.247:8080/",
+                "mcallback_url" => "http://192.168.29.247:8080/new-upi-gateway-response"
             ];
 
             $curl = curl_init();
