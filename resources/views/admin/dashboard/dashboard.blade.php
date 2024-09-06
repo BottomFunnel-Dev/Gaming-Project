@@ -379,7 +379,8 @@
     <!-- push external js -->
     @push('script')
         <!-- Include jQuery before any plugin scripts -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+            crossorigin="anonymous"></script>
 
         <!-- Owl Carousel and other plugin scripts -->
         <script src="{{ asset('plugins/owl.carousel/dist/owl.carousel.min.js') }}"></script>

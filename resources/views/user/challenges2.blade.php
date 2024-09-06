@@ -251,7 +251,7 @@
                                 // $('#challenge-amount-error').text(errors.message);
                                 // $('#challenge-amount-error').show();
                                 hideSuccessErrorDiv('alert-success', 'alert-danger', errors
-                                .message);
+                                    .message);
                             },
                             complete: function() {
                                 $('#challenge-amount').val('');
@@ -978,6 +978,7 @@
                 return html;
             }
             $(document).ready(function() {
+                // Initial AJAX call to load data when the page loads
                 $.ajax({
                     type: 'GET',
                     url: "{{ url('ajax_chalange') }}",
@@ -989,27 +990,30 @@
                         $('#rp3').html(data.myPlayChallenges);
                         $('#rp31').html(data.completeChallenges);
                         $('#rp4').html(data.playChallenges);
-                        $('#rp41').html(data)
-                        //	$('#d2').html(data.playChallenges);
+                        $('#rp41').html(data);
                     }
                 });
-                // setInterval(function() {
-                //         $.ajax({
-                //             type: 'GET',
-                //             url: "{{ url('ajax_chalange') }}",
-                //             contentType: false,
-                //             processData: false,
-                //             success: function(data) {
-                //                 $('#rp2').html(data.myChallenges);
-                //                 $('#rp21').html(data.challenges);
-                //                 $('#rp3').html(data.myPlayChallenges);
-                //                 $('#rp31').html(data.completeChallenges);
-                //                 $('#rp4').html(data.playChallenges);
-                //                 $('#rp41').html(data)
-                //                 //	$('#d2').html(data.playChallenges);
-                //             }
-                //         });
-                //     },  5000);
+
+                // Automatically refresh the data every 5 seconds (5000 milliseconds)
+                setInterval(function() {
+                    $.ajax({
+                        type: 'GET',
+                        url: "{{ url('ajax_chalange') }}",
+                        contentType: false,
+                        processData: false,
+                        success: function(data) {
+                            $('#rp2').html(data.myChallenges);
+                            $('#rp21').html(data.challenges);
+                            $('#rp3').html(data.myPlayChallenges);
+                            $('#rp31').html(data.completeChallenges);
+                            $('#rp4').html(data.playChallenges);
+                            $('#rp41').html(data);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("Error: " + error); // Log any errors for debugging
+                        }
+                    });
+                }, 5000); // 5 seconds interval
             });
         </script>
     @endsection

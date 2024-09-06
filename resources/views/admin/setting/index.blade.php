@@ -120,12 +120,12 @@
 
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <label for="name">{{ __('Deposit Open') }}<span
+                                        <label for="DepositStatus">{{ __('Deposit Open') }}<span
                                                 class="text-red">*</span></label>
                                         <select id="DepositStatus" class="form-control" name="DepositStatus">
                                             <option value="yes"
-                                                {{ isset($settings[12]) && $settings[12] == 'yes' ? 'selected' : '' }}>
-                                                Yes</option>
+                                                {{ isset($settings[12]) && $settings[12] == 'yes' ? 'selected' : '' }}>Yes
+                                            </option>
                                             <option value="no"
                                                 {{ isset($settings[12]) && $settings[12] == 'no' ? 'selected' : '' }}>No
                                             </option>
@@ -238,3 +238,4 @@
         <script src="{{ asset('js/form-advanced.js') }}"></script>
     @endpush
 @endsection
+
