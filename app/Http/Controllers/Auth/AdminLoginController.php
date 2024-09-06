@@ -35,42 +35,43 @@ class AdminLoginController extends Controller
      * Create a new controller instance.
      *
      * @return void
-     */ 
+     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
     }
 
     public function showLoginForm(){
-		
-		
+
+
         return view('auth.login');
     }
-    
+
     public function postLogin(Request $request)
-    {		
+    {
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        // return Hash::make("AasafAli@4509");
-		$validate_admin = DB::table('users')->select('*')->where('email', $request->email)->first();	
-		if ($validate_admin && Hash::check($request->password, $validate_admin->password)) {
-			
-		Auth::loginUsingId($validate_admin->id);
-		 
-        //    Auth::user()->attachRole('Super Admin');
-          //  echo "<pre>"; print_r(Auth::user()->get_roles()); die('ll');
-            //$user = auth()->guard('admin')->user();
-            
-            \Session::put('success','You are Login successfully!!');
-            return redirect()->route('admin-dashboard');
-            
-        } else {
-            return redirect()->back()->with('error','Your username or password are wrong.');
-        }
 
+        $validate_admin = DB::table('users')->select('*')->where('email', $request->email)->first();
+
+        if ($validate_admin) {
+            \Log::info('Found user: ', ['email' => $request->email]);
+            if (Hash::check($request->password, $validate_admin->password)) {
+                Auth::loginUsingId($validate_admin->id);
+                \Session::put('success','You are logged in successfully!!');
+                return redirect()->route('admin-dashboard');
+            } else {
+                \Log::info('Password check failed for user: ', ['email' => $request->email]);
+                return redirect()->back()->with('error','Your username or password is incorrect.');
+            }
+        } else {
+            \Log::info('User not found with email: ', ['email' => $request->email]);
+            return redirect()->back()->with('error','Your username or password is incorrect.');
+        }
     }
+
 
     // custom logout function
     // redirect to login page
