@@ -54,22 +54,22 @@ class ChallengeController extends Controller
     private function calculateCom($amount)
     {
         if ($amount >= 50 && $amount <= 250) {
-            \Log::info("Commission  amount {$amount}: 10% of {$amount}");
+            // \Log::info("Commission  amount {$amount}: 10% of {$amount}");
             return 10 / 100 * $amount;  // 10% commission for amounts between 50 and 250
         } elseif ($amount > 250 && $amount <= 500) {
-            \Log::info("Commission  amount {$amount}: Fixed 25 rupees");
+            // \Log::info("Commission  amount {$amount}: Fixed 25 rupees");
             return 25;  // Fixed 25 rupees commission for amounts between 250 and 500
         } elseif ($amount > 500) {
-            \Log::info("Commission  amount {$amount}: 5% of {$amount}");
+            // \Log::info("Commission  amount {$amount}: 5% of {$amount}");
             return 5 / 100 * $amount;  // 5% commission for amounts above 500
         }
-        \Log::info("No commission applied for amount {$amount}");
+        // \Log::info("No commission applied for amount {$amount}");
         return 0;
     }
 
     public function ajax_chalange()
     {
-        \Log::info("ajax_chalange method called.");
+        // \Log::info("ajax_chalange method called.");
 
         $url = URL::to("../public/") . "/";
         $wurl = URL::to("/") . "/";
@@ -85,7 +85,7 @@ class ChallengeController extends Controller
             ") and deleted_at is null ORDER BY id ASC"
         );
 
-        \Log::info("Challenges retrieved: " . json_encode($myChallenges));
+        // \Log::info("Challenges retrieved: " . json_encode($myChallenges));
 
         $output = "";
         foreach ($myChallenges as $key => $mval) {
@@ -104,11 +104,11 @@ class ChallengeController extends Controller
             try {
                 // Existing logic
                 $a_amount = $this->calculateCom($mval->amount);
-                \Log::info("Original amount: {$mval->amount}, Calculated commission: {$a_amount}");
+                // \Log::info("Original amount: {$mval->amount}, Calculated commission: {$a_amount}");
                 $prize = (2 * $mval->amount) - $a_amount;
-                \Log::info("Final prize for amount {$mval->amount}: {$prize}");
+                // \Log::info("Final prize for amount {$mval->amount}: {$prize}");
             } catch (\Exception $e) {
-                \Log::error("Error in prize calculation: " . $e->getMessage());
+                // \Log::error("Error in prize calculation: " . $e->getMessage());
             }
 
 

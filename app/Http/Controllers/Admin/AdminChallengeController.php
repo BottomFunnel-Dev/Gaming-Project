@@ -12,6 +12,7 @@ use App\UserSetting;
 use Auth;
 use Illuminate\Support\Facades\Validator;
 
+use Illuminate\Support\Facades\Log;
 // use Kreait\Firebase\Messaging\CloudMessage;
 // use Kreait\Firebase\Messaging;
 // use Kreait\Firebase\Messaging\Notification;
@@ -151,99 +152,112 @@ class AdminChallengeController extends Controller
 
     public function cancelGame(Request $request)
     {
-        $validator              = Validator::make($request->all(), [
-            'ch_id'              => 'required',
+        \Log::info('cancelGame function triggered');
+        $validator = Validator::make($request->all(), [
+            'ch_id' => 'required',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return redirect()->back()->withInput()->with('error', $validator->messages()->first());
         }
 
-        try
-        {
+        try {
             $update = $this->setChStatus($request->ch_id);
 
-            if($update){
+            if ($update) {
                 $this->setChResult($request->ch_id, 1, NULL);
+                \Log::info('Challenge ID cancelGame function: ' . $request->ch_id . ' canceled successfully by Admin');
             }
 
-            $transactions       =   Transaction::where('source_id',$request->ch_id)->where(function($query){
-                                        return $query
-                                        ->where('status','Create')
-                                        ->orWhere('status','Play');
-                                    })->get();
+            $transactions = Transaction::where('source_id', $request->ch_id)
+                ->where(function($query) {
+                    return $query
+                        ->where('status', 'Create')
+                        ->orWhere('status', 'Play');
+                })->get();
 
-            foreach($transactions as $key => $val){
-				$user_data = User::where('id', $val->user_id)->first();
-			    $wallet = $user_data->wallet;
+            foreach ($transactions as $key => $val) {
+                $user_data = User::where('id', $val->user_id)->first();
+                $wallet = $user_data->wallet;
 
-				$closing_balance = 	 $wallet+$val->amount;
+                $closing_balance = $wallet + $val->amount;
 
                 $refund = Transaction::create([
-                    'source_id'        => $request->ch_id,
-                    'user_id'          => $val->user_id,
-                    'amount'           => $val->amount,
-                    'status'           => 'Cancel',
-                    'remark'           => 'Cancel refund by admin',
-                    'ip'               => $request->ip(),
-					'closing_balance' =>  $closing_balance
+                    'source_id' => $request->ch_id,
+                    'user_id' => $val->user_id,
+                    'amount' => $val->amount,
+                    'status' => 'Cancel',
+                    'remark' => 'Cancel refund by admin',
+                    'ip' => $request->ip(),
+                    'closing_balance' => $closing_balance
                 ]);
-                if($refund){
-                    $this->updateWallet($val->amount,$val->user_id);
+
+                if ($refund) {
+                    $this->updateWallet($val->amount, $val->user_id);
+                    \Log::info('Refunded  cancelGame function' . $val->amount . ' to User ID: ' . $val->user_id);
                 }
             }
+
             return response([
-                'message'        => 'Game cancelled successfully!'
+                'message' => 'Game cancelled successfully!'
             ]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $bug = $e->getMessage();
+            \Log::error('Error in cancelGame Function: ' . $bug);
             return response([
-                'message'        => $bug
-            ],400);
+                'message' => $bug
+            ], 400);
         }
     }
+
     public function cancelGameInParameter($ch_id)
-    {
-        try
-        {
+    {\Log::info('cancelGame function triggered');
+        try {
             $update = $this->setChStatus($ch_id);
 
-            if($update){
+            if ($update) {
                 $this->setChResult($ch_id, 1, NULL);
+                \Log::info('Challenge ID cancelGameInParameter function: ' . $ch_id . ' canceled successfully by Admin');
             }
-            $transactions       =   Transaction::where('source_id',$ch_id)->where(function($query){
-                                        return $query
-                                        ->where('status','Create')
-                                        ->orWhere('status','Play');
-                                    })->get();
 
-            foreach($transactions as $key => $val){
-				$user_data = User::where('id', $val->user_id)->first();
-			$wallet = $user_data->wallet;
+            $transactions = Transaction::where('source_id', $ch_id)
+                ->where(function($query) {
+                    return $query
+                        ->where('status', 'Create')
+                        ->orWhere('status', 'Play');
+                })->get();
 
-				$closing_balance = 	 $wallet+$val->amount;
+            foreach ($transactions as $key => $val) {
+                $user_data = User::where('id', $val->user_id)->first();
+                $wallet = $user_data->wallet;
+
+                $closing_balance = $wallet + $val->amount;
 
                 $refund = Transaction::create([
-                    'source_id'        => $ch_id,
-                    'user_id'          => $val->user_id,
-                    'amount'           => $val->amount,
-                    'status'           => 'Cancel',
-                    'remark'           => 'Cancel refund by admin',
-                    'ip'               => '00',
-					'closing_balance' =>  $closing_balance
+                    'source_id' => $ch_id,
+                    'user_id' => $val->user_id,
+                    'amount' => $val->amount,
+                    'status' => 'Cancel',
+                    'remark' => 'Cancel refund by admin',
+                    'ip' => '00',
+                    'closing_balance' => $closing_balance
                 ]);
-                if($refund){
-                    $this->updateWallet($val->amount,$val->user_id);
+
+                if ($refund) {
+                    $this->updateWallet($val->amount, $val->user_id);
+                    \Log::info('Refunded cancelGameInParameter function' . $val->amount . ' to User ID: ' . $val->user_id);
                 }
             }
+
             return response([
-                'message'        => 'Game cancelled successfully!'
+                'message' => 'Game cancelled successfully!'
             ]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $bug = $e->getMessage();
+            \Log::error('Error in cancelGameInParameter cancelGameInParameter function: ' . $bug);
             return response([
-                'message'        => $bug
-            ],400);
+                'message' => $bug
+            ], 400);
         }
     }
 

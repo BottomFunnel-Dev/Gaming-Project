@@ -132,7 +132,7 @@ class UserResultController
                 $result->save();
                 if($chData->rcode == 0 && $request->result == 'Cancel' && $request->status != 5){
                     $adminInstance = new AdminChallengeController(); // Create an instance of the Admin class
-                    $adminInstance->cancelGameInParameter($chData->id);
+                    $adminInstance->cancelGame($chData->id);
 
                 }
                     if($chData->c_id == $user_id){

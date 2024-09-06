@@ -1013,7 +1013,7 @@
                             console.log("Error: " + error); // Log any errors for debugging
                         }
                     });
-                }, 5000); // 5 seconds interval
+                }, 2000); // 5 seconds interval
             });
         </script>
     @endsection
