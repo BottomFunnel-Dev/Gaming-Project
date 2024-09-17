@@ -12,6 +12,7 @@ use App\PlayerUsername;
 use App\ChallengeJoin;
 use App\Transaction;
 use App\Setting;
+use App\UserResult;
 use App\RoomCode;
 use Auth;
 use DB;
@@ -75,7 +76,7 @@ class ChallengeController extends Controller
         $wurl = URL::to("/") . "/";
         $user_id = Auth::user()->id;
 
-        \Log::info("User ID: {$user_id}");
+        // \Log::info("User ID: {$user_id}");
 
         $myChallenges = DB::select(
             "select * from challenges where (status = 1 or status = 2 or status = 3) and (c_id = " .
@@ -651,34 +652,55 @@ class ChallengeController extends Controller
         return $number % 50 == 0;
     }
 
+    public function CheckGameActive($user_id){
+        $result = false;
+        $myChallenges       =   DB::select("select `id` from challenges where (status != 0) and (c_id = ".$user_id." OR o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+        foreach($myChallenges as $row){
+            $rslUpload  =  UserResult::where('ch_id',$row->id)->where('user_id',$user_id)->count();
+            if($rslUpload == 0){
+                $result = true;
+            }
+        }
+        return $result;
+    }
     public function create(Request $request)
     {
-        $user_id = Auth::user()->id;
+	   $user_id            =   Auth::user()->id;
 
         $request->validate([
             'amount' => 'required|numeric|gt:49'
         ]);
 
 
-        $chk = $this->checkBalance($request->amount);
-        if (!$chk) {
+        $chk    =   $this->checkBalance($request->amount);
+        if(!$chk){
             return response([
-                'message' => "Insufficient balance, Please recharge your wallet!"
-            ], 400);
+                'message'        => "Insufficient balance, Please recharge your wallet!"
+            ],400);
         }
         $Muplifhgjk = $this->isMultipleOf50__($request->amount);
-        if (!$Muplifhgjk) {
+        if(!$Muplifhgjk){
             return response([
-                'message' => "Amount is not multiple of 50rs!"
-            ], 400);
+                'message'        => "Amount is not multiple of 50rs!"
+            ],400);
         }
-        //  or status = 2 or status = 3
-        $myChallenges = DB::select("select * from challenges where (status != 0) and (c_id = " . $user_id . " OR o_id = " . $user_id . ") and deleted_at is null ORDER BY id ASC");
-        if (count($myChallenges) > 0) {
-            return response([
-                'message' => "Already Running Game"
-            ], 400);
-        }
+// 		$myChallenges       =   DB::select("select * from challenges where (status != 0 or status = 2 or status = 3) and (c_id = ".$user_id." OR o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+// 		if(count($myChallenges)>0){
+// 			      return response([
+//                 'message'        => "Already Running Game"
+//             ],400);
+// 		}
+
+            if($this->CheckGameActive($user_id)){
+		    	return response([
+                    'message'        => "Already Running Game"
+                ],400);
+		    }
+
+
+
+        // $myChallenges = DB::select("select * from challenges where (status NOT IN (0, 3)) and (c_id = " . $user_id . " OR o_id = " . $user_id . ")
+        //  and deleted_at is null ORDER BY id ASC ");
 
         try {
             //$cname                          =   $this->randomPlayer();
@@ -712,58 +734,64 @@ class ChallengeController extends Controller
         $request->validate([
             'ch_id' => 'required|numeric'
         ]);
-        try {
-            $user_id = Auth::user()->id;
-            $chData = Challenge::find($request->ch_id);
-            $chk = $this->checkBalance($chData->amount);
-            // $chDataChecknotexist     =   Challenge::where('o_id',$user_id)->orWhere('c_id',$user_id)->where('status','!=',0)->count();
+        try
+        {
+            $user_id    =   Auth::user()->id;
+            $chData     =   Challenge::find($request->ch_id);
+            $chk        =   $this->checkBalance($chData->amount);
             // return $chDataChecknotexist;
-            // $chDataChecknotexist     =   Challenge::where('o_id',$user_id)->where('status',2)->count();
-            $myChallenges = DB::select("select * from challenges where (status != 0) and (c_id = " . $user_id . " OR o_id = " . $user_id . ") and deleted_at is null ORDER BY id ASC");
-            if (count($myChallenges) > 0) {
+            $chDataChecknotexist     =   Challenge::where('o_id',$user_id)->where('status',2)->count();
+            // $myChallenges       =   DB::select("select * from challenges where (status != 0) and (c_id = ".$user_id." OR o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+            // if($chDataChecknotexist > 0){
+            //     return response([
+            //         'message'        => "You are already joined with another Match!"
+            //     ],400);
+            // }
+
+            if($this->CheckGameActive($user_id)){
                 return response([
-                    'message' => "You are already joined with another Match!" . count($myChallenges)
-                ], 400);
+                    'message'        => "You are already joined with another Match!"
+                ],400);
             }
 
-            if (!$chk) {
+            if(!$chk){
                 return response([
-                    'message' => "Insufficient balance, Please recharge your wallet!"
-                ], 400);
+                    'message'        => "Insufficient balance, Please recharge your wallet!"
+                ],400);
             }
 
 
-            if ($user_id == $chData->c_id) {
+            if($user_id == $chData->c_id){
                 return response([
-                    'message' => "You cannot accept the game which is created by you!"
-                ], 400);
+                    'message'        => "You cannot accept the game which is created by you!"
+                ],400);
             }
 
-            if ($chData->status == 1) {
+            if($chData->status  ==  1){
                 ChallengeJoin::create([
-                    'user_id' => $user_id,
-                    'ch_id' => $request->ch_id,
-                    'ip' => $request->ip(),
+                    'user_id'       =>   $user_id,
+                    'ch_id'         =>   $request->ch_id,
+                    'ip'            =>   $request->ip(),
                 ]);
 
-                $chData->status = 2;
-                $chData->o_id = $user_id;
-                $chData->oname = Auth::user()->username;
+                $chData->status =   2;
+                $chData->o_id   =   $user_id;
+                $chData->oname  =   Auth::user()->username;
                 $chData->save();
 
-                $walletData = User::find($user_id);
+                $walletData =   User::find($user_id);
                 // $walletData->decrement('wallet',$chData->amount);
                 // return response()->json(['data'=>$chData]);
-                return response()->json(['data' => $chData]);
+                return response()->json(['data'=>$chData]);
             }
             return response([
-                'message' => "Unable to play the game!"
-            ], 400);
-        } catch (\Exception $e) {
+                'message'        => "Unable to play the game!"
+            ],400);
+        }catch (\Exception $e) {
             $bug = $e->getMessage();
             return response([
-                'message' => $bug
-            ], 400);
+                'message'        => $bug
+            ],400);
         }
 
     }
@@ -775,25 +803,26 @@ class ChallengeController extends Controller
         $request->validate([
             'ch_id' => 'required|numeric'
         ]);
-        try {
-            $user_id = Auth::user()->id;
-            $chData = Challenge::find($request->ch_id);
-            if ($chData->status == 1) {
-                $walletData = User::find($user_id);
+        try
+        {
+             $user_id    =   Auth::user()->id;
+            $chData     =   Challenge::find($request->ch_id);
+            if($chData->status  ==  1){
+                $walletData =   User::find($user_id);
                 $walletData->wallet = $walletData->wallet + $chData->amount;
                 $walletData->save();
                 $chData->delete();
 
-                return response()->json(['data' => $request->ch_id]);
+                return response()->json(['data'=>$request->ch_id]);
             }
             return response([
-                'message' => "Unable to cancel the game!"
-            ], 400);
-        } catch (\Exception $e) {
+                'message'        => "Unable to cancel the game!"
+            ],400);
+        }catch (\Exception $e) {
             $bug = $e->getMessage();
             return response([
-                'message' => $bug
-            ], 400);
+                'message'        => $bug
+            ],400);
         }
 
     }
@@ -803,27 +832,28 @@ class ChallengeController extends Controller
         $request->validate([
             'ch_id' => 'required|numeric'
         ]);
-        try {
-            $chData = Challenge::find($request->ch_id);
-            $user_id = Auth::user()->id;
-            if ($chData->status == 2) {
-                $chData->status = 1;
+        try
+        {
+            $chData     =   Challenge::find($request->ch_id);
+            $user_id    =   Auth::user()->id;
+            if($chData->status  ==  2){
+                $chData->status =   1;
                 // $walletData =   User::find($chData->o_id);
                 // $walletData->wallet = $walletData->wallet + $chData->amount;
                 // $walletData->save();
-                $chData->o_id = NULL;
-                $chData->oname = NULL;
+                $chData->o_id   =   NULL;
+                $chData->oname  =   NULL;
                 $chData->save();
-                return response()->json(['data' => $chData]);
+                return response()->json(['data'=>$chData]);
             }
             return response([
-                'message' => "Unable to cancel request!"
-            ], 400);
-        } catch (\Exception $e) {
+                'message'        => "Unable to cancel request!"
+            ],400);
+        }catch (\Exception $e) {
             $bug = $e->getMessage();
             return response([
-                'message' => $bug
-            ], 400);
+                'message'        => $bug
+            ],400);
         }
 
     }

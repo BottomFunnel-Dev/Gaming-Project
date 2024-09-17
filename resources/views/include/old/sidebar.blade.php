@@ -2,18 +2,18 @@
     <div class="sidebar-header">
         <a class="header-brand" href="{{route('dashboard')}}">
             <div class="logo-img">
-               <img height="30" src="{{ asset('img/logo_white.png')}}" class="header-brand-img" title="RADMIN"> 
+               <img height="30" src="{{ asset('img/logo_white.png')}}" class="header-brand-img" title="RADMIN">
             </div>
         </a>
         <div class="sidebar-action"><i class="ik ik-arrow-left-circle"></i></div>
-        <button id="sidebarClose" class="nav-close"><i class="ik ik-x"></i></button>
+        {{-- <button id="sidebarClose" class="nav-close"><i class="ik ik-x"></i></button> --}}
     </div>
 
     @php
         $segment1 = request()->segment(1);
         $segment2 = request()->segment(2);
     @endphp
-    
+
     <div class="sidebar-content">
         <div class="nav-container">
             <nav id="main-menu-navigation" class="navigation-main">
@@ -142,8 +142,8 @@
                         <a href="{{url('rating')}}" class="menu-item {{ ($segment1 == 'rating') ? 'active' : '' }}">{{ __('Rating')}}</a>
                     </div>
                 </div>
-                
-                
+
+
                 <div class="nav-item {{ ($segment1 == 'charts-chartist' || $segment1 == 'charts-flot'||$segment1 == 'charts-knob'||$segment1 == 'charts-amcharts') ? 'active open' : '' }} has-sub">
                     <a href="#"><i class="ik ik-pie-chart"></i><span>{{ __('Charts')}}</span> </a>
                     <div class="submenu-content">
@@ -168,7 +168,7 @@
                         <a href="{{url('forgot-password')}}" class="menu-item {{ ($segment1 == 'forgot-password') ? 'active' : '' }}">{{ __('Forgot Password')}}</a>
                     </div>
                 </div>
-                
+
                 <div class="nav-item {{ ($segment1 == 'profile' || $segment1 == 'invoice'||$segment1 == 'session-timeout') ? 'active open' : '' }} has-sub">
                     <a href="#"><i class="ik ik-file-text"></i><span>{{ __('Pages')}}</span></a>
                     <div class="submenu-content">
@@ -204,7 +204,7 @@
                 <div class="nav-item">
                     <a href="javascript:void(0)" class="disabled"><i class="ik ik-slash"></i><span>{{ __('Disabled Menu')}}</span></a>
                 </div>
-                
+
         </div>
     </div>
 </div>

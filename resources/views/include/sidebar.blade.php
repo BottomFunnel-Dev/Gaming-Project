@@ -6,7 +6,7 @@
             </div>
         </a>
         <div class="sidebar-action"><i class="ik ik-arrow-left-circle"></i></div>
-        <button id="sidebarClose" class="nav-close"><i class="ik ik-x"></i></button>
+        {{-- <button id="sidebarClose" class="nav-close"><i class="ik ik-x"></i></button> --}}
     </div>
 
     @php

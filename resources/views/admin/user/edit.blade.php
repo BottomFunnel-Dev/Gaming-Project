@@ -1,8 +1,8 @@
-@extends('layouts.main') 
+@extends('layouts.main')
 @section('title', 'Edit User')
 @section('content')
     <!-- push external head elements to head -->
-    
+
     <div class="container-fluid">
     	<div class="page-header">
             <div class="row align-items-end">
@@ -78,17 +78,17 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <div class="form-group">
-                                        <label for="email">{{ __('Referral Code')}}</label>
-                                        <input id="referral" maxlength="10" type="text" class="form-control @error('referral') is-invalid @enderror" name="referral" value="{{ isset($user->setting->used_referral) ? $user->setting->used_referral : '' }}" placeholder="Enter referral code">
-                                        <div class="help-block with-errors" ></div>
+                                    <!--<div class="form-group">-->
+                                    <!--    <label for="email">{{ __('Referral Code')}}</label>-->
+                                    <!--    <input id="referral" maxlength="10" type="text" class="form-control @error('referral') is-invalid @enderror" name="referral" value="{{ isset($user->setting->used_referral) ? $user->setting->used_referral : '' }}" placeholder="Enter referral code">-->
+                                    <!--    <div class="help-block with-errors" ></div>-->
 
-                                        @error('referral')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>                                                                   
+                                    <!--    @error('referral')-->
+                                    <!--        <span class="invalid-feedback" role="alert">-->
+                                    <!--            <strong>{{ $message }}</strong>-->
+                                    <!--        </span>-->
+                                    <!--    @enderror-->
+                                    <!--</div>                                                                   -->
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -96,7 +96,7 @@
                                     </div>
                                 </div>
                             </div>
-                        
+
                         </form>
                     </div>
                 </div>
@@ -105,8 +105,8 @@
     </div>
     <!-- push external js -->
 
-    @push('script') 
-        
+    @push('script')
+
         <script src="{{ asset('plugins/select2/dist/js/select2.min.js') }}"></script>
          <!--get role wise permissiom ajax script-->
         <script src="{{ asset('js/get-role.js') }}"></script>
