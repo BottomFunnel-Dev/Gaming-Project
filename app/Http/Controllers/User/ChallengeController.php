@@ -454,50 +454,54 @@ class ChallengeController extends Controller
             ") and deleted_at is null ORDER BY id ASC"
         );
         $output3 = " ";
-        foreach ($myPlayChallenges as $mpid => $mpval) {
-            $a_amount = (5 / 100) * $mpval->amount;
-            $prize = 2 * $mpval->amount - $a_amount;
-            $output3 .=
-                '
-                <div class="betCard mt-1" id="myplaying-chdiv-' .
-                $mpval->id .
-                '" >
-                    <div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR<img
-                            class="mx-1" src="' .
-                $url .
-                'front/images/global-rupeeIcon.png" width="21px" alt="">' .
-                $prize .
-                '</span>
-                        <div class="betCard-title d-flex align-items-center text-uppercase"><span class="ml-auto">
-                            <a href="' .
-                $wurl .
-                "challenge-detail/" .
-                $mpval->id .
-                '"  class="btn btn-info px-3 btn-sm" >View</a>
-                        </span></div>
-                    </div>
-                    <div class="py-1 row">
-                        <div class="pr-3 text-center col-5">
-                        <div class="pl-2"><img class="border-50" src="front/images/author.png" width="21px" height="21px"
-                            alt=""></div>
-                        <div style="line-height: 1;"><span class="betCard-playerName">' .
-                $mpval->cname .
-                '</span></div>
-                        </div>
-                        <div class="pr-3 text-center col-2 cxy">
-                        <div>v/s</div>
-                        </div>
-                        <div class="text-center col-5">
-                        <div class="pl-2"><img class="border-50" src="front/images/author.png" width="21px" height="21px"
-                            alt=""></div>
-                        <div style="line-height: 1;"><span class="betCard-playerName">' .
-                $mpval->oname .
-                '</span></div>
-                        </div>
-                    </div>
-                </div>
-      ';
-        }
+        // foreach ($myPlayChallenges as $mpid => $mpval) {
+        //     $a_amount = (5 / 100) * $mpval->amount;
+        //     $prize = 2 * $mpval->amount - $a_amount;
+        //     $output3 .=
+        //     '
+        //             <div class="betCard mt-1" id="myplaying-chdiv-' .
+        //     $mpval->id .
+        //     '" >
+        //                 <div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR<img
+        //                         class="mx-1" src="' .
+        //     $url .
+        //     'front/images/global-rupeeIcon.png" width="21px" alt="">' .
+        //     $prize .
+        //     '</span>
+        //                     <div class="betCard-title d-flex align-items-center text-uppercase"><span class="ml-auto">
+        //                         <a href="' .
+        //     $wurl .
+        //     "challenge-detail/" .
+        //     $mpval->id .
+        //     '"  class="btn btn-info px-3 btn-sm" >View</a>
+        //                     </span></div>
+        //                 </div>
+        //                 <div class="py-1 row">
+        //                     <div class="pr-3 text-center col-5">
+        //                     <div class="pl-2"><img class="border-50" src="' .
+        //     $url .
+        //     'front/images/author.svg" width="21px" height="21px"
+        //                         alt=""></div>
+        //                     <div style="line-height: 1;"><span class="betCard-playerName">' .
+        //     $mpval->cname .
+        //     '</span></div>
+        //                     </div>
+        //                     <div class="pr-3 text-center col-2 cxy">
+        //                     <div>v/s</div>
+        //                     </div>
+        //                     <div class="text-center col-5">
+        //                     <div class="pl-2"><img class="border-50" src="' .
+        //     $url .
+        //     'front/images/author.svg" width="21px" height="21px"
+        //                         alt=""></div>
+        //                     <div style="line-height: 1;"><span class="betCard-playerName">' .
+        //     $mpval->oname .
+        //         '</span></div>
+        //                     </div>
+        //                 </div>
+        //             </div>
+        //   ';
+        // }
 
         $playChallenges = DB::select(
             "SELECT * from challenges WHERE NOT (c_id = " .
@@ -604,34 +608,31 @@ class ChallengeController extends Controller
             "playChallenges" => $output4,
         ]);
     }
-    public function ajax_open_battle()
-    {
+    public function ajax_open_battle(){
 
-        $user_id = Auth::user()->id;
-        //echo $user_id; die;
-        $myChallenges = DB::select("select * from challenges where (status = 1 or status = 2 or status = 3) and (c_id = " . $user_id . " OR o_id = " . $user_id . ") and deleted_at is null ORDER BY id ASC");
-        $challenges = DB::select("SELECT * FROM challenges WHERE NOT (c_id = " . $user_id . " and o_id = " . $user_id . ") AND STATUS=1 and deleted_at IS NULL ORDER BY id ASC");
-        //$challenges       =   DB::select("select * from challenges where status = 1 and c_id != ".$user_id." and o_id != ".$user_id." and deleted_at is null ORDER BY id ASC");
-        $myPlayChallenges = DB::select("select * from challenges where ((status = 3 or status = 4 or status = 5) and c_id = " . $user_id . " ) OR ((status = 4 or status = 5) and  o_id = " . $user_id . ") and deleted_at is null ORDER BY id ASC");
-        $playChallenges = DB::select("SELECT * from challenges WHERE NOT (c_id = " . $user_id . " or o_id = " . $user_id . ") and (status = 2 or status = 3 or status = 4 or status =5 ) and deleted_at is null ORDER BY id ASC");
-
-
-        return view('user.ajax_challenges', compact('challenges', 'playChallenges', 'myChallenges', 'myPlayChallenges'));
-    }
-
-    public function ajax_running_battle()
-    {
-
-        $user_id = Auth::user()->id;
-        //echo $user_id; die;
-        $myChallenges = DB::select("select * from challenges where (status = 1 or status = 2 or status = 3) and (c_id = " . $user_id . " OR o_id = " . $user_id . ") and deleted_at is null ORDER BY id ASC");
-        $challenges = DB::select("SELECT * FROM challenges WHERE NOT (c_id = " . $user_id . " and o_id = " . $user_id . ") AND STATUS=1 and deleted_at IS NULL ORDER BY id ASC");
-        //$challenges       =   DB::select("select * from challenges where status = 1 and c_id != ".$user_id." and o_id != ".$user_id." and deleted_at is null ORDER BY id ASC");
-        $myPlayChallenges = DB::select("select * from challenges where ((status = 3 or status = 4 or status = 5) and c_id = " . $user_id . " ) OR ((status = 4 or status = 5) and  o_id = " . $user_id . ") and deleted_at is null ORDER BY id ASC");
-        $playChallenges = DB::select("SELECT * from challenges WHERE NOT (c_id = " . $user_id . " or o_id = " . $user_id . ") and (status = 2 or status = 3 or status = 4 or status =5 ) and deleted_at is null ORDER BY id ASC");
+        $user_id            =   Auth::user()->id;
+       //echo $user_id; die;
+       $myChallenges       =   DB::select("select * from challenges where (status = 1 or status = 2 or status = 3) and (c_id = ".$user_id." OR o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+       $challenges         =   DB::select("SELECT * FROM challenges WHERE NOT (c_id = ".$user_id." and o_id = ".$user_id.") AND STATUS=1 and deleted_at IS NULL ORDER BY id ASC");
+       //$challenges       =   DB::select("select * from challenges where status = 1 and c_id != ".$user_id." and o_id != ".$user_id." and deleted_at is null ORDER BY id ASC");
+       $myPlayChallenges   =   DB::select("select * from challenges where ((status = 3 or status = 4 or status = 5) and c_id = ".$user_id." ) OR ((status = 4 or status = 5) and  o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+       $playChallenges     =   DB::select("SELECT * from challenges WHERE NOT (c_id = ".$user_id." or o_id = ".$user_id.") and (status = 2 or status = 3 or status = 4 or status =5 ) and deleted_at is null ORDER BY id ASC");
 
 
-        return view('user.ajax_running_battle', compact('challenges', 'playChallenges', 'myChallenges', 'myPlayChallenges'));
+       return view('user.ajax_challenges',compact('challenges','playChallenges','myChallenges','myPlayChallenges'));
+   }
+    public function ajax_running_battle(){
+
+        $user_id            =   Auth::user()->id;
+    //echo $user_id; die;
+    $myChallenges       =   DB::select("select * from challenges where (status = 1 or status = 2 or status = 3) and (c_id = ".$user_id." OR o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+    $challenges         =   DB::select("SELECT * FROM challenges WHERE NOT (c_id = ".$user_id." and o_id = ".$user_id.") AND STATUS=1 and deleted_at IS NULL ORDER BY id ASC");
+    //$challenges       =   DB::select("select * from challenges where status = 1 and c_id != ".$user_id." and o_id != ".$user_id." and deleted_at is null ORDER BY id ASC");
+    $myPlayChallenges   =   DB::select("select * from challenges where ((status = 3 or status = 4 or status = 5) and c_id = ".$user_id." ) OR ((status = 4 or status = 5) and  o_id = ".$user_id.") and deleted_at is null ORDER BY id ASC");
+    $playChallenges     =   DB::select("SELECT * from challenges WHERE NOT (c_id = ".$user_id." or o_id = ".$user_id.") and (status = 2 or status = 3 or status = 4 or status =5 ) and deleted_at is null ORDER BY id ASC");
+
+
+    return view('user.ajax_running_battle',compact('challenges','playChallenges','myChallenges','myPlayChallenges'));
     }
     public function challengeListing(Request $request)
     {
