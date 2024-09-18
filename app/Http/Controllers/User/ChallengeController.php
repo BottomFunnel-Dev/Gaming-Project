@@ -454,6 +454,7 @@ class ChallengeController extends Controller
             ") and deleted_at is null ORDER BY id ASC"
         );
         $output3 = " ";
+        // this is for the a;ready running match s
         // foreach ($myPlayChallenges as $mpid => $mpval) {
         //     $a_amount = (5 / 100) * $mpval->amount;
         //     $prize = 2 * $mpval->amount - $a_amount;
