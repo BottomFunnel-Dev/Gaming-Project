@@ -132,7 +132,7 @@ class UserResultController
                 $result->save();
                 if($chData->rcode == 0 && $request->result == 'Cancel' && $request->status != 5){
                     $adminInstance = new AdminChallengeController(); // Create an instance of the Admin class
-                    $adminInstance->cancelGame($chData->id);
+                    $adminInstance->cancelGameInParameter($chData->id);
 
                 }
                     if($chData->c_id == $user_id){
@@ -319,21 +319,6 @@ class UserResultController
         return $a_amount;
     }
 
-    // private function calculateCom($amount)
-    // {
-    //     if ($amount >= 50 && $amount <= 250) {
-    //         \Log::info("Commission  amount {$amount}: 10% of {$amount}");
-    //         return 10 / 100 * $amount;  // 10% commission for amounts between 50 and 250
-    //     } elseif ($amount > 250 && $amount <= 500) {
-    //         \Log::info("Commission  amount {$amount}: Fixed 25 rupees");
-    //         return 25;  // Fixed 25 rupees commission for amounts between 250 and 500
-    //     } elseif ($amount > 500) {
-    //         \Log::info("Commission  amount {$amount}: 5% of {$amount}");
-    //         return 5 / 100 * $amount;  // 5% commission for amounts above 500
-    //     }
-    //     \Log::info("No commission applied for amount {$amount}");
-    //     return 0;
-    // }
     private function updateWallet($amount,$user_id){
         $walletData =   User::find($user_id);
         // $walletData->increment('usd_wallet',$amount);
