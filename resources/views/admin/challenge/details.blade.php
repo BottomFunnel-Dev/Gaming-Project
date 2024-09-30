@@ -152,16 +152,17 @@
                                 @foreach ($challenge->transactions as $key => $val)
                                     <tr>
                                         <td>{{ $val->id }}</td>
-                                        <td>{{ @$val->playername->username }}</td>
+                                        <td>{{ $val->playername ? $val->playername->username : 'Unknown Player' }}</td>
                                         <td>{{ $val->status }}</td>
                                         <td>{{ $val->amount }}</td>
                                         <td>{{ $val->created_at }}</td>
                                         <td>
-                                            @if ($challenge->status == 4)
+                                            @if ($challenge->status == 4 && $val->playername)
                                                 <a title="Update wallet balance" class="btn btn-success"
                                                     onclick="return confirm('Are you sure want to perform this action ?')"
-                                                    href="{{ url('admin/challenge/make-winner/' . $challenge->id . '/' . $val->playername->id) }}">Set
-                                                    Winner</a>
+                                                    href="{{ url('admin/challenge/make-winner/' . $challenge->id . '/' . $val->playername->id) }}">
+                                                    Set Winner
+                                                </a>
                                             @endif
                                         </td>
                                     </tr>

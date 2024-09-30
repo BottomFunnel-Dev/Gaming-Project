@@ -796,7 +796,6 @@ class ChallengeController extends Controller
     }
 
 
-
     public function cancelChallenge(Request $request)
     {
         $request->validate([
@@ -856,6 +855,8 @@ class ChallengeController extends Controller
         }
 
     }
+
+    // this is new with the help of the callback
     public function add_rommcode(Request $r)
     {
         // Validate the request parameters
@@ -864,55 +865,124 @@ class ChallengeController extends Controller
             'code' => 'required'
         ]);
 
-        // Initialize cURL session
-        $curl = curl_init();
+        // Prepare the request payload for the new API
+        $payload = [
+            'roomCode' => $r->code,
+            'purpose' => 'Check'
+        ];
 
-        // Set cURL options
-        curl_setopt_array($curl, [
-            // Use the tested API URL
-            CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=" . $r->code . "&apikey=733f4afa",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-        ]);
+        try {
+            // Initialize Guzzle client
+            $client = new Client();
 
-        // Execute cURL request and capture response
-        $response = curl_exec($curl);
-        $err = curl_error($curl);
+            // Send POST request to the new API endpoint
+            $response = $client->post('https://akadda.com/api/cashfree-callback1', [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => $payload,  // Guzzle will automatically encode the array to JSON
+                'timeout' => 30
+            ]);
 
-        // Log the full API response for debugging
-        \Log::info('Full API Response add_rommcode function: ', [$response]);
-
-        // Close cURL session
-        curl_close($curl);
-
-        // Handle potential cURL errors
-        if ($err) {
-            return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
-        } else {
             // Decode the JSON response from the API
-            $responses = json_decode($response);
+            $responseData = json_decode($response->getBody()->getContents());
 
-            // Check if the API returned a valid room code and status
-            if (isset($responses->result->roomcode) && isset($responses->result->status)) {
-                // Find the challenge by ID
-                $dataa = Challenge::where('id', $r->id)->first();
+            // Log the API response structure for debugging
+            \Log::info('API Response Structure: ', (array)$responseData);
 
-                // If the challenge exists and is in a valid state, update the room code
-                if ($dataa && $dataa->status >= 3) {
-                    Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
-                    return redirect('/challenge-detail/' . $r->id);
+            // Log the full API response for debugging
+            \Log::info('Full API Response add_rommcode function: ', [(array)$responseData]);
+
+            // Check the success status of the response
+            if (isset($responseData->success) && $responseData->success) {
+                // Ensure the ludoKing->_tableId is present in the response
+                if (isset($responseData->data->ludoKing->_tableId)) {
+                    // Access the _tableId from the response
+                    $tableId = $responseData->data->ludoKing->_tableId;
+
+                    // Find the challenge by ID
+                    $dataa = Challenge::where('id', $r->id)->first();
+
+                    // If the challenge exists and is in a valid state, update the room code
+                    if ($dataa && $dataa->status >= 3) {
+                        Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
+                        return redirect('/challenge-detail/' . $r->id);
+                    } else {
+                        return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled or Invalid State');
+                    }
                 } else {
-                    return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled');
+                    return redirect('/challenge-detail/' . $r->id)->with('error', 'Room code not found in response data!');
                 }
             } else {
                 return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
             }
+        } catch (\Exception $e) {
+            // Log the exception error message
+            \Log::error('Error in add_rommcode function: ' . $e->getMessage());
+            return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
         }
     }
+
+
+    // this is the old roomcode via the api
+    // public function add_rommcode(Request $r)
+    // {
+    //     // Validate the request parameters
+    //     $r->validate([
+    //         'id' => 'required',
+    //         'code' => 'required'
+    //     ]);
+
+    //     // Initialize cURL session
+    //     $curl = curl_init();
+
+    //     // Set cURL options
+    //     curl_setopt_array($curl, [
+    //         // Use the tested API URL
+    //         CURLOPT_URL => "https://apiv2.ludoadda.co.in/api/all/result?roomcode=" . $r->code . "&apikey=733f4afa",
+    //         CURLOPT_RETURNTRANSFER => true,
+    //         CURLOPT_ENCODING => "",
+    //         CURLOPT_MAXREDIRS => 10,
+    //         CURLOPT_TIMEOUT => 30,
+    //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    //         CURLOPT_CUSTOMREQUEST => "GET",
+    //     ]);
+
+    //     // Execute cURL request and capture response
+    //     $response = curl_exec($curl);
+    //     $err = curl_error($curl);
+
+    //     // Log the full API response for debugging
+    //     \Log::info('Full API Response add_rommcode function: ', [$response]);
+
+    //     // Close cURL session
+    //     curl_close($curl);
+
+    //     // Handle potential cURL errors
+    //     if ($err) {
+    //         return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
+    //     } else {
+    //         // Decode the JSON response from the API
+    //         $responses = json_decode($response);
+
+    //         // Check if the API returned a valid room code and status
+    //         if (isset($responses->result->roomcode) && isset($responses->result->status)) {
+    //             // Find the challenge by ID
+    //             $dataa = Challenge::where('id', $r->id)->first();
+
+    //             // If the challenge exists and is in a valid state, update the room code
+    //             if ($dataa && $dataa->status >= 3) {
+    //                 Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
+    //                 return redirect('/challenge-detail/' . $r->id);
+    //             } else {
+    //                 return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled');
+    //             }
+    //         } else {
+    //             return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
+    //         }
+    //     }
+    // }
+
 
     public function add_rommcode_automaticByController($id)
     {

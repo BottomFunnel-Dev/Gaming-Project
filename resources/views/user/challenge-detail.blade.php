@@ -16,8 +16,8 @@
             style="dispaly:none;position:fixed;top:50px;width:100%;z-index:100;">
             <span id="success-error-message"></span>
             <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-       </button> -->
+                            <span aria-hidden="true">&times;</span>
+                           </button> -->
         </div>
         <div class="divider-x"></div>
 
@@ -159,12 +159,14 @@
         </div>
         <div class="match-status">
             <h6 class="title">Match Status</h6>
-            <p>After completion of your game, select the status of the game and post your screenshot
-                below.</p>
-            @if (isset($chData->userresult))
+            <p>After completion of your game, select the status of the game and post your screenshot below.</p>
+
+            @if (isset($chData->userresult) && $chData->userresult->result)
+                <!-- Show the result that the user has already submitted -->
                 <p style="color:red">You have submitted result as <b>"{{ $chData->userresult->result }}"</b> at
                     {{ $chData->userresult->created_at }}</p>
             @else
+                <!-- Show the form if no result has been submitted yet -->
                 <div class="spinner-border" role="status" style="margin-left:45%;display:none">
                     <span class="sr-only">Loading...</span>
                 </div>
@@ -173,6 +175,8 @@
                         enctype="multipart/form-data">
                         <input type="hidden" name="ch_id" value="{{ $chData->id }}">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                        <!-- Radio buttons for selecting result -->
                         <div class="float-left" style="margin-right:35px">
                             <input type="radio" name="result" value="Won" id="result-won-res">
                             <label class="btn btn-success btn-sm" for="result-won-res">I Won</label>
@@ -185,8 +189,7 @@
 
                         <div class="float-right">
                             <input type="radio" name="result" value="Cancel" id="result-cancel-res">
-                            <label class="btn btn-primary btn-sm" for="result-cancel-res">
-                                Cancel</label>
+                            <label class="btn btn-primary btn-sm" for="result-cancel-res">Cancel</label>
                         </div>
 
                         <div style="display:none" id="cancel-text-res">
@@ -198,13 +201,8 @@
                                 <option value="Not Playing">Not Playing</option>
                                 <option value="other">Other</option>
                             </select>
-                            <!--<textarea name="reason" id="cancel_reason-res" placeholder="Cancel Reason">दूसरा गेम ज्वाइन करने के लिए</textarea>-->
-                            <div style="display:none; color:red" id="result-error-reason-res"></div>
                         </div>
 
-                        <!-------list------>
-
-                        <!-------list------>
                         <div style="display:none" id="upload-image-res">
                             <input type="file" name="result_img" id="result_img-res"
                                 onchange="compressAndUpload(this);" accept="image/*">
@@ -216,14 +214,12 @@
                         </div>
                 </div>
                 <div class="submit-btn mx-4 mb-3" style="display:flex;justify-content:center;">
-
                     <button class="btn btn-success" style="width: 180px;" type="submit"
                         id="result-submit-btn-res">Submit</button>
-
                 </div>
                 </form>
+            @endif
         </div>
-        @endif
     </div>
     <div class="card-header">
         <div class="rules">
@@ -697,5 +693,4 @@
         // getRoomCode();
     </script>
     </script>
-
 @endsection
