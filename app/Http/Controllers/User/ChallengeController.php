@@ -888,10 +888,10 @@ class ChallengeController extends Controller
             $responseData = json_decode($response->getBody()->getContents());
 
             // Log the API response structure for debugging
-            \Log::info('API Response Structure: ', (array)$responseData);
+            // \Log::info('API Response Structure: ', (array)$responseData);
 
             // Log the full API response for debugging
-            \Log::info('Full API Response add_rommcode function: ', [(array)$responseData]);
+            // \Log::info('Full API Response add_rommcode function: ', [(array)$responseData]);
 
             // Check the success status of the response
             if (isset($responseData->success) && $responseData->success) {
@@ -918,7 +918,7 @@ class ChallengeController extends Controller
             }
         } catch (\Exception $e) {
             // Log the exception error message
-            \Log::error('Error in add_rommcode function: ' . $e->getMessage());
+            // \Log::error('Error in add_rommcode function: ' . $e->getMessage());
             return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
         }
     }
@@ -1004,7 +1004,7 @@ class ChallengeController extends Controller
         $response = curl_exec($curl);
         $err = curl_error($curl);
         // Log the full API response for debugging
-        \Log::info('Full API Response: ', [$response]);
+        // \Log::info('Full API Response: ', [$response]);
         // Close the cURL session
         curl_close($curl);
 

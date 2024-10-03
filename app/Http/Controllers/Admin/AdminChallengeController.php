@@ -116,93 +116,93 @@ class AdminChallengeController extends Controller
         }
     }
     public function details($id)
-{
-    // Fetch the challenge details along with related data
-    $challenge = Challenge::with(['creator', 'opponent', 'result', 'usersresult', 'transactions'])->where('id', $id)->first();
-    $RoomCode = $challenge->rcode;
+    {
+        // Fetch the challenge details along with related data
+        $challenge = Challenge::with(['creator', 'opponent', 'result', 'usersresult', 'transactions'])->where('id', $id)->first();
+        $RoomCode = $challenge->rcode;
 
-    // Prepare the payload for the new API
-    $payload = [
-        'roomCode' => $RoomCode,
-        'purpose'  => 'result'  // Set purpose to "Result"
-    ];
+        // Prepare the payload for the new API
+        $payload = [
+            'roomCode' => $RoomCode,
+            'purpose'  => 'result'  // Set purpose to "Result"
+        ];
 
-    try {
-        // Initialize Guzzle client
-        $client = new \GuzzleHttp\Client();
+        try {
+            // Initialize Guzzle client
+            $client = new \GuzzleHttp\Client();
 
-        // Send the POST request to the new API endpoint
-        $response = $client->post('https://akadda.com/api/cashfree-callback1', [
-            'headers' => [
-                'Content-Type' => 'application/json'
-            ],
-            'json'    => $payload,  // Guzzle automatically converts array to JSON
-            'timeout' => 30
-        ]);
+            // Send the POST request to the new API endpoint
+            $response = $client->post('https://akadda.com/api/cashfree-callback1', [
+                'headers' => [
+                    'Content-Type' => 'application/json'
+                ],
+                'json'    => $payload,  // Guzzle automatically converts array to JSON
+                'timeout' => 30
+            ]);
 
-        // Decode the JSON response from the API
-        $responseData = json_decode($response->getBody()->getContents());
+            // Decode the JSON response from the API
+            $responseData = json_decode($response->getBody()->getContents());
 
-        // Log the full API response for debugging
-        \Log::info('Full API Response for game result: ', [(array)$responseData]);
+            // Log the full API response for debugging
+            // \Log::info('Full API Response for game result: ', [(array)$responseData]);
 
-        // Check if the API response indicates success
-        if (isset($responseData->success) && $responseData->success) {
-            if (isset($responseData->data->result)) {
-                // Extract the game result data
-                $gameResult = $responseData->data->result;
+            // Check if the API response indicates success
+            if (isset($responseData->success) && $responseData->success) {
+                if (isset($responseData->data->result)) {
+                    // Extract the game result data
+                    $gameResult = $responseData->data->result;
 
-                // Default statuses to "Hold" before updating
-                $resultowner = $this->ApiResult("Hold");
-                $resultplayer1 = $this->ApiResult("Hold");
+                    // Default statuses to "Hold" before updating
+                    $resultowner = $this->ApiResult("Hold");
+                    $resultplayer1 = $this->ApiResult("Hold");
 
-                // Check if the game status is "Running" or "Finished"
-                if ($gameResult->eStatus == 'Running') {
-                    $resultowner = $this->ApiResult('Playing');
-                    $resultplayer1 = $this->ApiResult('Playing');
-                } elseif ($gameResult->eStatus == 'Finished') {
-                    // If game is finished, check which player won or lost
-                    if ($gameResult->aPlayers[0]->eStatus == 'Won') {
-                        $resultowner = $this->ApiResult('Won');
-                        $resultplayer1 = $this->ApiResult('Lost');
-                    } elseif ($gameResult->aPlayers[1]->eStatus == 'Won') {
-                        $resultowner = $this->ApiResult('Lost');
-                        $resultplayer1 = $this->ApiResult('Won');
+                    // Check if the game status is "Running" or "Finished"
+                    if ($gameResult->eStatus == 'Running') {
+                        $resultowner = $this->ApiResult('Playing');
+                        $resultplayer1 = $this->ApiResult('Playing');
+                    } elseif ($gameResult->eStatus == 'Finished') {
+                        // If game is finished, check which player won or lost
+                        if ($gameResult->aPlayers[0]->eStatus == 'Won') {
+                            $resultowner = $this->ApiResult('Won');
+                            $resultplayer1 = $this->ApiResult('Lost');
+                        } elseif ($gameResult->aPlayers[1]->eStatus == 'Won') {
+                            $resultowner = $this->ApiResult('Lost');
+                            $resultplayer1 = $this->ApiResult('Won');
+                        }
+                    } else {
+                        // Map player statuses for other scenarios (e.g., not yet finished)
+                        $creatorId = $challenge->creator_id;
+                        $status = $gameResult->aPlayers[0]->eStatus ?? "null";
+                        $status2 = $gameResult->aPlayers[1]->eStatus ?? "null";
+
+                        if ($gameResult->aPlayers[0]->_userId == $creatorId) {
+                            $resultowner = $this->ApiResult($status);
+                            $resultplayer1 = $this->ApiResult($status2);
+                        } else {
+                            $resultowner = $this->ApiResult($status2);
+                            $resultplayer1 = $this->ApiResult($status);
+                        }
                     }
                 } else {
-                    // Map player statuses for other scenarios (e.g., not yet finished)
-                    $creatorId = $challenge->creator_id;
-                    $status = $gameResult->aPlayers[0]->eStatus ?? "null";
-                    $status2 = $gameResult->aPlayers[1]->eStatus ?? "null";
-
-                    if ($gameResult->aPlayers[0]->_userId == $creatorId) {
-                        $resultowner = $this->ApiResult($status);
-                        $resultplayer1 = $this->ApiResult($status2);
-                    } else {
-                        $resultowner = $this->ApiResult($status2);
-                        $resultplayer1 = $this->ApiResult($status);
-                    }
+                    // No game result data found, set default values
+                    $resultowner = $this->ApiResult("Hold");
+                    $resultplayer1 = $this->ApiResult("Hold");
                 }
             } else {
-                // No game result data found, set default values
-                $resultowner = $this->ApiResult("Hold");
-                $resultplayer1 = $this->ApiResult("Hold");
+                // API response indicates failure
+                $resultowner = $this->ApiResult("Updating..");
+                $resultplayer1 = $this->ApiResult("Updating..");
             }
-        } else {
-            // API response indicates failure
-            $resultowner = $this->ApiResult("Updating..");
-            $resultplayer1 = $this->ApiResult("Updating..");
+        } catch (\Exception $e) {
+            // Log the exception error message
+            // \Log::error('Error in fetching game result: ' . $e->getMessage());
+            $resultowner = $this->ApiResult("Error");
+            $resultplayer1 = $this->ApiResult("Error");
         }
-    } catch (\Exception $e) {
-        // Log the exception error message
-        \Log::error('Error in fetching game result: ' . $e->getMessage());
-        $resultowner = $this->ApiResult("Error");
-        $resultplayer1 = $this->ApiResult("Error");
-    }
 
-    // Return the view with the challenge and result data
-    return view('admin/challenge/details', compact('challenge', 'resultowner', 'resultplayer1'));
-}
+        // Return the view with the challenge and result data
+        return view('admin/challenge/details', compact('challenge', 'resultowner', 'resultplayer1'));
+    }
 
 
     public function cancelGame(Request $request)
