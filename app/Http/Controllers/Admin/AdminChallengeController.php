@@ -143,9 +143,6 @@ class AdminChallengeController extends Controller
             // Decode the JSON response from the API
             $responseData = json_decode($response->getBody()->getContents());
 
-            // Log the full API response for debugging
-            // \Log::info('Full API Response for game result: ', [(array)$responseData]);
-
             // Check if the API response indicates success
             if (isset($responseData->success) && $responseData->success) {
                 if (isset($responseData->data->result)) {
@@ -161,27 +158,23 @@ class AdminChallengeController extends Controller
                         $resultowner = $this->ApiResult('Playing');
                         $resultplayer1 = $this->ApiResult('Playing');
                     } elseif ($gameResult->eStatus == 'Finished') {
-                        // If game is finished, check which player won or lost
-                        if ($gameResult->aPlayers[0]->eStatus == 'Won') {
-                            $resultowner = $this->ApiResult('Won');
-                            $resultplayer1 = $this->ApiResult('Lost');
-                        } elseif ($gameResult->aPlayers[1]->eStatus == 'Won') {
-                            $resultowner = $this->ApiResult('Lost');
-                            $resultplayer1 = $this->ApiResult('Won');
+                        // If game is finished, directly use the API status for each player
+                        $creatorId = $challenge->creator_id;
+                        $statusPlayer1 = $gameResult->aPlayers[0]->eStatus;
+                        $statusPlayer2 = $gameResult->aPlayers[1]->eStatus;
+
+                        // Map the statuses to the right players
+                        if ($gameResult->aPlayers[0]->_userId == $creatorId) {
+                            $resultowner = $this->ApiResult($statusPlayer1);
+                            $resultplayer1 = $this->ApiResult($statusPlayer2);
+                        } else {
+                            $resultowner = $this->ApiResult($statusPlayer2);
+                            $resultplayer1 = $this->ApiResult($statusPlayer1);
                         }
                     } else {
-                        // Map player statuses for other scenarios (e.g., not yet finished)
-                        $creatorId = $challenge->creator_id;
-                        $status = $gameResult->aPlayers[0]->eStatus ?? "null";
-                        $status2 = $gameResult->aPlayers[1]->eStatus ?? "null";
-
-                        if ($gameResult->aPlayers[0]->_userId == $creatorId) {
-                            $resultowner = $this->ApiResult($status);
-                            $resultplayer1 = $this->ApiResult($status2);
-                        } else {
-                            $resultowner = $this->ApiResult($status2);
-                            $resultplayer1 = $this->ApiResult($status);
-                        }
+                        // Set default values if the game is in an unexpected state
+                        $resultowner = $this->ApiResult("Hold");
+                        $resultplayer1 = $this->ApiResult("Hold");
                     }
                 } else {
                     // No game result data found, set default values
