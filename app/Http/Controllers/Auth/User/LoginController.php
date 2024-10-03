@@ -191,32 +191,35 @@ class LoginController extends Controller
 
 // 		return 1;
 // 	}
-    private function sendOtp($mobile,$otp){
-	$curl = curl_init();
+    private function sendOtp($mobile, $otp) {
+        $curl = curl_init();
 
-curl_setopt_array($curl, array(
-  CURLOPT_URL => 'https://login.99smsservice.com/sms/api?action=send-sms&api_key=TkFNS0p4SUlQR3l2bkZPZXBwdHg%3D&to='.$mobile.'&from=SANGHC&sms=Dear%20User%2C%0A%0AYour%20OTP%20is%20'.$otp.'.%20Valid%20for%2010%20minutes.%20Please%20do%20not%20share%20this%20OTP.%0A%0ARegards%0AAK%20ADDA%0A%0A%0ATK%20IND.&p_entity_id=1201162643300643505&temp_id=1207169726695274252',
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => '',
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 0,
-  CURLOPT_FOLLOWLOCATION => true,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => 'POST',
-  CURLOPT_HTTPHEADER => array(
-    'Cookie: laravel_session=eyJpdiI6IjBmWmZBOUhVbjVld1VCS04wRk9pdEE9PSIsInZhbHVlIjoiSmxcL2JVaHZTWWVlYWd6YzdvQXRkMEkwT0hpdG5rbUpNQld4YzlXQml5Q3RkOWYySUU1THlHTVByd1VjYkhyS0NGS2FcL0hPQzkxa3hBbDdFV3owOVdQZz09IiwibWFjIjoiZWZkYWE0ZGY3YWY0N2E3YjJjYTZjYTBjMTkwOGI0OTVlMDMxOWM5MTIxNmYzMmY3Y2E5YTFjNWQ5ODY2Yjk2MSJ9'
-  ),
-));
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://login.99smsservice.com/sms/api?action=send-sms&api_key=ckpDTUp6cnVPcnZhQUdvQ2ppTz0%3D&to='.$mobile.'&from=HARIOK&sms=Dear%20User%0AYour%20OTP%20is%20'.$otp.'%20Valid%20for%2010%20minutes.%20Please%20do%20not%20share%20this%20OTP.%0ARegards%0AAKADDA%0Ahariom&p_entity_id=1101778010000075980&temp_id=1107171109383082610',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+              'Cookie: laravel_session=eyJpdiI6ImJDZVwvMitEekNiZFFkcUVqOTBocm53PT0iLCJ2YWx1ZSI6IlVWMUtvWEZiOHZUNit5OXQ5Y01HajVOUHlQU3J1Y1BlXC9aNkkrb0dpQ3NhUjk5RlM0c3UxcmNlZ0xBOHA0VnhUcndMS2Q3WVBMSTZBUzZtTXhFSVNsUT09IiwibWFjIjoiODYwYzEyMDQyODA4ZGExMTQ0NjNmZjg3ZjRlZWFlMGQ2NmEzZDdkYzAyZjIzYWU0NDlhNTAzZThiNjRkNDUxZSJ9'
+            ),
+        ));
 
-$response = curl_exec($curl);
+        $response = curl_exec($curl);
+        curl_close($curl);
 
-curl_close($curl);
-	$user = User::where('mobile','=',$mobile)->update(['otp' => $otp]);
-	return $response;
-	return response()->json([$user],200);
+        // Log the response from the SMS gateway for debugging
+        // \Log::info('SMS API Response: ' . $response);
 
-		return 1;
-	}
+        // Update OTP in the database
+        $user = User::where('mobile', '=', $mobile)->update(['otp' => $otp]);
+
+        return $response;
+    }
+
 
     public function logout(){
         Auth::logout();
