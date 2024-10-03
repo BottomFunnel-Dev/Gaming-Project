@@ -301,7 +301,7 @@ class WithdrawRequestController
             // \Log::info("IMPS Verification URL: $url"); // Log IMPS verification URL
 
             $bankDetailDB = UserBank::where('number', $account_no)->where('ifsc', $ifsc)->where('type', $type)->where('auto', 1)->first();
-            $name_at_bank = "Rajasthani Ludo User";
+            $name_at_bank = "Akadda Ludo User";
             $flag = 0;
 
             if (!$bankDetailDB) {
