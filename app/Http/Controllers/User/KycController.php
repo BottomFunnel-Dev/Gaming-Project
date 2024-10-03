@@ -96,7 +96,7 @@ $response = curl_exec($curl);
     }
 	public function check_aadhar(Request $request) {
         $user_id = Auth::user()->id;
-        \Log::info('User ID:', ['user_id' => $user_id]);
+        // \Log::info('User ID:', ['user_id' => $user_id]);
 
         if (isset($request->ref_id)) {
             $sessionIDDD = $request->ref_id;
@@ -105,11 +105,11 @@ $response = curl_exec($curl);
 
             $url = "https://production.deepvue.tech/v1/ekyc/aadhaar/verify-otp?otp=$uSEROtp&session_id=$sessionIDDD&consent=Y&purpose=For%20KYC";
             $lastdata = $this->APIHitDeepvue($url);
-            \Log::info('Aadhaar API response:', (array)$lastdata);
+            // \Log::info('Aadhaar API response:', (array)$lastdata);
 
             if ($lastdata->code == 200) {
                 $user_data_details = UserData::where('user_id', $user_id)->first();
-                \Log::info('User data before update:', (array)$user_data_details);
+                // \Log::info('User data before update:', (array)$user_data_details);
 
                 $user_data_details->DOCUMENT_FIRST_NAME = $lastdata->data->name;
                 $user_data_details->DOCUMENT_DOB = $lastdata->data->dateOfBirth;
@@ -130,7 +130,7 @@ $response = curl_exec($curl);
                 return redirect('/complete-kyc/approve')->with('success', "Aadhar card Registered");
             }
 
-            \Log::error('Error in Aadhaar OTP verification:', (array)$lastdata);
+            // \Log::error('Error in Aadhaar OTP verification:', (array)$lastdata);
             return back()->with('error', isset($lastdata->message) ? $lastdata->message : "Something went wrong!");
         } else {
             // \Log::info('Generating Aadhaar OTP.');

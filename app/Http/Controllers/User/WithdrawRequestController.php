@@ -211,40 +211,58 @@ class WithdrawRequestController
         $ModeOn = [$WithdrawalUPIStatus->field_value,$WithdrawalIMPSStatus->field_value];
         return view('user.edit-bank',compact('IMPSbankDetail','ModeOn','UPIbankDetail'));
     }
-    public function POSTeditBankTypeDetail($type,Request $request)
+    public function POSTeditBankTypeDetail($type, Request $request)
     {
         $user_id = Auth::user()->id;
         $TokenAUth = $this->AuthDeepvue();
         $token = $TokenAUth->access_token;
-        if($type == "upi"){
+
+        // \Log::info("User ID: $user_id, Type: $type"); // Log user ID and type
+
+        if ($type == "upi") {
             $upiId = $request->upi_id;
-            $url = "https://production.deepvue.tech/v1/verification/upi?vpa=".$upiId;
-            $bankDetailDB = UserBank::where('number',$upiId)->where('type',$type)->where('auto',1)->first();
-            $name_at_bank = "Rajasthani Ludo User";
+            $url = "https://production.deepvue.tech/v1/verification/upi?vpa=" . $upiId;
+            // \Log::info("UPI Verification URL: $url"); // Log UPI verification URL
+
+            $bankDetailDB = UserBank::where('number', $upiId)->where('type', $type)->where('auto', 1)->first();
+            $name_at_bank = "Akadda Ludo User";
             $flag = 0;
-            if(!$bankDetailDB){
-                $response = $this->APIHitDeepvue($token,$url);
-                if(isset($response->code) && $response->code == 200){
-                    if($response->data->account_exists){
+
+            if (!$bankDetailDB) {
+                $response = $this->APIHitDeepvue($token, $url);
+                // \Log::info("UPI API Response: ", (array)$response); // Log the API response
+
+                if (isset($response->code) && $response->code == 200) {
+                    if ($response->data->account_exists) {
                         $name_at_bank = $response->data->name_at_bank;
                         $flag = 1;
+                    } else {
+                        // Log invalid UPI ID scenario
+                        // \Log::warning("Invalid UPI ID: $upiId");
+                        return back()->with('error', 'Oops! Please enter the correct UPI ID.')->withInput();
                     }
+                } else {
+                    // Log unexpected response code
+                    // \Log::error("Unexpected API response code: {$response->code}");
                 }
-            }else{
+            } else {
                 $name_at_bank = $bankDetailDB->name;
             }
-            if($flag == 1){
-                $bankDetail = UserBank::where('uid',$user_id)->where('type',$type)->where('status',1)->orderBy('id','desc')->first();
-                if($bankDetail){
+
+            if ($flag == 1) {
+                $bankDetail = UserBank::where('uid', $user_id)->where('type', $type)->where('status', 1)->orderBy('id', 'desc')->first();
+                if ($bankDetail) {
                     $bankDetail->number = $upiId;
                     $bankDetail->type = $type;
                     $bankDetail->name = $name_at_bank;
-                    if($bankDetail->save()){
+                    if ($bankDetail->save()) {
+                        // \Log::info("UPI details updated for user ID: $user_id"); // Log successful update
                         return redirect('/universal-withdraw');
-                    }else{
-                        return back()->with('error','Someting wents wrong, Please try again.');
+                    } else {
+                        // \Log::error("Failed to update UPI details for user ID: $user_id"); // Log failure to update
+                        return back()->with('error', 'Something went wrong, please try again.');
                     }
-                }else{
+                } else {
                     $dd = new UserBank;
                     $dd->uid = $user_id;
                     $dd->type = $type;
@@ -252,13 +270,15 @@ class WithdrawRequestController
                     $dd->name = $name_at_bank;
                     $dd->status = 1;
 
-                    if($dd->save()){
+                    if ($dd->save()) {
+                        // \Log::info("New UPI details saved for user ID: $user_id"); // Log new save
                         return redirect('/universal-withdraw');
-                    }else{
-                        return back()->with('error','Someting wents wrong, Please try again.');
+                    } else {
+                        // \Log::error("Failed to save new UPI details for user ID: $user_id"); // Log failure to save
+                        return back()->with('error', 'Something went wrong, please try again.');
                     }
                 }
-            }else{
+            } else {
                 $dd = new UserBank;
                 $dd->uid = $user_id;
                 $dd->type = $type;
@@ -266,31 +286,39 @@ class WithdrawRequestController
                 $dd->name = $name_at_bank;
                 $dd->auto = 1;
                 $dd->status = 1;
-                if($dd->save()){
+                if ($dd->save()) {
+                    // \Log::info("New UPI details saved with auto flag for user ID: $user_id"); // Log new save with auto flag
                     return redirect('/universal-withdraw');
-                }else{
-                    return back()->with('error','Someting wents wrong, Please try again.');
+                } else {
+                    // \Log::error("Failed to save new UPI details with auto flag for user ID: $user_id"); // Log failure to save
+                    return back()->with('error', 'Something went wrong, please try again.');
                 }
             }
-        }elseif($type=='imps'){
+        } elseif ($type == 'imps') {
             $account_no = $request->accountNumber;
             $ifsc = $request->ifsc;
             $url = "https://production.deepvue.tech/v1/verification/bankaccount?account_number=$account_no&ifsc=$ifsc";
-            $bankDetailDB = UserBank::where('number',$account_no)->where('ifsc',$ifsc)->where('type',$type)->where('auto',1)->first();
+            // \Log::info("IMPS Verification URL: $url"); // Log IMPS verification URL
+
+            $bankDetailDB = UserBank::where('number', $account_no)->where('ifsc', $ifsc)->where('type', $type)->where('auto', 1)->first();
             $name_at_bank = "Rajasthani Ludo User";
             $flag = 0;
-            if(!$bankDetailDB){
-                $response = $this->APIHitDeepvue($token,$url);
-                if(isset($response->code) && $response->code == 200){
-                    if($response->data->account_exists){
+
+            if (!$bankDetailDB) {
+                $response = $this->APIHitDeepvue($token, $url);
+                // \Log::info("IMPS API Response: ", (array)$response); // Log the API response
+
+                if (isset($response->code) && $response->code == 200) {
+                    if ($response->data->account_exists) {
                         $name_at_bank = $response->data->name_at_bank;
                         $flag = 1;
                     }
                 }
-            }else{
+            } else {
                 $name_at_bank = $bankDetailDB->name;
             }
-            if($flag == 1){
+
+            if ($flag == 1) {
                 $dd = new UserBank;
                 $dd->uid = $user_id;
                 $dd->number = $account_no;
@@ -299,23 +327,27 @@ class WithdrawRequestController
                 $dd->name = $name_at_bank;
                 $dd->auto = 1;
                 $dd->status = 1;
-                if($dd->save()){
+                if ($dd->save()) {
+                    // \Log::info("New IMPS details saved for user ID: $user_id"); // Log new IMPS save
                     return redirect('/universal-withdraw');
-                }else{
-                    return back()->with('error','Someting wents wrong, Please try again.');
+                } else {
+                    // \Log::error("Failed to save new IMPS details for user ID: $user_id"); // Log failure to save
+                    return back()->with('error', 'Something went wrong, please try again.');
                 }
-            }else{
-                $bankDetail = UserBank::where('uid',$user_id)->where('type',$type)->where('status',1)->orderBy('id','desc')->first();
-                if($bankDetail){
+            } else {
+                $bankDetail = UserBank::where('uid', $user_id)->where('type', $type)->where('status', 1)->orderBy('id', 'desc')->first();
+                if ($bankDetail) {
                     $bankDetail->number = $account_no;
                     $bankDetail->ifsc = $ifsc;
                     $bankDetail->name = $name_at_bank;
-                    if($bankDetail->save()){
+                    if ($bankDetail->save()) {
+                        // \Log::info("IMPS details updated for user ID: $user_id"); // Log successful IMPS update
                         return redirect('/universal-withdraw');
-                    }else{
-                        return back()->with('error','Someting wents wrong, Please try again.');
+                    } else {
+                        // \Log::error("Failed to update IMPS details for user ID: $user_id"); // Log failure to update
+                        return back()->with('error', 'Something went wrong, please try again.');
                     }
-                }else{
+                } else {
                     $dd = new UserBank;
                     $dd->uid = $user_id;
                     $dd->number = $account_no;
@@ -323,17 +355,22 @@ class WithdrawRequestController
                     $dd->type = $type;
                     $dd->name = $name_at_bank;
                     $dd->status = 1;
-                    if($dd->save()){
+                    if ($dd->save()) {
+                        // \Log::info("New IMPS details saved for user ID: $user_id"); // Log new IMPS save
                         return redirect('/universal-withdraw');
-                    }else{
-                        return back()->with('error','Someting wents wrong, Please try again.');
+                    } else {
+                        // \Log::error("Failed to save new IMPS details for user ID: $user_id"); // Log failure to save
+                        return back()->with('error', 'Something went wrong, please try again.');
                     }
                 }
             }
         }
-        $bankDetail = UserBank::where('uid',$user_id)->where('type',$type)->first();
-        return view('user.edit-bank-type',compact('bankDetail','type'));
+
+        $bankDetail = UserBank::where('uid', $user_id)->where('type', $type)->first();
+        return view('user.edit-bank-type', compact('bankDetail', 'type'));
     }
+
+
     public function editBankTypeDetail($type)
     {
         $user_id = Auth::user()->id;
