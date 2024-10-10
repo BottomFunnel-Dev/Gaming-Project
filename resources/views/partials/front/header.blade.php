@@ -11,7 +11,7 @@
             <div class="ml-0 navLogo d-flex" style=".ml-1 {
   margin-left: ($spacer * .5) !important;
 }">
-              <img src="{{asset('front/images/khelmoj123.png')}}" alt="" style="width: 65px;">
+              <img src="{{asset('front/images/khelmoj123.jpeg')}}" alt="" style="width: 65px;">
            </div>
          </a>
          <script type="text/javascript">
@@ -24,7 +24,7 @@
          @if(isset(Auth::user()->id))
             <div>
                <div class="menu-items">
-                   
+
                   <a class="box" href="{{url('add-money')}}">
                      <picture class="moneyIcon-container"><img src="{{asset('front/images/global-rupeeIcon.png')}}" alt=""></picture>
                      <div class="mt-1 ml-1">

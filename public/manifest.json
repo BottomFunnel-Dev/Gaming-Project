@@ -1,28 +1,28 @@
 {
-  "name": "AK Adda",
-  "short_name": "AK Adda",
+  "name": "AK Players",
+  "short_name": "AK Players",
   "icons": [{
-    "src": "/front/images/khelmoj123.png",
+    "src": "/front/images/khelmoj123.jpeg",
       "sizes": "128x128",
       "type": "image/png"
     }, {
-      "src": "/front/images/khelmoj123.png",
+      "src": "/front/images/khelmoj123.jpeg",
       "sizes": "144x144",
       "type": "image/png"
     }, {
-      "src": "/front/images/khelmoj123.png",
+      "src": "/front/images/khelmoj123.jpeg",
       "sizes": "152x152",
       "type": "image/png"
     }, {
-      "src": "/front/images/khelmoj123.png",
+      "src": "/front/images/khelmoj123.jpeg",
       "sizes": "192x192",
       "type": "image/png"
     }, {
-      "src": "/front/images/khelmoj123.png",
+      "src": "/front/images/khelmoj123.jpeg",
       "sizes": "256x256",
       "type": "image/png"
     }, {
-      "src": "/front/images/khelmoj123.png",
+      "src": "/front/images/khelmoj123.jpeg",
       "sizes": "512x512",
       "type": "image/png"
     }],
