@@ -2,13 +2,13 @@
 @section('content')
 
 <div class="main-area" style="padding-top: 60px;">
-    
+
          <nav aria-label="pagination navigation" class="MuiPagination-root d-flex justify-content-center">
             <ul class="MuiPagination">
             @if ($transactions->onFirstPage())
                 <li><a href="#" aria-disabled="true"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
             @else
-                <li><a href="{{ $transactions->previousPageUrl() }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>                
+                <li><a href="{{ $transactions->previousPageUrl() }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></a></li>
             @endif
                <li><a @if($page == 1 || $page == 0) class="active" @endif href="/game-history?page=1">1</a></li>
                <li><a @if($page == 2) class="active" @endif href="/game-history?page=2">2</a></li>
@@ -16,7 +16,7 @@
                <li><a @if($page == 4) class="active" @endif href="/game-history?page=4">4</a></li>
                <li><a @if($page == 5) class="active" @endif href="/game-history?page=5">5</a></li>
                @if ($transactions->hasMorePages())
-                    <li><a href="{{ $transactions->nextPageUrl() }}" ><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>                    
+                    <li><a href="{{ $transactions->nextPageUrl() }}" ><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
                 @else
                     <li><a href="#" aria-disabled="true"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></li>
                 @endif
@@ -38,10 +38,11 @@ function myFunction3() {
       <span class="text-capitalize me-2 py-2 px-4 border text-dark badge rounded-pill text-white bg-primary" style="cursor: pointer;"onclick="myFunction2()">Game</span>
       <span class="text-capitalize me-2 py-2 px-4 border text-dark badge rounded-pill" style="cursor: pointer;"onclick="myFunction3()">Referral</span>
     </div>
-         @foreach($transactions as $id => $val)                    
+         @foreach($transactions as $id => $val)
                         @switch($val->status)
                           @case('Create')
-                            @if($val->challenge->status == 0 && (isset($val->challengeresult->is_cancel) && $val->challengeresult->is_cancel == 0) && ($val->challengeresult->user_id != Auth::user()->id ))
+                            {{-- @if($val->challenge->status == 0 && (isset($val->challengeresult->is_cancel) && $val->challengeresult->is_cancel == 0) && ($val->challengeresult->user_id != Auth::user()->id )) --}}
+                            @if(isset($val->challenge) && $val->challenge->status == 0 && isset($val->challengeresult->is_cancel) && $val->challengeresult->is_cancel == 0 && $val->challengeresult->user_id != Auth::user()->id)
 
                             <div class="w-100 py-3 d-flex align-items-center list-item">
                               <div class="center-xy list-date mx-2">
@@ -60,11 +61,11 @@ function myFunction3() {
                                     <div class="ml-1 mb-1"><img height="21px" width="21px" src="{{ asset('front/images/global-rupeeIcon.png')}}" alt="">
                                     </div><span class="pl-1">{{$val->amount}}</span>
                                 </div>
-                                <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div> 
+                                <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div>
                               </div>
                             </div>
 
-                            @endif                              
+                            @endif
                             @break
                           @case('Play')
                             @if($val->challenge->status == 0 && (isset($val->challengeresult->is_cancel) && $val->challengeresult->is_cancel == 0) && ($val->challengeresult->user_id != Auth::user()->id ))
@@ -85,11 +86,11 @@ function myFunction3() {
                                     <div class="ml-1 mb-1"><img height="21px" width="21px" src="{{ asset('front/images/global-rupeeIcon.png')}}" alt="">
                                     </div><span class="pl-1">{{$val->amount}}</span>
                                 </div>
-                               <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div> 
+                               <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div>
                               </div>
-                            </div>                           
+                            </div>
                             @endif
-                            
+
                             @break
                           @case('Won')
                           <div class="w-100 py-3 d-flex align-items-center list-item">
@@ -100,12 +101,12 @@ function myFunction3() {
                               <div class="mx-3 d-flex list-body">
                                 <div class="d-flex align-items-center"></div>
                                 <div class="d-flex flex-column font-8">
-                                  Won the game against 
+                                  Won the game against
                                   @if(isset($val->challenge) && $val->challenge->c_id == Auth::user()->id)
                                     {{$val->challenge->oname}}
                                   @elseif(isset($val->challenge) && $val->challenge->o_id == Auth::user()->id)
                                     {{$val->challenge->cname}}
-                                  @endif                                  
+                                  @endif
                                   <div class="games-section-headline">Order ID:
                                       {{$val->source_id}}</div>
                                 </div>
@@ -116,7 +117,7 @@ function myFunction3() {
 								    <div class="ml-1 mb-1"><img height="21px" width="21px" src="{{ asset('front/images/global-rupeeIcon.png')}}" alt="">
                                     </div><span class="pl-1">{{$val->amount }}</span>
                                 </div>
-                             <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div> 
+                             <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div>
                               </div>
                             </div>
                             @break
@@ -129,12 +130,12 @@ function myFunction3() {
                               <div class="mx-3 d-flex list-body">
                                 <div class="d-flex align-items-center"></div>
                                 <div class="d-flex flex-column font-8">
-                                  Cancel game against 
+                                  Cancel game against
                                   @if(isset($val->challenge) && $val->challenge->c_id == Auth::user()->id)
                                     {{$val->challenge->oname}}
                                   @elseif(isset($val->challenge) && $val->challenge->o_id == Auth::user()->id)
                                     {{$val->challenge->cname}}
-                                  @endif                                  
+                                  @endif
                                   <div class="games-section-headline">Order ID:
                                       {{$val->source_id}}</div>
                                 </div>
@@ -145,12 +146,12 @@ function myFunction3() {
                                     <div class="ml-1 mb-1"><img height="21px" width="21px" src="{{ asset('front/images/global-rupeeIcon.png')}}" alt="">
                                     </div><span class="pl-1">{{$val->amount}}</span>
                                 </div>
-                              <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div> 
+                              <div class="games-section-headline" style="font-size: 0.6em;">Closing Balance: {{$val->closing_balance}}</div>
                               </div>
                             </div>
 
                             @break
-                          @endswitch                        
+                          @endswitch
                 @endforeach
 
         @if($transactions->count() == 0 )
