@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="{{ asset('front/images/khelmoj123.jpeg') }}" />
-    <title>AK Players | Best online ludo platform</title>
+    <title>AK Players | Best online ludo platform in the market </title>
     <meta content="ApnaLudo" name="description">
     <meta
         content="ludo khelo,online ludo, online games, play with real players, best ludo website, ludo earning, earn by playing ludo, playing ludo king,  ludo contest, Best Ludo website in kota , ludo tournament , ludo khelo paise kamao, khelo ludo, Ludo Players, Ludo king."
