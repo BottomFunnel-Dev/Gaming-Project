@@ -859,51 +859,38 @@ class ChallengeController extends Controller
     // this is new with the help of the callback
     public function add_rommcode(Request $r)
     {
-        // Validate the request parameters
         $r->validate([
             'id' => 'required',
             'code' => 'required'
         ]);
 
-        // Prepare the request payload for the new API
         $payload = [
             'roomCode' => $r->code,
             'purpose' => 'Check'
         ];
 
         try {
-            // Initialize Guzzle client
             $client = new Client();
 
-            // Send POST request to the new API endpoint
-            $response = $client->post('https://akplayers.com//api/cashfree-callback1', [
+            \Log::info('Request Payload: ', $payload);
+
+            $response = $client->post('https://akadda.com/api/cashfree-callback1', [
                 'headers' => [
                     'Content-Type' => 'application/json'
                 ],
-                'json' => $payload,  // Guzzle will automatically encode the array to JSON
+                'json' => $payload,
                 'timeout' => 30
             ]);
 
-            // Decode the JSON response from the API
             $responseData = json_decode($response->getBody()->getContents());
+            \Log::info('API Response: ', (array)$responseData);
 
-            // Log the API response structure for debugging
-            // \Log::info('API Response Structure: ', (array)$responseData);
-
-            // Log the full API response for debugging
-            // \Log::info('Full API Response add_rommcode function: ', [(array)$responseData]);
-
-            // Check the success status of the response
             if (isset($responseData->success) && $responseData->success) {
-                // Ensure the ludoKing->_tableId is present in the response
                 if (isset($responseData->data->ludoKing->_tableId)) {
-                    // Access the _tableId from the response
                     $tableId = $responseData->data->ludoKing->_tableId;
 
-                    // Find the challenge by ID
                     $dataa = Challenge::where('id', $r->id)->first();
 
-                    // If the challenge exists and is in a valid state, update the room code
                     if ($dataa && $dataa->status >= 3) {
                         Challenge::where('id', $r->id)->update(['rcode' => $r->code]);
                         return redirect('/challenge-detail/' . $r->id);
@@ -911,17 +898,19 @@ class ChallengeController extends Controller
                         return redirect('/challenge-detail/' . $r->id)->with('error', 'Already Cancelled or Invalid State');
                     }
                 } else {
+                    \Log::warning('Room code not found in response data!', (array)$responseData);
                     return redirect('/challenge-detail/' . $r->id)->with('error', 'Room code not found in response data!');
                 }
             } else {
+                \Log::warning('Room not found or success flag is false', (array)$responseData);
                 return redirect('/challenge-detail/' . $r->id)->with('error', 'Room not found!');
             }
         } catch (\Exception $e) {
-            // Log the exception error message
-            // \Log::error('Error in add_rommcode function: ' . $e->getMessage());
+            \Log::error('Error in add_rommcode function: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect('/challenge-detail/' . $r->id)->with('error', 'Room Code Error');
         }
     }
+
 
 
     // this is the old roomcode via the api
