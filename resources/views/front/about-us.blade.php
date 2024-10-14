@@ -17,7 +17,7 @@
                     <br>
                     <div class="footer-text">We are an HTML5 game-publishing company and our mission is to make accessing games fast and easy by removing the friction of app-installs.</div>
                     <br>
-                    <div class="footer-text">AK Players is a skill-based real-money gaming platform accessible only for our users in India. It is accessible on <a target="_blank" rel="noopener noreferrer" href="https://www.akadda.com">https://www.akadda.com</a>. On AK Players, users can compete for real cash in Tournaments and Battles. They can encash their winnings via popular options such as Paytm Wallet, Amazon Pay, Bank Transfer, Mobile Recharges etc.</div>
+                    <div class="footer-text">AK Players is a skill-based real-money gaming platform accessible only for our users in India. It is accessible on <a target="_blank" rel="noopener noreferrer" href="https://www.akplayers.com">https://www.akplayers.com</a>. On AK Players, users can compete for real cash in Tournaments and Battles. They can encash their winnings via popular options such as Paytm Wallet, Amazon Pay, Bank Transfer, Mobile Recharges etc.</div>
                     <br>
                     <div class="footer-text-bold">Our Games</div>
                     <br>
