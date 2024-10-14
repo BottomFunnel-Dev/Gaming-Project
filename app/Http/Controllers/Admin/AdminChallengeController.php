@@ -143,11 +143,19 @@ class AdminChallengeController extends Controller
             // Decode the JSON response from the API
             $responseData = json_decode($response->getBody()->getContents());
 
+            // Log the full response data for debugging purposes
+            \Log::info('API Response:', ['response' => $responseData]);
+
             // Check if the API response indicates success
             if (isset($responseData->success) && $responseData->success) {
+                \Log::info('API Success:', ['roomCode' => $RoomCode, 'success' => true]);
+
                 if (isset($responseData->data->result)) {
                     // Extract the game result data
                     $gameResult = $responseData->data->result;
+
+                    // Log game result details
+                    \Log::info('Game Result:', ['gameResult' => $gameResult]);
 
                     // Default statuses to "Hold" before updating
                     $resultowner = $this->ApiResult("Hold");
@@ -157,6 +165,13 @@ class AdminChallengeController extends Controller
                     if ($gameResult->eStatus == 'Running') {
                         $resultowner = $this->ApiResult('Playing');
                         $resultplayer1 = $this->ApiResult('Playing');
+
+                        // Log the current status as the game is running
+                        \Log::info('Game Running:', [
+                            'owner_status' => 'Playing',
+                            'player1_status' => 'Playing'
+                        ]);
+
                     } elseif ($gameResult->eStatus == 'Finished') {
                         // If game is finished, directly use the API status for each player
                         $creatorId = $challenge->creator_id;
@@ -167,35 +182,63 @@ class AdminChallengeController extends Controller
                         if ($gameResult->aPlayers[0]->_userId == $creatorId) {
                             $resultowner = $this->ApiResult($statusPlayer1);
                             $resultplayer1 = $this->ApiResult($statusPlayer2);
+
+                            // Log the statuses and who won (if applicable)
+                            \Log::info('Game Finished - Creator is Player 1:', [
+                                'creator_status' => $statusPlayer1,
+                                'opponent_status' => $statusPlayer2
+                            ]);
                         } else {
                             $resultowner = $this->ApiResult($statusPlayer2);
                             $resultplayer1 = $this->ApiResult($statusPlayer1);
+
+                            // Log the statuses and who won (if applicable)
+                            \Log::info('Game Finished - Creator is Player 2:', [
+                                'creator_status' => $statusPlayer2,
+                                'opponent_status' => $statusPlayer1
+                            ]);
                         }
                     } else {
                         // Set default values if the game is in an unexpected state
                         $resultowner = $this->ApiResult("Hold");
                         $resultplayer1 = $this->ApiResult("Hold");
+
+                        // Log that the game is in an unexpected state
+                        \Log::warning('Unexpected Game Status:', ['gameStatus' => $gameResult->eStatus]);
                     }
                 } else {
                     // No game result data found, set default values
                     $resultowner = $this->ApiResult("Hold");
                     $resultplayer1 = $this->ApiResult("Hold");
+
+                    // Log that no game result data was found
+                    \Log::warning('No Game Result Data for Room:', ['roomCode' => $RoomCode]);
                 }
             } else {
                 // API response indicates failure
                 $resultowner = $this->ApiResult("Updating..");
                 $resultplayer1 = $this->ApiResult("Updating..");
+
+                // Log that the API call was unsuccessful
+                \Log::error('API Call Failed:', ['roomCode' => $RoomCode, 'response' => $responseData]);
             }
         } catch (\Exception $e) {
             // Log the exception error message
-            // \Log::error('Error in fetching game result: ' . $e->getMessage());
+            \Log::error('Error in fetching game result: ' . $e->getMessage());
             $resultowner = $this->ApiResult("Error");
             $resultplayer1 = $this->ApiResult("Error");
         }
 
+        // Log the final result statuses before returning the view
+        \Log::info('Final Result Statuses:', [
+            'creator_status' => $resultowner,
+            'opponent_status' => $resultplayer1
+        ]);
+
         // Return the view with the challenge and result data
         return view('admin/challenge/details', compact('challenge', 'resultowner', 'resultplayer1'));
     }
+
 
 
     public function cancelGame(Request $request)

@@ -302,10 +302,10 @@
                     data.cname + ' </span></span>';
                 html += '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span>';
                 html +=
-                    '<div class="global-rupee-icon"><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                    '<div class="global-rupee-icon"><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                     data.amount + '</span></div></div>';
                 html +=
-                    '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                    '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                     prize + '</span></div>';
                 html += '</div><button id="' + data.id + '-play" class="bg-secondary playButton cxy" onclick="playChallenge(' +
                     data.id + ');">Play</button></div></div></div>';
@@ -319,7 +319,7 @@
 
                 html += '<div id="pp2"><div id="chdiv-' + data.id +
                     '" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
-                html += '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' + data
+                html += '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' + data
                     .amount + '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
                 html += '<span class="ml-auto" id="' + data.id +
                     '-buttons"><button class="btn btn-danger px-3 btn-sm" onclick="cancelChallengeCre(' + data.id +
@@ -353,10 +353,10 @@
                 var prize = getPrizeAmount(data.amount);
                 html += '<div id="pp2"><div class="betCard mt-1" id="playing-chdiv-' + data.id +
                     '"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
-                html += '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' + data
+                html += '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' + data
                     .amount +
                     '</span><div class="betCard-title d-flex align-items-center text-uppercase"><span class="ml-auto mr-3">PRIZE';
-                html += '<img  class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
+                html += '<img  class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' +
                     prize + '</span></div></div><div class="py-1 row"><div class="pr-3 text-center col-5">';
                 html +=
                     '<div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
@@ -375,7 +375,7 @@
                 var prize = getPrizeAmount(data.amount);
                 html += '<div id="pp2"><div id="chdiv-' + data.id +
                     '" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
-                html += '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
+                html += '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' +
                     prize + '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
                 html += '<span class="ml-auto" id="' + data.id + '-buttons"><button id="' + data.id +
                     '-accept" class="btn btn-success px-3 btn-sm" style="cursor: pointer;float: left;width: 65px;height: 31px; " onclick="acceptChallenge(' +
@@ -399,8 +399,8 @@
                 // html	+='<div id="chdiv-'+data.id+'" class="betCard mt-1">';
                 // html	+='<span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">You </span></span>';
                 // html	+='<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span>';
-                // html	+='<div class="global-rupee-icon"><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">'+data.amount+'</span></div></div>';
-                // html	+='<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">'+prize+'</span></div>';
+                // html	+='<div class="global-rupee-icon"><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">'+data.amount+'</span></div></div>';
+                // html	+='<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">'+prize+'</span></div>';
                 // html	+='</div><button href="javascript:void(0)" class="bg-warning playButton cxy" onclick="cancelChallengeReq('+data.id+');">Requested</button></div></div>';
 
                 // return html;
@@ -414,10 +414,10 @@
                     '" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">' +
                     data.cname + ' </span></span>';
                 html +=
-                    '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                    '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                     data.amount + '</span>';
                 html +=
-                    '</div></div><div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                    '</div></div><div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                     prize + '</span>';
                 html += '</div></div><button id="' + data.id +
                     '-start-btn" class="bg-success playButton cxy" onclick="startChallenge(' + data.id +
@@ -431,7 +431,7 @@
 
                 html += '<div id="pp2"><div class="betCard mt-1" id="myplaying-chdiv-' + data.id +
                     '" ><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
-                html += '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
+                html += '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' +
                     prize + '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
 
                 html +=
@@ -828,7 +828,7 @@
                         html += '<div id="pp2"><div id="chdiv-' + challenges[i].id +
                             '" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
                         html +=
-                            '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
+                            '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' +
                             challenges[i].amount +
                             '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
                         html += '<span class="ml-auto" id="' + challenges[i].id +
@@ -850,10 +850,10 @@
                         html +=
                             '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span>';
                         html +=
-                            '<div class="global-rupee-icon"><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div class="global-rupee-icon"><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             challenges[i].amount + '</span></div></div>';
                         html +=
-                            '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             prize + '</span></div>';
                         html += '</div><button id="' + challenges[i].id +
                             '-play" class="bg-secondary playButton cxy" onclick="playChallenge(' + challenges[i].id +
@@ -873,7 +873,7 @@
                         html += '<div id="pp2"><div id="chdiv-' + myChallenges[i].id +
                             '" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
                         html +=
-                            '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
+                            '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' +
                             myChallenges[i].amount +
                             '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
                         html += '<span class="ml-auto" id="' + myChallenges[i].id +
@@ -895,10 +895,10 @@
                         html +=
                             '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span>';
                         html +=
-                            '<div class="global-rupee-icon"><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div class="global-rupee-icon"><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             myChallenges[i].amount + '</span></div></div>';
                         html +=
-                            '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             prize + '</span></div>';
                         html += '</div><button id="' + myChallenges[i].id +
                             '-play" class="bg-secondary playButton cxy" onclick="playChallenge(' + myChallenges[i].id +
@@ -907,7 +907,7 @@
                         html += '<div id="pp2"><div id="chdiv-' + myChallenges[i].id +
                             '" class="betCard mt-1"><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
                         html +=
-                            '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
+                            '<img class="mx-1" src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt="">' +
                             prize + '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
                         html += '<span class="ml-auto" id="' + myChallenges[i].id + '-buttons"><button id="' + myChallenges[i]
                             .id +
@@ -927,10 +927,10 @@
                         html += '<div id="pp2"><div id="chdiv-' + myChallenges[i].id +
                             '" class="betCard mt-1"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">You </span></span>';
                         html +=
-                            '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             myChallenges[i].amount + '</span></div></div>';
                         html +=
-                            '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             prize + '</span>';
                         html += '</div></div><button id="' + myChallenges[i].id +
                             '-requested" class="bg-warning playButton cxy" onclick="cancelChallengeReq(' + myChallenges[i].id +
@@ -940,10 +940,10 @@
                             '" class="betCard mt-1"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">CHALLENGE FROM<span class="ml-1" style="color: #072c92;">' +
                             myChallenges[i].cname + ' </span></span>';
                         html +=
-                            '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '<div class="d-flex pl-3"><div class="pr-3 pb-1"><span class="betCard-subTitle">Entry Fee</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             myChallenges[i].amount + '</span>';
                         html +=
-                            '</div></div><div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
+                            '</div></div><div><span class="betCard-subTitle">Prize</span><div><img src="{{ asset('front\images\global-rupeeIcon.png') }}" width="21px" alt=""><span class="betCard-amount">' +
                             prize + '</span>';
                         html += '</div></div><button id="' + myChallenges[i].id +
                             '-start-btn" class="bg-success playButton cxy" onclick="startChallenge(' + myChallenges[i].id +
@@ -963,7 +963,7 @@
                     html += '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
                         prize + '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
 
-                    html +=s
+                    html +=
                         '<div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';
                     html += '<div style="line-height: 1;"><span class="betCard-playerName">' + myPlayChallenges[i].cname +
                         '</span></div></div><div class="pr-3 text-center col-2 cxy">';
@@ -975,43 +975,53 @@
                 }
                 return html;
             }
-            $(document).ready(function() {
-                // Initial AJAX call to load data when the page loads
-                $.ajax({
-                    type: 'GET',
-                    url: "{{ url('ajax_chalange') }}",
-                    contentType: false,
-                    processData: false,
-                    success: function(data) {
-                        $('#rp2').html(data.myChallenges);
-                        $('#rp21').html(data.challenges);
-                        $('#rp3').html(data.myPlayChallenges);
-                        $('#rp31').html(data.completeChallenges);
-                        $('#rp4').html(data.playChallenges);
-                        $('#rp41').html(data);
-                    }
-                });
 
-                // Automatically refresh the data every 5 seconds (5000 milliseconds)
-                setInterval(function() {
+            $(document).ready(function() {
+                function loadData() {
                     $.ajax({
                         type: 'GET',
                         url: "{{ url('ajax_chalange') }}",
                         contentType: false,
                         processData: false,
                         success: function(data) {
-                            $('#rp2').html(data.myChallenges);
-                            $('#rp21').html(data.challenges);
-                            $('#rp3').html(data.myPlayChallenges);
-                            $('#rp31').html(data.completeChallenges);
-                            $('#rp4').html(data.playChallenges);
-                            $('#rp41').html(data);
+                            // Update content without complete re-rendering to avoid visual effects
+
+                            // Only replace inner HTML content if it has changed to avoid unnecessary re-rendering.
+                            if ($('#rp2').text() !== $(data.myChallenges).text()) {
+                                $('#rp2').html(data.myChallenges); // Update My Challenges
+                            }
+
+                            if ($('#rp21').text() !== $(data.challenges).text()) {
+                                $('#rp21').html(data.challenges); // Update Challenges
+                            }
+
+                            if ($('#rp3').text() !== $(data.myPlayChallenges).text()) {
+                                $('#rp3').html(data.myPlayChallenges); // Update My Play Challenges
+                            }
+
+                            if ($('#rp31').text() !== $(data.completeChallenges).text()) {
+                                $('#rp31').html(data.completeChallenges); // Update Complete Challenges
+                            }
+
+                            if ($('#rp4').text() !== $(data.playChallenges).text()) {
+                                $('#rp4').html(data.playChallenges); // Update Play Challenges
+                            }
+
+                            if ($('#rp41').text() !== $(data).text()) {
+                                $('#rp41').html(data); // Update other data if needed
+                            }
                         },
                         error: function(xhr, status, error) {
                             console.log("Error: " + error); // Log any errors for debugging
                         }
                     });
-                }, 2000); // 5 seconds interval
+                }
+
+                // Initial call to load data
+                loadData();
+
+                // Automatically refresh data every 5 seconds without causing visual effects
+                setInterval(loadData, 2000);
             });
         </script>
     @endsection
