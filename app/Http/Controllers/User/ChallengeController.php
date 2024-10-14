@@ -876,7 +876,7 @@ class ChallengeController extends Controller
             $client = new Client();
 
             // Send POST request to the new API endpoint
-            $response = $client->post('https://akadda.com/api/cashfree-callback1', [
+            $response = $client->post('https://akplayers.com//api/cashfree-callback1', [
                 'headers' => [
                     'Content-Type' => 'application/json'
                 ],

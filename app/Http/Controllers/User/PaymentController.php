@@ -228,7 +228,7 @@ class PaymentController
                     "amount": "' . $request->orderAmount . '",
                     "mobile": "' . $user->mobile . '",
                     "orderid": "' . $order_id . '",
-                    "callback_url": "https://akadda.com"
+                    "callback_url": "https://akplayers.com/"
                 }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',

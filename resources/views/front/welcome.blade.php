@@ -125,7 +125,7 @@
          and easy by removing the friction of app-installs.</div><br>
       <div class="footer-text">AK Players is a skill-based real-money gaming platform accessible only for our users in
          India. It is accessible on <a target="_blank" rel="noopener noreferrer"
-            href="https://akadda.com/">https://akadda.com/</a>. On akadda, users can compete for real cash in
+            href="https://akplayers.com//">https://akplayers.com//</a>. On akadda, users can compete for real cash in
          Tournaments and Battles. They can encash their winnings via popular options such as Paytm Wallet, Amazon Pay,
          Bank Transfer, Mobile Recharges etc.</div><br>
       <div class="footer-text-bold">Our Games</div><br>
@@ -136,7 +136,7 @@
          8 Ball Pool, Carrom, Tic Tac Toe, Archery, Quiz, Chinese Checkers and more! Some of our popular titles are:
          Escape Run, Bubble Wipeout, Tower Twist, Cricket Gunda, Ludo With Friends. If you have any suggestions around
          new games that we should add or if you are a game developer yourself and want to work with us, don't hesitate
-         to drop in a line at <a href="#">support@akadda.com</a>!</div>
+         to drop in a line at <a href="#">support@akplayers.com</a>!</div>
    </div>
          </section>
          <section class="footer">
