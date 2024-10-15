@@ -1,25 +1,24 @@
-@extends('layouts.main') 
+@extends('layouts.main')
 @section('title', 'Dashboard')
 @section('content')
     <!-- push external head elements to head -->
     @push('head')
-
         <link rel="stylesheet" href="{{ asset('plugins/weather-icons/css/weather-icons.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/owl.carousel/dist/assets/owl.carousel.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/owl.carousel/dist/assets/owl.theme.default.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/chartist/dist/chartist.min.css') }}">
     @endpush
     <div class="container-fluid">
-    	<div class="row">
-    		<!-- page statustic chart start -->
+        <div class="row">
+            <!-- page statustic chart start -->
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/users')}}">
+                <a href="{{ url('admin/users') }}">
                     <div class="card card-red text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['today_users']+1000 }}</h4>
-                                    <p class="mb-0">{{ __('New users')}}</p>
+                                    <h4 class="mb-0">{{ $data['today_users'] + 1000 }}</h4>
+                                    <p class="mb-0">{{ __('New users') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="fas fa-users f-30"></i>
@@ -30,13 +29,13 @@
                 </a>
             </div>
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/users')}}">
+                <a href="{{ url('admin/users') }}">
                     <div class="card card-green text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['total_users']+1000 }}</h4>
-                                    <p class="mb-0">{{ __('Total users ')}}</p>
+                                    <h4 class="mb-0">{{ $data['total_users'] + 1000 }}</h4>
+                                    <p class="mb-0">{{ __('Total users ') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-globe f-30"></i>
@@ -47,13 +46,13 @@
                 </a>
             </div>
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/users')}}">
+                <a href="{{ url('admin/users') }}">
                     <div class="card card-green text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['total_wallet_balance']+100000 }}</h4>
-                                    <p class="mb-0">{{ __('Total Wallet Balance ')}}</p>
+                                    <h4 class="mb-0">{{ $data['total_wallet_balance'] + 100000 }}</h4>
+                                    <p class="mb-0">{{ __('Total Wallet Balance ') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-globe f-30"></i>
@@ -70,7 +69,7 @@
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h4 class="mb-0">{{ $data['today_recharge'] - $data['today_withdraw'] }}</h4>
-                                    <p class="mb-0">{{ __('Today income ')}}</p>
+                                    <p class="mb-0">{{ __('Today income ') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-globe f-30"></i>
@@ -87,7 +86,7 @@
             <!--                <div class="row align-items-center">-->
             <!--                    <div class="col-8">-->
             <!--                        <h4 class="mb-0">{{ $data['total_recharge'] - $data['total_withdraw'] }}</h4>-->
-            <!--                        <p class="mb-0">{{ __('Total income ')}}</p>-->
+            <!--                        <p class="mb-0">{{ __('Total income ') }}</p>-->
             <!--                    </div>-->
             <!--                    <div class="col-4 text-right">-->
             <!--                        <i class="ik ik-globe f-30"></i>-->
@@ -98,13 +97,13 @@
             <!--    </a>-->
             <!--</div>-->
             <!--<div class="col-xl-3 col-md-6">-->
-            <!--    <a href="{{url('admin/transactions')}}">-->
+            <!--    <a href="{{ url('admin/transactions') }}">-->
             <!--        <div class="card card-green text-white">-->
             <!--            <div class="card-block">-->
             <!--                <div class="row align-items-center">-->
             <!--                    <div class="col-8">-->
             <!--                        <h4 class="mb-0">{{ $data['month_recharge'] }}</h4>-->
-            <!--                        <p class="mb-0">{{ __('Monthly Recharge ')}}</p>-->
+            <!--                        <p class="mb-0">{{ __('Monthly Recharge ') }}</p>-->
             <!--                    </div>-->
             <!--                    <div class="col-4 text-right">-->
             <!--                        <i class="ik ik-globe f-30"></i>-->
@@ -115,13 +114,13 @@
             <!--    </a>-->
             <!--</div>-->
             <!--<div class="col-xl-3 col-md-6">-->
-            <!--    <a href="{{url('admin/transactions')}}">-->
+            <!--    <a href="{{ url('admin/transactions') }}">-->
             <!--        <div class="card card-green text-white">-->
             <!--            <div class="card-block">-->
             <!--                <div class="row align-items-center">-->
             <!--                    <div class="col-8">-->
             <!--                        <h4 class="mb-0">{{ $data['total_recharge'] }}</h4>-->
-            <!--                        <p class="mb-0">{{ __('Total Recharge ')}}</p>-->
+            <!--                        <p class="mb-0">{{ __('Total Recharge ') }}</p>-->
             <!--                    </div>-->
             <!--                    <div class="col-4 text-right">-->
             <!--                        <i class="ik ik-globe f-30"></i>-->
@@ -132,13 +131,13 @@
             <!--    </a>-->
             <!--</div>-->
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/transactions')}}">
+                <a href="{{ url('admin/transactions') }}">
                     <div class="card card-green text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h4 class="mb-0">{{ $data['today_recharge'] }}</h4>
-                                    <p class="mb-0">{{ __('Today Recharge ')}}</p>
+                                    <p class="mb-0">{{ __('Today Recharge ') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-globe f-30"></i>
@@ -149,13 +148,13 @@
                 </a>
             </div>
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/withdraw-requests')}}">
+                <a href="{{ url('admin/withdraw-requests') }}">
                     <div class="card card-green text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h4 class="mb-0">{{ $data['today_withdraw'] }}</h4>
-                                    <p class="mb-0">{{ __('Today withdrawal ')}}</p>
+                                    <p class="mb-0">{{ __('Today withdrawal ') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-globe f-30"></i>
@@ -183,13 +182,13 @@
                 </a>
             </div> --}}
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/challenges')}}">
+                <a href="{{ url('admin/challenges') }}">
                     <div class="card card-blue text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['total_challenges']+85254526 }}</h4>
-                                    <p class="mb-0">{{ __('Total games')}}</p>
+                                    <h4 class="mb-0">{{ $data['total_challenges'] + 85254526 }}</h4>
+                                    <p class="mb-0">{{ __('Total games') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-user f-30"></i>
@@ -200,13 +199,13 @@
                 </a>
             </div>
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/challenges?status=Hold')}}">
+                <a href="{{ url('admin/challenges?status=Hold') }}">
                     <div class="card card-green text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h4 class="mb-0">{{ $data['hold_challenges'] }}</h4>
-                                    <p class="mb-0">{{ __('Pending games ')}}</p>
+                                    <p class="mb-0">{{ __('Pending games ') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-globe f-30"></i>
@@ -216,15 +215,15 @@
                     </div>
                 </a>
             </div>
-            
+
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/challenges?status=Playing')}}">
+                <a href="{{ url('admin/challenges?status=Playing') }}">
                     <div class="card card-yellow text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['playing_challenges']+852 }}</h4>
-                                    <p class="mb-0">{{ __('Playing Games')}}</p>
+                                    <h4 class="mb-0">{{ $data['playing_challenges'] + 852 }}</h4>
+                                    <p class="mb-0">{{ __('Playing Games') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-film f-30"></i>
@@ -234,15 +233,15 @@
                     </div>
                 </a>
             </div>
-            
+
             <div class="col-xl-3 col-md-6">
-                <a href="{{url('admin/challenges?status=Play_wait')}}">
+                <a href="{{ url('admin/challenges?status=Play_wait') }}">
                     <div class="card card-yellow text-white">
                         <div class="card-block" style="background: goldenrod;">
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h4 class="mb-0">{{ $data['one_person_response'] }}</h4>
-                                    <p class="mb-0">{{ __('One person response')}}</p>
+                                    <p class="mb-0">{{ __('One person response') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-film f-30"></i>
@@ -259,7 +258,7 @@
                             <div class="row align-items-center">
                                 <div class="col-8">
                                     <h4 class="mb-0">{{ $data['total_month_refer_income'] }}</h4>
-                                    <p class="mb-0">{{ __('Monthly Refer Income')}}</p>
+                                    <p class="mb-0">{{ __('Monthly Refer Income') }}</p>
                                 </div>
                                 <div class="col-4 text-right">
                                     <i class="ik ik-film f-30"></i>
@@ -270,7 +269,7 @@
                 </a>
             </div>
             <!-- page statustic chart end -->
-            
+
 
             <!-- Streams record start -->
             {{-- <div class="col-md-12">
@@ -296,11 +295,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($data['rechargesByDay'] as $key => $val)
+                                    @foreach ($data['rechargesByDay'] as $key => $val)
                                         <tr>
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$key}}</td>
-                                            <td>{{$val}}</td>                                        
+                                            <td>{{$val}}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -315,8 +314,8 @@
                 <div class="card card-green">
                     <div class="card-header ">
                         <div class="col">
-                            <h6 class="mb-5" style="color:white;">{{ __('Income In ') .@date('F')}}</h6>
-                            <h5 class="mb-0  fw-700" style="color:white;">{{ __('₹'). $data['commision']}}</h5>
+                            <h6 class="mb-5" style="color:white;">{{ __('Income In ') . @date('F') }}</h6>
+                            <h5 class="mb-0  fw-700" style="color:white;">{{ __('₹') . $data['commision'] }}</h5>
                         </div>
                     </div>
                     <div class="card-block text-center">
@@ -325,12 +324,12 @@
                 </div>
             </div>
             <!-- sale 2 card end -->
-            
+
             <!-- Streams record start -->
             <div class="col-md-12">
                 <div class="card table-card">
                     <div class="card-header">
-                        <h3>{{ __('Recharges')}}</h3>
+                        <h3>{{ __('Recharges') }}</h3>
                         <div class="card-header-right">
                             <ul class="list-unstyled card-option">
                                 <li><i class="ik ik-chevron-left action-toggle"></i></li>
@@ -344,21 +343,21 @@
                             <table class="table table-hover table-borderless mb-0">
                                 <thead>
                                     <tr>
-                                        <th>{{ __('ID')}}</th>
-                                        <th>{{ __('Player')}}</th>
-                                        <th>{{ __('Source ID')}}</th>
-                                        <th>{{ __('Amount')}}</th>
-                                        <th>{{ __('Stream Time')}}</th>
+                                        <th>{{ __('ID') }}</th>
+                                        <th>{{ __('Player') }}</th>
+                                        <th>{{ __('Source ID') }}</th>
+                                        <th>{{ __('Amount') }}</th>
+                                        <th>{{ __('Stream Time') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($data['recharges'] as $key => $val)
+                                    @foreach ($data['recharges'] as $key => $val)
                                         <tr>
-                                            <td>{{$val->id}}</td>
-                                            <td>{{$val->playername->username}}</td>
-                                            <td>{{$val->source_id}}</td>
-                                            <td>{{$val->amount}}</td>
-                                            <td>{{ $val->created_at}}</td>                                            
+                                            <td>{{ $val->id }}</td>
+                                            <td>{{ $val->playername->username }}</td>
+                                            <td>{{ $val->source_id }}</td>
+                                            <td>{{ $val->amount }}</td>
+                                            <td>{{ $val->created_at }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -367,16 +366,17 @@
                     </div>
                     <div class="card-footer">
                         <div class="text-right">
-                            <a href="{{url('admin/transactions')}}" class=" b-b-primary text-primary">{{ __('View all transactions')}}</a>
+                            <a href="{{ url('admin/transactions') }}"
+                                class=" b-b-primary text-primary">{{ __('View all transactions') }}</a>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Streams record end -->
 
-    	</div>
+        </div>
     </div>
-	<!-- push external js -->
+    <!-- push external js -->
     @push('script')
         <script src="{{ asset('plugins/owl.carousel/dist/owl.carousel.min.js') }}"></script>
         <script src="{{ asset('plugins/chartist/dist/chartist.min.js') }}"></script>
@@ -388,20 +388,18 @@
         <script src="{{ asset('plugins/amcharts/amcharts.js') }}"></script>
         <script src="{{ asset('plugins/amcharts/serial.js') }}"></script>
         <script src="{{ asset('plugins/amcharts/themes/light.js') }}"></script>
-       
-        
+
+
         <script src="{{ asset('js/widget-statistic.js') }}"></script>
         <script src="{{ asset('js/widget-data.js') }}"></script>
         <script src="{{ asset('js/dashboard-charts.js') }}"></script>
-        
+
         <script>
- window.addEventListener('beforeunload', function (e) {
-     alert('kk');
-    e.preventDefault();
-    e.returnValue = '';
-});
+            window.addEventListener('beforeunload', function(e) {
+                alert('kk');
+                e.preventDefault();
+                e.returnValue = '';
+            });
         </script>
-
-
     @endpush
 @endsection
