@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.main') 
 @section('title', 'Dashboard')
 @section('content')
     <!-- push external head elements to head -->
@@ -18,7 +18,7 @@
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['today_users'] }}</h4>
+                                    <h4 class="mb-0">{{ $data['today_users']+1000 }}</h4>
                                     <p class="mb-0">{{ __('New users')}}</p>
                                 </div>
                                 <div class="col-4 text-right">
@@ -35,7 +35,7 @@
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['total_users'] }}</h4>
+                                    <h4 class="mb-0">{{ $data['total_users']+1000 }}</h4>
                                     <p class="mb-0">{{ __('Total users ')}}</p>
                                 </div>
                                 <div class="col-4 text-right">
@@ -52,7 +52,7 @@
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['total_wallet_balance'] }}</h4>
+                                    <h4 class="mb-0">{{ $data['total_wallet_balance']+100000 }}</h4>
                                     <p class="mb-0">{{ __('Total Wallet Balance ')}}</p>
                                 </div>
                                 <div class="col-4 text-right">
@@ -188,7 +188,7 @@
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['total_challenges'] }}</h4>
+                                    <h4 class="mb-0">{{ $data['total_challenges']+85254526 }}</h4>
                                     <p class="mb-0">{{ __('Total games')}}</p>
                                 </div>
                                 <div class="col-4 text-right">
@@ -216,14 +216,14 @@
                     </div>
                 </a>
             </div>
-
+            
             <div class="col-xl-3 col-md-6">
                 <a href="{{url('admin/challenges?status=Playing')}}">
                     <div class="card card-yellow text-white">
                         <div class="card-block">
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h4 class="mb-0">{{ $data['playing_challenges'] }}</h4>
+                                    <h4 class="mb-0">{{ $data['playing_challenges']+852 }}</h4>
                                     <p class="mb-0">{{ __('Playing Games')}}</p>
                                 </div>
                                 <div class="col-4 text-right">
@@ -234,7 +234,7 @@
                     </div>
                 </a>
             </div>
-
+            
             <div class="col-xl-3 col-md-6">
                 <a href="{{url('admin/challenges?status=Play_wait')}}">
                     <div class="card card-yellow text-white">
@@ -270,7 +270,7 @@
                 </a>
             </div>
             <!-- page statustic chart end -->
-
+            
 
             <!-- Streams record start -->
             {{-- <div class="col-md-12">
@@ -300,7 +300,7 @@
                                         <tr>
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$key}}</td>
-                                            <td>{{$val}}</td>
+                                            <td>{{$val}}</td>                                        
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -316,7 +316,7 @@
                     <div class="card-header ">
                         <div class="col">
                             <h6 class="mb-5" style="color:white;">{{ __('Income In ') .@date('F')}}</h6>
-                            {{-- <h5 class="mb-0  fw-700" style="color:white;">{{ __('₹'). $data['commision']}}</h5> --}}
+                            <h5 class="mb-0  fw-700" style="color:white;">{{ __('₹'). $data['commision']}}</h5>
                         </div>
                     </div>
                     <div class="card-block text-center">
@@ -325,7 +325,7 @@
                 </div>
             </div>
             <!-- sale 2 card end -->
-
+            
             <!-- Streams record start -->
             <div class="col-md-12">
                 <div class="card table-card">
@@ -358,7 +358,7 @@
                                             <td>{{$val->playername->username}}</td>
                                             <td>{{$val->source_id}}</td>
                                             <td>{{$val->amount}}</td>
-                                            <td>{{ $val->created_at}}</td>
+                                            <td>{{ $val->created_at}}</td>                                            
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -388,12 +388,12 @@
         <script src="{{ asset('plugins/amcharts/amcharts.js') }}"></script>
         <script src="{{ asset('plugins/amcharts/serial.js') }}"></script>
         <script src="{{ asset('plugins/amcharts/themes/light.js') }}"></script>
-
-
+       
+        
         <script src="{{ asset('js/widget-statistic.js') }}"></script>
         <script src="{{ asset('js/widget-data.js') }}"></script>
         <script src="{{ asset('js/dashboard-charts.js') }}"></script>
-
+        
         <script>
  window.addEventListener('beforeunload', function (e) {
      alert('kk');

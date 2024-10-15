@@ -801,29 +801,49 @@ class ChallengeController extends Controller
         $request->validate([
             'ch_id' => 'required|numeric'
         ]);
-        try
-        {
-             $user_id    =   Auth::user()->id;
-            $chData     =   Challenge::find($request->ch_id);
-            if($chData->status  ==  1){
-                $walletData =   User::find($user_id);
-                $walletData->wallet = $walletData->wallet + $chData->amount;
-                $walletData->save();
-                $chData->delete();
 
-                return response()->json(['data'=>$request->ch_id]);
+        try {
+            $user_id = Auth::user()->id;
+            $chData = Challenge::find($request->ch_id);
+
+            if ($chData->status == 1) {
+                \Log::debug('Cancel challenge request initiated for User ID ' . $user_id);
+
+                // Get the current user and opponent details
+                $walletDataUser = User::find($user_id); // Current user
+                $walletDataOpponent = User::find($chData->opponent_id); // Opponent user (assuming you store opponent_id in challenges)
+
+                // Add the amount back to both users' wallets
+                $walletDataUser->wallet += $chData->amount;
+                $walletDataOpponent->wallet += $chData->amount;
+
+                // Save both wallet updates
+                $walletDataUser->save();
+                $walletDataOpponent->save();
+
+                // Mark the challenge as canceled
+                $chData->is_cancel = 1;
+                $chData->save();
+
+                // Log the amount credited back
+                \Log::debug('Challenge canceled. Amount ' . $chData->amount . ' credited back to User ID ' . $user_id . ' and Opponent ID ' . $chData->opponent_id);
+
+                return response()->json(['data' => $request->ch_id, 'message' => 'Challenge canceled successfully.']);
             }
-            return response([
-                'message'        => "Unable to cancel the game!"
-            ],400);
-        }catch (\Exception $e) {
-            $bug = $e->getMessage();
-            return response([
-                'message'        => $bug
-            ],400);
-        }
 
+            return response([
+                'message' => "Unable to cancel the game!"
+            ], 400);
+
+        } catch (\Exception $e) {
+            \Log::error('Error canceling challenge: ' . $e->getMessage());
+            return response([
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
+
+
 
     public function cancelChallengeReq(Request $request)
     {
