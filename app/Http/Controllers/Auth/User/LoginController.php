@@ -12,6 +12,7 @@ use Auth;
 use Session;
 use Http;
 
+// use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str; // To generate a new session ID
 class LoginController extends Controller
 {
@@ -174,129 +175,89 @@ class LoginController extends Controller
 
 
 
-    public function doLoginUser(Request $request)
-    {
-        // Validate the mobile number input
-        $this->validate($request, [
-            'mobile' => 'required|numeric',
-        ]);
 
-        $isResend = $request->has('resend_otp') && $request->resend_otp == true;
+public function doLoginUser(Request $request)
+{
+    // Validate the mobile number input
+    $this->validate($request, [
+        'mobile' => 'required|numeric',
+    ]);
 
-        try {
-            $mobile = $request->mobile;
-            $otp = $request->otp;
-            $newOtp = rand(100000, 999999);
-            $userData = User::where('mobile', $mobile)->first();
+    $isResend = $request->has('resend_otp') && $request->resend_otp == true;
 
-            // Check if user exists
-            if (isset($userData)) {
-                // Check if the user is blocked
-                if ($userData->status == 0) {
+    try {
+        $mobile = $request->mobile;
+        $otp = $request->otp;
+        $newOtp = rand(100000, 999999);
+        $userData = User::where('mobile', $mobile)->first();
+
+        \Log::info('User Login Attempt', ['mobile' => $mobile, 'otp' => $otp]);
+
+        // Check if user exists
+        if ($userData) {
+            \Log::info('User found', ['user_id' => $userData->id]);
+
+            // Check if the user is blocked
+            if ($userData->status == 0) {
+                \Log::warning('Blocked user attempted to log in', ['user_id' => $userData->id]);
+                return response()->json([
+                    'status' => 0,
+                    'message' => "This User is Blocked"
+                ], 400);
+            }
+
+            // Handle OTP verification
+            if ($otp) {
+                if ($userData->otp != $otp) {
+                    \Log::warning('Invalid OTP attempt', ['user_id' => $userData->id]);
                     return response()->json([
                         'status' => 0,
-                        'message' => "This User is Blocked"
+                        'message' => 'Invalid OTP!'
                     ], 400);
                 }
 
-                // Handle OTP verification
-                if ($otp) {
-                    if ($userData->otp != $otp) {
-                        return response()->json([
-                            'status' => 0,
-                            'message' => 'Invalid OTP!'
-                        ], 400);
-                    }
+                // If already logged in, invalidate the previous session
+                if ($userData->session_id && $userData->session_id !== session()->getId()) {
+                    \Log::warning('User already logged in from another device, logging out previous session', ['user_id' => $userData->id]);
 
-                    // Check if the user is already logged in from another browser or device
-                    if ($userData->session_id && $userData->session_id !== session()->getId()) {
-                        return response()->json([
-                            'status' => 0,
-                            'message' => 'You are already logged in from another device or browser.'
-                        ], 400);
-                    }
-
-                    // Generate a new session ID and store it in the database
-                    $sessionId = session()->getId();
-                    $userData->session_id = $sessionId;
-                    $userData->otp = 0; // Clear OTP after successful login
-                    $userData->save();
-
-                    // Log the user in
-                    Auth::login($userData);
-
-                    // Check if user_settings record exists and update if necessary
-                    $user_setting = UserSetting::where('user_id', $userData->id)->first();
-                    if (!$user_setting) {
-                        $user_setting = new UserSetting;
-                        $user_setting->user_id = $userData->id;
-                        $user_setting->status = 1;
-                        $user_setting->referral = bin2hex(random_bytes(4));
-                        $user_setting->save();
-                    } else {
-                        $user_setting->status = 1;
-                        $user_setting->save();
-                    }
-
-                    return response()->json([
-                        'status' => 2,
-                        'url' => url('/')
-                    ], 200);
+                    // Invalidate the previous session
+                    Session::getHandler()->destroy($userData->session_id);
                 }
 
-                // Handle OTP resend
-                if (!$isResend) {
-                    $userData->otp = $newOtp;
-                    $userData->save();
-                    $this->sendOtp($mobile, $newOtp);
+                // Generate a new session ID and store it in the database
+                $sessionId = session()->getId();
+                $userData->session_id = $sessionId;
+                $userData->otp = 0; // Clear OTP after successful login
+                $userData->save();
 
-                    return response()->json([
-                        'status' => 1,
-                        'message' => 'OTP sent successfully!'
-                    ], 200);
+                // Log the user in
+                Auth::login($userData);
+
+                \Log::info('User logged in successfully', ['user_id' => $userData->id, 'session_id' => $sessionId]);
+
+                // Check if user_settings record exists and update if necessary
+                $user_setting = UserSetting::where('user_id', $userData->id)->first();
+                if (!$user_setting) {
+                    $user_setting = new UserSetting;
+                    $user_setting->user_id = $userData->id;
+                    $user_setting->status = 1;
+                    $user_setting->referral = bin2hex(random_bytes(4));
+                    $user_setting->save();
+                } else {
+                    $user_setting->status = 1;
+                    $user_setting->save();
                 }
-
-                $this->sendOtp($mobile, $newOtp);
 
                 return response()->json([
-                    'status' => 1,
-                    'message' => 'OTP resent successfully!'
+                    'status' => 2,
+                    'url' => url('/')
                 ], 200);
-            } else {
-                // Handle new user registration
-                $user = User::create([
-                    'username' => ucfirst(substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4)) . ucfirst(substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4)),
-                    'mobile' => $mobile,
-                    'otp' => $newOtp,
-                    'ip' => $request->ip(),
-                    'session_id' => session()->getId(), // Store the new session ID for the user
-                ]);
+            }
 
-                // Handle referral logic
-                if ($request->referral) {
-                    $settings = UserSetting::where('user_id', $user->id)->first();
-                    $rf_user_data = UserSetting::where('referral', $request->referral)->first();
-                    if (empty($settings)) {
-                        $settings = new UserSetting;
-                        $settings->user_id = $user->id;
-                        $settings->status = 1;
-                        $settings->referral = bin2hex(random_bytes(4));
-                        $settings->save();
-                    }
-                    $rf_user = User::where('id', $rf_user_data->user_id)->first();
-                    if (isset($rf_user)) {
-                        if ($rf_user->status == 0) {
-                            return response()->json([
-                                'status' => 0,
-                                'message' => "This User is Blocked"
-                            ], 400);
-                        }
-                        $rf_user->earnings += 50;
-                        $rf_user->save();
-                    }
-                }
-
-                // Send OTP to the new user
+            // Handle OTP resend
+            if (!$isResend) {
+                $userData->otp = $newOtp;
+                $userData->save();
                 $this->sendOtp($mobile, $newOtp);
 
                 return response()->json([
@@ -304,13 +265,43 @@ class LoginController extends Controller
                     'message' => 'OTP sent successfully!'
                 ], 200);
             }
-        } catch (\Exception $e) {
+
+            $this->sendOtp($mobile, $newOtp);
+
             return response()->json([
-                'status' => 0,
-                'message' => 'An error occurred: ' . $e->getMessage()
-            ], 500);
+                'status' => 1,
+                'message' => 'OTP resent successfully!'
+            ], 200);
+        } else {
+            // Handle new user registration
+            $user = User::create([
+                'username' => ucfirst(substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4)) . ucfirst(substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4)),
+                'mobile' => $mobile,
+                'otp' => $newOtp,
+                'ip' => $request->ip(),
+                'session_id' => session()->getId(), // Store the new session ID for the user
+            ]);
+
+            \Log::info('New user registered', ['user_id' => $user->id, 'mobile' => $mobile]);
+
+            // Send OTP to the new user
+            $this->sendOtp($mobile, $newOtp);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'OTP sent successfully!'
+            ], 200);
         }
+    } catch (\Exception $e) {
+        \Log::error('Error during login', ['error' => $e->getMessage()]);
+        return response()->json([
+            'status' => 0,
+            'message' => 'An error occurred: ' . $e->getMessage()
+        ], 500);
     }
+}
+
+
 
 
 
@@ -366,21 +357,21 @@ class LoginController extends Controller
     }
 
     public function logout()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if ($user) {
-        // Clear the session ID
-        $user->session_id = null;
-        $user->save();
+        if ($user) {
+            // Clear the session ID
+            $user->session_id = null;
+            $user->save();
+        }
+
+        // Perform logout and destroy session
+        Auth::logout();
+        Session::flush();
+
+        return redirect()->route('login')->with('message', 'Logged out successfully!');
     }
-
-    // Perform logout and destroy session
-    Auth::logout();
-    Session::flush();
-
-    return redirect()->route('login')->with('message', 'Logged out successfully!');
-}
 
 
 

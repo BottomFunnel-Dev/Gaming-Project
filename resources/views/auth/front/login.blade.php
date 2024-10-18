@@ -130,6 +130,7 @@
                                 $('.loading').show();
                             },
                             success: function(data) {
+                                console.log("AJAX Response Data: ", data); // Log the response data
                                 if (data.status == 1) {
                                     hideSuccessErrorDiv('alert-danger', 'alert-success', data
                                         .message);
@@ -138,9 +139,12 @@
                                     $('#mobile-no').attr('readonly', 'readonly');
                                     startTimer(); // Start the timer when OTP is generated
                                 } else if (data.status == 2) {
+                                    console.log("Redirecting to: ", data
+                                    .url); // Log the URL to which the user is redirected
                                     window.location.href = data.url;
                                 }
                             },
+
                             error: function(xhr) {
                                 console.error("Error Response: ", xhr.responseText);
                                 var errorMessage = xhr.responseJSON ? xhr.responseJSON.message :

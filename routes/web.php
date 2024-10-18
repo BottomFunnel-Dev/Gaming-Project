@@ -384,4 +384,3 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/ajax_chalange', [ChallengeController::class, 'ajax_chalange']);
 });
-
