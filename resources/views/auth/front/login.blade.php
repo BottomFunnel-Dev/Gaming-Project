@@ -34,7 +34,8 @@
                 <span id="success-error-message"></span>
             </div>
             <div class="position-absolute w-100 center-xy mx-auto sign-otp">
-                <form id="login-form" method="POST" action="{{ route('login') }}">
+                {{-- <form id="login-form" method="POST" action="{{ route('login') }}"> --}}
+                <form id="login-form" method="POST" action="{{ secure_url(route('login')) }}">
                     @csrf
                     <input type="hidden" name="referral" value="{{ $referral }}" />
                     <div class="sign-up-screen">
@@ -153,7 +154,7 @@
                                 }
                             },
                             error: function(xhr) {
-                                console.error("Error Response: ", xhr.responseText);
+                                console.error("Error Response: ", xhr);
                                 var errorMessage = xhr.responseJSON ? xhr.responseJSON.message :
                                     "An error occurred";
                                 hideSuccessErrorDiv('alert-success', 'alert-danger', errorMessage);
