@@ -20,7 +20,7 @@ use Http;
 use URL;
 use Hash;
 use Carbon\Carbon;
-
+use App\ChallengeResult;
 use Illuminate\Support\Facades\Log;
 
 use GuzzleHttp\Client;
@@ -806,34 +806,45 @@ class ChallengeController extends Controller
             $user_id = Auth::user()->id;
             $chData = Challenge::find($request->ch_id);
 
-            if ($chData->status == 1) {
-                \Log::debug('Cancel challenge request initiated for User ID ' . $user_id);
-
-                // Get the current user and opponent details
-                $walletDataUser = User::find($user_id); // Current user
-                $walletDataOpponent = User::find($chData->opponent_id); // Opponent user (assuming you store opponent_id in challenges)
-
-                // Add the amount back to both users' wallets
-                $walletDataUser->wallet += $chData->amount;
-                $walletDataOpponent->wallet += $chData->amount;
-
-                // Save both wallet updates
-                $walletDataUser->save();
-                $walletDataOpponent->save();
-
-                // Mark the challenge as canceled
-                $chData->is_cancel = 1;
-                $chData->save();
-
-                // Log the amount credited back
-                \Log::debug('Challenge canceled. Amount ' . $chData->amount . ' credited back to User ID ' . $user_id . ' and Opponent ID ' . $chData->opponent_id);
-
-                return response()->json(['data' => $request->ch_id, 'message' => 'Challenge canceled successfully.']);
+            // Check if challenge exists
+            if (!$chData) {
+                \Log::error('Challenge not found for ID: ' . $request->ch_id);
+                return response()->json(['message' => 'Challenge not found.'], 404);
             }
 
-            return response([
-                'message' => "Unable to cancel the game!"
-            ], 400);
+            // Check if the current user is the creator of the challenge
+            if ($chData->c_id !== $user_id) {
+                \Log::error('User not authorized to delete this challenge. User ID: ' . $user_id);
+                return response()->json(['message' => 'You are not authorized to delete this challenge.'], 403);
+            }
+
+            \Log::debug('Cancel challenge request initiated for User ID ' . $user_id);
+
+            // Update challenge status to deleted (0)
+            $chData->status = 0; // Assuming 0 means deleted
+            $chData->save();
+
+            // Check for existing challenge result
+            $challengeResult = ChallengeResult::where('ch_id', $request->ch_id)->first();
+
+            if ($challengeResult) {
+                // Update the challenge result, setting is_cancel to 0
+                $challengeResult->is_cancel = 0; // Update is_cancel
+                $challengeResult->save();
+            } else {
+                // Log the missing challenge result
+                \Log::error('No challenge result found for Challenge ID: ' . $request->ch_id);
+                // Still allow the challenge to be deleted
+            }
+
+            // Update the user's wallet balance
+            $user = User::find($user_id);
+            $user->wallet += $chData->amount; // Credit back the amount
+            $user->save();
+
+            \Log::debug('Challenge canceled. Status updated and is_cancel set for Challenge ID: ' . $request->ch_id);
+
+            return response()->json(['data' => $request->ch_id, 'message' => 'Challenge deleted successfully and wallet credited.']);
 
         } catch (\Exception $e) {
             \Log::error('Error canceling challenge: ' . $e->getMessage());
@@ -842,8 +853,6 @@ class ChallengeController extends Controller
             ], 400);
         }
     }
-
-
 
     public function cancelChallengeReq(Request $request)
     {
