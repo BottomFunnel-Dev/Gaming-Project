@@ -126,9 +126,16 @@
 
                     if (flag) {
                         $.ajax({
+                            // type: "POST",
+                            // dataType: 'json',
+                            // url: '{{ route('login') }}',
+                            // data: $(this).serialize(),
+                            // beforeSend: function() {
+                            //     $('.loading').show();
+                            // },
                             type: "POST",
                             dataType: 'json',
-                            url: '{{ route('login') }}',
+                            url: '{{ secure_url(route('login')) }}', // Use secure_url to ensure HTTPS
                             data: $(this).serialize(),
                             beforeSend: function() {
                                 $('.loading').show();
