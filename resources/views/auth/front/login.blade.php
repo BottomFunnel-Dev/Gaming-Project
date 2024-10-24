@@ -19,7 +19,9 @@
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('front/css/responsive.css') }}">
 
-    <script src="{{ asset('front/js/jquery-3.6.1.min.js') }}"></script>
+    {{-- <script src="{{ asset('front/js/jquery-3.6.1.min.js') }}"></script> --}}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
 
 </head>
 
