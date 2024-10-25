@@ -152,12 +152,19 @@
             alert('Referral code copied!');
         }
 
-        function shareOnWA(referral) {
-            var text = 'Play+Ludo+and+earn+₹10000+daily.++';
-            text += 'https://khelmoj.in/login?referral=' + referral + '.++';
-            text += 'Register+Now,+My+refer+code+is+' + referral + '.';
+        // function shareOnWA(referral) {
+        //     var text = 'Play+Ludo+and+earn+₹10000+daily.++';
+        //     text += 'https://khelmoj.in/login?referral=' + referral + '.++';
+        //     text += 'Register+Now,+My+refer+code+is+' + referral + '.';
 
-            window.location.href = 'https://wa.me/?text=' + text;
+        //     window.location.href = 'https://wa.me/?text=' + text;
+        // }
+
+        function shareOnWA(referral) {
+            var text = 'Play Ludo and earn ₹10000 daily.%0A' +
+                'Register Now, My referral code is ' + referral + '.%0A' +
+                'https://akplayers.com/login?referral=' + referral;
+            window.open('https://web.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank');
         }
     </script>
 @endsection

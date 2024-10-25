@@ -7,6 +7,12 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Open Graph Meta Tags for WhatsApp -->
+    <meta property="og:title" content="Play Ludo and Earn">
+    <meta property="og:description" content="Join and play Ludo to earn rewards daily. Use my referral code!">
+    <meta property="og:image" content="{{ asset('front/images/khelmoj123.jpeg') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
