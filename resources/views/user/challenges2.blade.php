@@ -963,7 +963,7 @@
                         '" ><div class="d-flex"><span class="betCard-title pl-3 d-flex align-items-center text-uppercase">PLAYING FOR';
                     html += '<img class="mx-1" src="{{ asset('front/images/global-rupeeIcon.png') }}" width="21px" alt="">' +
                         prize + '</span><div class="betCard-title d-flex align-items-center text-uppercase">';
-                    html += '<span class="ml-auto"><a href="https://apnaludo.com/challenge-detail/' + myPlayChallenges[i].id +
+                    html += '<span class="ml-auto"><a href="https://akplayers.com/challenge-detail/' + myPlayChallenges[i].id +
                         '"  class="btn btn-info px-3 btn-sm" >View</a>	</span></div></div>';
                     html +=
                         '<div class="py-1 row"><div class="pr-3 text-center col-5"><div class="pl-2"><img class="border-50" src="{{ asset('front/images/author.svg') }}" width="21px" height="21px" alt=""></div>';

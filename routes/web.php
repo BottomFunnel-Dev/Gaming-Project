@@ -89,7 +89,7 @@ Route::get('/', function (Request $request) {
     }
 
     return view('front.welcome', compact('kyc'));
-})->name('front.apnaludo');
+})->name('front.akplayers');
 
 
 // this is done by previous developer

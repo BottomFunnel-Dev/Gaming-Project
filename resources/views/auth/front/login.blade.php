@@ -8,7 +8,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="{{ asset('front/images/khelmoj123.jpeg')}}" />
   <title>AK Players | Best online ludo platform</title>
-  <meta content="ApnaLudo" name="description">
+  <meta content="Ak Players" name="description">
   <meta content="ludo khelo,online ludo, online games, play with real players, best ludo website, ludo earning, earn by playing ludo, playing ludo king,  ludo contest, Best Ludo website in kota , ludo tournament , ludo khelo paise kamao, khelo ludo, Ludo Players, Ludo king." name="keywords">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,800,900">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
