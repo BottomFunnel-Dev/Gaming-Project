@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}" />
   <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="{{ asset('front/images/khelmoj123.png')}}" />
-  <title>AK Adda | Best online ludo platform</title>
+  <link rel="icon" href="{{ asset('front/images/khelmoj123.jpeg')}}" />
+  <title>AK Players | Best online ludo platform</title>
   <meta content="ApnaLudo" name="description">
   <meta content="ludo khelo,online ludo, online games, play with real players, best ludo website, ludo earning, earn by playing ludo, playing ludo king,  ludo contest, Best Ludo website in kota , ludo tournament , ludo khelo paise kamao, khelo ludo, Ludo Players, Ludo king." name="keywords">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,800,900">
