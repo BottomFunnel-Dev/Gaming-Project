@@ -75,6 +75,9 @@
         </div>
     </div>
 
+    <!-- Include jQuery before any plugin scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     @push('script')
         <script>
             function linkType(val) {

@@ -90,10 +90,8 @@
 
     {{-- <script src="https://cleverpages.in/libs/jquery/dist/jquery.min.js"></script> --}}
     <!-- Load jQuery -->
+    <!-- Include jQuery before any plugin scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Load DataTables -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
 
     <!-- Load DataTables Buttons -->
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>

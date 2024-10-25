@@ -200,4 +200,16 @@
             </div>
         </div>
     </div>
+
+    <!-- push external js -->
+    @push('script')
+        {{-- <script src="{{ asset('js/form-advanced.js') }}"></script> --}}
+        <!-- Include jQuery before any plugin scripts -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="{{ asset('plugins/select2/dist/js/select2.min.js') }}"></script>
+        <script src="{{ asset('plugins/DataTables/datatables.min.js') }}"></script>
+        <script src="{{ asset('plugins/DataTables/Cell-edit/dataTables.cellEdit.js') }}"></script>
+        <!--server side permission table script-->
+        <script src="{{ asset('js/permission.js') }}"></script>
+    @endpush
 @endsection

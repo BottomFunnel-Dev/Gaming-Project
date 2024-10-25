@@ -236,5 +236,7 @@
     <!-- push external js -->
     @push('script')
         <script src="{{ asset('js/form-advanced.js') }}"></script>
+        <!-- Include jQuery before any plugin scripts -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @endpush
 @endsection
